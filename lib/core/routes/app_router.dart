@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:partsrunner/core/routes/route_name.dart';
 
 import '../../features/auth/login/presentaion/login_Screen.dart';
+import '../../features/auth/login/presentaion/success.dart';
 import '../../features/auth/signup/presentaion/signup_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/role_select/select_role_screen.dart';
@@ -15,6 +16,7 @@ class AppRoutes {
     RouteNames.selectRoleScreen: (context) => const SelectRoleScreen(),
     RouteNames.signupScreen: (context) => const SignupScreen(),
     RouteNames.loginScreen: (context) => const LoginScreen(),
+    RouteNames.successScreen: (context) => const SuccessScreen(),
 
 
   };
