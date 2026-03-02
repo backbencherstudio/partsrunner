@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:partsrunner/core/widget/CustomTextFIeld.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 
+import '../../../../core/routes/route_name.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -86,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 CustomButton(
                   text: "Login",
-                  submit: () {},
+                  submit: () {
+                    Navigator.pushNamed(context, RouteNames.successScreen);
+                  },
                   backgroundColor: Color(0xffFF4000),
                   textColor: Colors.white,
                 ),
