@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:partsrunner/core/routes/route_name.dart';
 
 import '../../features/auth/login/presentaion/login_Screen.dart';
+import '../../features/auth/login/presentaion/otp_screen.dart';
 import '../../features/auth/login/presentaion/success.dart';
 import '../../features/auth/signup/presentaion/signup_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
     RouteNames.signupScreen: (context) => const SignupScreen(),
     RouteNames.loginScreen: (context) => const LoginScreen(),
     RouteNames.successScreen: (context) => const SuccessScreen(),
+    RouteNames.otpScreen: (context) => const OtpScreen(),
 
 
   };

@@ -38,6 +38,8 @@ dependencies:
   flutter_screenutil: ^5.9.0
   shared_preferences: ^2.5.4
   flutter_intl_phone_field: ^0.0.7
+  pin_code_fields: ^9.0.0
+
   http: ^1.6.0
   hive: ^2.2.3
 dev_dependencies:

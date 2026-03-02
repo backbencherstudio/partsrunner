@@ -6,4 +6,5 @@ class RouteNames {
   static const String signupScreen = '/signupScreen';
   static const String parentScreen = '/parentScreen';
   static const String successScreen = '/successScreen';
+  static const String otpScreen = '/otpScreen';
 }
