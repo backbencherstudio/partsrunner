@@ -6,6 +6,7 @@ import '../../features/auth/login/presentaion/otp_screen.dart';
 import '../../features/auth/login/presentaion/success.dart';
 import '../../features/auth/signup/presentaion/signup_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/parent/presentation/screen/parent_screen.dart';
 import '../../features/role_select/select_role_screen.dart';
 import '../../features/splash/splash_screen.dart';
 class AppRoutes {
@@ -19,6 +20,7 @@ class AppRoutes {
     RouteNames.loginScreen: (context) => const LoginScreen(),
     RouteNames.successScreen: (context) => const SuccessScreen(),
     RouteNames.otpScreen: (context) => const OtpScreen(),
+    RouteNames.parentScreen: (context) => const ParentScreen(),
 
 
   };
