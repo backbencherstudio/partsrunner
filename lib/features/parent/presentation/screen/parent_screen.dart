@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../activeTracking/presentaion/screen/active_tracking_screen.dart';
 import '../../../home/presentaion/screen/home_screen.dart';
+import '../../../profile/presentaion/screen/profile_screen.dart';
 import '../provider/parent_screen_provider.dart';
 
 class ParentScreen extends ConsumerWidget {
@@ -16,7 +17,7 @@ class ParentScreen extends ConsumerWidget {
       const HomeScreen(),
       const ActiveTrackingScreen(),
       const HomeScreen(),
-      const HomeScreen(),
+      const ProfileScreen(),
     ];
 
     return Scaffold(

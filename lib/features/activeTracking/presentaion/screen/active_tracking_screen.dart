@@ -41,22 +41,22 @@ class ActiveTrackingScreen extends StatelessWidget {
         "eta": "12 mins",
         "status": "In Progress",
         "statusColor": Colors.green,
-        "progress": 0.66, // InRoute / central
+        "progress": 0.66,
         "message": "",
       },
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
-        title: const Text("Active Tracking"),
+        title: Text("Active Tracking"),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
         centerTitle: true,
       ),
       body: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
         itemCount: trackingItems.length,
         itemBuilder: (context, index) {
           final item = trackingItems[index];
@@ -76,7 +76,7 @@ class ActiveTrackingScreen extends StatelessWidget {
           final hasMessage = message.trim().isNotEmpty;
 
           return Container(
-            margin: const EdgeInsets.only(bottom: 16),
+            margin: EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -84,12 +84,12 @@ class ActiveTrackingScreen extends StatelessWidget {
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, 4),
                 ),
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -98,30 +98,30 @@ class ActiveTrackingScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.orange.shade50,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.watch_outlined,
                           color: Colors.orange,
                           size: 28,
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               name,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(height: 4),
                             Text(
                               "ID: $id",
                               style: TextStyle(
@@ -133,12 +133,12 @@ class ActiveTrackingScreen extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.12),
+                          color: statusColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
