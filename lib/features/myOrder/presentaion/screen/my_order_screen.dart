@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'completed_screen.dart';
+import 'ongoin_screen.dart';
+
 class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({super.key});
 
@@ -26,14 +29,14 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 27),
+            padding: EdgeInsets.symmetric(horizontal: 27),
             child: Container(
               padding: EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xffF8FAFB),
+                color: Color(0xffF8FAFB),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -46,15 +49,15 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: isOngoing
-                              ? const Color(0xffFCF2EF)
-                              : const Color(0xffF8FAFB),
+                              ? Color(0xffFCF2EF)
+                              : Color(0xffF8FAFB),
                         ),
                         child: Center(
                           child: Text(
@@ -77,15 +80,15 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                         });
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                           horizontal: 40,
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: !isOngoing
-                              ? const Color(0xffFCF2EF)
-                              : const Color(0xffF8FAFB),
+                              ? Color(0xffFCF2EF)
+                              : Color(0xffF8FAFB),
                         ),
                         child: Center(
                           child: Text(
@@ -104,15 +107,11 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
 
-          /// Example Content Change
           Expanded(
             child: Center(
-              child: Text(
-                isOngoing ? "Ongoing Orders List" : "Completed Orders List",
-                style: const TextStyle(fontSize: 16),
-              ),
+              child: isOngoing ? OngoingScreen() : CompletedScreen(),
             ),
           ),
         ],
