@@ -8,19 +8,21 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
               height: 280,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/header.png'),
                   fit: BoxFit.cover,
                 ),
               ),
               child: Container(
-                padding: EdgeInsets.only(top: 50),
+                padding: const EdgeInsets.only(top: 50),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -32,80 +34,93 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding:  EdgeInsets.all(
+                    16.0,
+                  ),
                   child: Column(
                     children: [
                       Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
+                            padding: const EdgeInsets.all(12),
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.white,
                             ),
-
-                            child: Text(
+                            child: const Text(
                               "AB",
-                              style: TextStyle(color: Colors.black),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          SizedBox(width: 7),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                          const SizedBox(width: 12),
+                          const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Good morning, James!",
-                                style: TextStyle(color: Color(0xffF86816)),
+                                style: TextStyle(
+                                  color: Color(0xffF86816),
+                                  fontSize: 16,
+                                ),
                               ),
                               Text(
                                 "Find Your Runner?",
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ],
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Container(
-                            padding: EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 1.5,
+                              ),
                             ),
-                            child: Icon(
+                            child: const Icon(
                               Icons.notifications_none_outlined,
                               color: Colors.white,
+                              size: 26,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
+                      const SizedBox(height: 24),
                       TextFormField(
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                            borderRadius: BorderRadius.circular(13),
-                          ),
-                          hintText: "Search....",
+                          hintText: "Search...",
                           filled: true,
                           fillColor: Colors.white,
-
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(13),
+                            borderSide: BorderSide.none,
+                          ),
                           suffixIcon: Padding(
-                            padding: EdgeInsets.all(3.0),
+                            padding: const EdgeInsets.all(6),
                             child: Container(
-                              padding: EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
-                                color: Color(0xffFFECE6),
+                                color: const Color(0xffFFECE6),
                               ),
-                              child: Icon(Icons.search, color: Color(0xffFF4000)),
+                              child: const Icon(
+                                Icons.search,
+                                color: Color(0xffFF4000),
+                                size: 26,
+                              ),
                             ),
                           ),
                         ),
@@ -115,50 +130,69 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            // Request card with overlap
             Transform.translate(
-              offset: Offset(0, -90),
+              offset: const Offset(0, -50),
               child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     color: Colors.white,
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
-                        color: Colors.grey,
-                        spreadRadius: 3,
-                        blurRadius: 4,
-                        offset: Offset(1, 1),
+                        color: Colors.black12,
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                        offset: Offset(0, 6),
                       ),
                     ],
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color(0xffFFECE6),
+                              borderRadius: BorderRadius.circular(12),
+                              color: const Color(0xffFFECE6),
                             ),
-                            child: Icon(Icons.search, color: Color(0xffFF4000)),
+                            child: const Icon(
+                              Icons.search,
+                              color: Color(0xffFF4000),
+                              size: 32,
+                            ),
                           ),
-
-                          SizedBox(width: 7),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Request New Delivery"),
-                              SizedBox(height: 5),
-                              Text("Schedule a parts pickup in seconds"),
-                            ],
+                          const SizedBox(width: 16),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Request New Delivery",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  "Schedule a parts pickup in seconds",
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 20),
-
+                      SizedBox(height: 24),
                       CustomButton(
                         text: "Start Plan",
                         submit: () {},
@@ -170,6 +204,97 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text(
+                    "Current Shipping",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "View All",
+                    style: TextStyle(
+                      color: Color(0xffFF4000),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: const [
+                    BoxShadow(color: Colors.black12, blurRadius: 8),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Active Delivery: VTY7162E",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            "In Progress",
+                            style: TextStyle(color: Colors.green, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      "Runner: Michael S. • Price: \$125.00 • Supplier: Auto Supply Co.",
+                    ),
+                    SizedBox(height: 12),
+                    // ETA progress bar simulation
+                    LinearProgressIndicator(value: 0.6, minHeight: 8),
+                    SizedBox(height: 8),
+                    Text("ETA 12 min", style: TextStyle(fontSize: 12)),
+                    SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        text: "View Live Map",
+                        submit: () {},
+                        backgroundColor: Color(0xffFF4000),
+                        textColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: 24),
+
+            // Add Recent Shipping section similarly...
+            // (you can copy-paste and adapt the pattern)
+            SizedBox(
+              height: 100,
+            ), // extra space at bottom to test scroll (remove later)
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../activeTracking/presentaion/screen/active_tracking_screen.dart';
 import '../../../home/presentaion/screen/home_screen.dart';
 import '../provider/parent_screen_provider.dart';
 
@@ -13,7 +14,7 @@ class ParentScreen extends ConsumerWidget {
 
     final screens = [
       const HomeScreen(),
-      const HomeScreen(),
+      const ActiveTrackingScreen(),
       const HomeScreen(),
       const HomeScreen(),
     ];
@@ -63,7 +64,7 @@ class ParentScreen extends ConsumerWidget {
         ref.read(bottomNavProvider.notifier).state = index;
       },
       child: Container(
-        padding:  EdgeInsets.all(8.r),
+        padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isSelect ? Color(0xffFF4000) : Colors.transparent,
