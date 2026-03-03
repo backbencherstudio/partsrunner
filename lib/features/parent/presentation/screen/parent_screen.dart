@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../activeTracking/presentaion/screen/active_tracking_screen.dart';
 import '../../../home/presentaion/screen/home_screen.dart';
+import '../../../myOrder/presentaion/screen/my_order_screen.dart';
 import '../../../profile/presentaion/screen/profile_screen.dart';
 import '../provider/parent_screen_provider.dart';
 
@@ -16,7 +17,7 @@ class ParentScreen extends ConsumerWidget {
     final screens = [
       const HomeScreen(),
       const ActiveTrackingScreen(),
-      const HomeScreen(),
+      const MyOrderScreen(),
       const ProfileScreen(),
     ];
 
