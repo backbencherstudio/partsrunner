@@ -89,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 CustomButton(
                   text: "Login",
                   submit: () {
-                    Navigator.pushNamed(context, RouteNames.otpScreen);
+                    // Navigator.pushNamed(context, RouteNames.otpScreen);
                   },
                   backgroundColor: Color(0xffFF4000),
                   textColor: Colors.white,

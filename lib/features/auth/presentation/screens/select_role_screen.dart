@@ -60,7 +60,7 @@ class SelectRoleScreen extends ConsumerWidget {
               isSelected: selectedRole == UserRole.runner,
               onTap: () {
                 ref.read(selectedRoleProvider.notifier).state = UserRole.runner;
-                Navigator.pushNamed(context, RouteNames.signupScreen);
+                // Navigator.pushNamed(context, RouteNames.signupScreen);
               },
             ),
 

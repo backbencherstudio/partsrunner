@@ -3,9 +3,10 @@ class AppRouteNames {
   static const String splash = 'splash';
   static const String onboarding = 'onboarding';
   static const String message = 'message';
-  static const String bottomNavd = 'bottomNav';
+  static const String bottomNav = 'bottomNav';
 
   // Auth
+  static const String auth = 'auth';
   static const String selectRole = 'selectRole';
   static const String signup = 'signup';
   static const String otp = 'otp';

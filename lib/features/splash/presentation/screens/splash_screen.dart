@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,8 +14,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 1), () {
-      Navigator.pushReplacementNamed(context, '/parentScreen');
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        context.goNamed(AppRouteNames.onboarding);
+      }
     });
   }
 
