@@ -23,7 +23,7 @@ class OtpScreen extends StatelessWidget {
             ),
             Text(
               textAlign: TextAlign.center,
-              "To verify your email address,\nplease enter the OTP sent to your email\n kristin***i.com",
+              "To verify your email address,\nplease enter the OTP sent to your email\nkristin***i.com",
             ),
             SizedBox(height: 20),
             PinInput(
