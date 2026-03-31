@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/onboarding/presentation/providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -128,7 +126,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         curve: Curves.easeIn,
                       );
                     } else {
-                      context.go(AppRouteNames.selectRoleScreen);
+                      // context.go(AppRouteNames.selectRoleScreen);
                     }
                   },
                   child: Text(
