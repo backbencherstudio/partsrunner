@@ -1,8 +1,16 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/constant/auth_method.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/CustomTextFIeld.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
-
-import '../../../../core/routes/app_route_names.dart';
+import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
+import 'package:partsrunner/features/auth/presentation/widgets/auth_method_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,42 +35,67 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset("assets/icons/logo.png", height: 200, width: 200),
-                const SizedBox(height: 16),
-                const Text(
-                  "Welcome to Parts Runner",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+                AuthHeader(
+                  title: "Welcome to Parts Runner",
+                  subtitle: "Login to your account",
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  "Login to your account",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-
-                // Email
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Email",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                ),
-                CustomTextField(
-                  hintText: "kristin@untitledui.com",
-                  isPassword: false,
-                  controller: _emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Email can't be empty";
-                    }
-                    return null;
+                20.verticalSpace,
+                AuthMethodWidget(),
+                24.verticalSpace,
+                Consumer(
+                  builder: (context, ref, child) {
+                    final state = ref.watch(authMethodProvider);
+                    return Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            state == AuthMethod.email ? "Email" : "Phone",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        8.verticalSpace,
+                        CustomTextField(
+                          prefix: state == AuthMethod.phone
+                              ? GestureDetector(
+                                  onTap: () {
+                                    // TODO: Implement country code selection
+                                  },
+                                  child: Container(
+                                    width: 70,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        right: BorderSide(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Center(child: Text("+1")),
+                                  ),
+                                )
+                              : null,
+                          hintText: state == AuthMethod.phone
+                              ? "000 000 0000"
+                              : "Enter your email",
+                          isPassword: false,
+                          controller: _emailController,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Email can't be empty";
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    );
                   },
                 ),
 
-                const SizedBox(height: 16),
+                16.verticalSpace,
 
                 // Password
                 const Align(
@@ -73,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 CustomTextField(
-                  hintText: "..........",
+                  hintText: "Enter your password",
                   isPassword: true,
                   controller: _passwordController,
                   validator: (value) {
@@ -84,18 +117,68 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
 
-                SizedBox(height: 24),
+                8.verticalSpace,
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final rememberMe = ref.watch(rememberMeProvider);
+                        return GestureDetector(
+                          onTap: () {
+                            ref.read(rememberMeProvider.notifier).state =
+                                !rememberMe;
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                color: AppColor.primary,
+                                rememberMe
+                                    ? Icons.check_circle
+                                    : Icons.circle_outlined,
+                              ),
+                              4.horizontalSpace,
+                              Text("Remember me"),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        context.goNamed(AppRouteNames.forgetPassword);
+                      },
+                      child: Text(
+                        "Forgot password?",
+                        style: TextStyle(color: AppColor.primary),
+                      ),
+                    ),
+                  ],
+                ),
+
+                24.verticalSpace,
 
                 CustomButton(
-                  text: "Login",
+                  text: "Continue",
                   submit: () {
-                    // Navigator.pushNamed(context, RouteNames.otpScreen);
+                    context.goNamed(
+                      AppRouteNames.message,
+                      extra: {
+                        'title': 'Success',
+                        'message':
+                            'Nice to see you again. Get your parts delivered with tracking parts in real-time!',
+                        'imagePath': 'assets/icons/success.png',
+                        'buttonText': 'Get Started',
+                        'routeName': AppRouteNames.bottomNav,
+                      },
+                    );
                   },
                   backgroundColor: Color(0xffFF4000),
                   textColor: Colors.white,
                 ),
 
-                SizedBox(height: 16),
+                16.verticalSpace,
                 RichText(
                   text: TextSpan(
                     children: [
@@ -109,8 +192,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Color(0xffFF4000),
                           fontWeight: FontWeight.bold,
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            context.pushNamed(AppRouteNames.signup);
+                          },
                       ),
-
                     ],
                   ),
                 ),
@@ -119,6 +205,49 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AuthHeader extends StatelessWidget {
+  const AuthHeader({
+    super.key,
+    this.hasLogo = true,
+    required this.title,
+    this.subtitle,
+  });
+
+  final bool hasLogo;
+  final String title;
+  final String? subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (hasLogo) ...[
+          Image.asset("assets/icons/logo.png", width: 120.w),
+          16.verticalSpace,
+        ],
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Industry',
+          ),
+          textAlign: TextAlign.center,
+        ),
+        8.verticalSpace,
+        Text(
+          subtitle!,
+          style: GoogleFonts.interTight(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }

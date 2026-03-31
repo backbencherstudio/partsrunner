@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/features/auth/presentation/providers/role_provider.dart';
-
-import '../../../../core/routes/app_route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
+import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 
 class SelectRoleScreen extends ConsumerWidget {
   const SelectRoleScreen({super.key});

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
+import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
 import 'package:partsrunner/features/onboarding/presentation/screens/onboarding_screen.dart';
@@ -27,7 +31,14 @@ class AppRoutes {
         path: '/message',
         name: AppRouteNames.message,
         builder: (context, state) {
-          return const Placeholder();
+          final extra = state.extra as Map<String, dynamic>?;
+          return Message(
+            title: extra?['title'] ?? '',
+            message: extra?['message'] ?? '',
+            imagePath: extra?['imagePath'] ?? '',
+            buttonText: extra?['buttonText'] ?? '',
+            routeName: extra?['routeName'],
+          );
         },
       ),
       GoRoute(
@@ -53,14 +64,14 @@ class AppRoutes {
         builder: (context, state) => const Placeholder(),
         routes: [
           GoRoute(
-            path: 'selectRole', // ✅ no leading /
+            path: 'selectRole',
             name: AppRouteNames.selectRole,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const SelectRoleScreen(),
           ),
           GoRoute(
             path: 'signup',
             name: AppRouteNames.signup,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const SignupScreen(),
           ),
           GoRoute(
             path: 'otp',
@@ -75,7 +86,7 @@ class AppRoutes {
           GoRoute(
             path: 'login',
             name: AppRouteNames.login,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const LoginScreen(),
           ),
           GoRoute(
             path: 'forgetPassword',

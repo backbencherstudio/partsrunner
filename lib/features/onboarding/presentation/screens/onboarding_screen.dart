@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/onboarding/presentation/providers/onboarding_provider.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -62,13 +66,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       children: [
                         Image.asset(
                           onboardingData[index]["image"]!,
-                          height: 200,
-                          width: 200,
+                          height: 140.h,
+                          width: 140.w,
                         ),
-                        const SizedBox(height: 40),
+                        32.verticalSpace,
                         Text(
                           onboardingData[index]["title"]!,
                           style: const TextStyle(
+                            fontFamily: 'Industry',
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
@@ -77,7 +82,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         Text(
                           onboardingData[index]["description"]!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 16),
+                          style: GoogleFonts.interTight(fontSize: 14),
                         ),
                       ],
                     ),
@@ -94,11 +99,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: currentIndex == index ? 30 : 8,
-                  height: 12,
+                  width: currentIndex == index ? 30.w : 10.w,
+                  height: 10.h,
                   decoration: BoxDecoration(
                     color: currentIndex == index
-                        ? const Color(0xffFF6633)
+                        ? const Color(0xffFF4000)
                         : const Color(0xffFFC4B0),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -110,30 +115,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffFF6633),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 52.h),
+                  backgroundColor: const Color(0xffFF4000),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-                  onPressed: () {
-                    if (currentIndex < onboardingData.length - 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeIn,
-                      );
-                    } else {
-                      // context.go(AppRouteNames.selectRoleScreen);
-                    }
-                  },
-                  child: Text(
-                    currentIndex == onboardingData.length - 1
-                        ? "Get Started"
-                        : "Next",
-                    style: const TextStyle(color: Color(0xffffffff)),
+                ),
+                onPressed: () {
+                  if (currentIndex < onboardingData.length - 1) {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  } else {
+                    context.goNamed(AppRouteNames.login);
+                  }
+                },
+                child: Text(
+                  currentIndex == onboardingData.length - 1
+                      ? "Get Started"
+                      : "Next",
+                  style: const TextStyle(
+                    fontFamily: "Industry",
+                    color: Color(0xffffffff),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),

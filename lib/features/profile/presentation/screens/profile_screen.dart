@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -40,13 +42,19 @@ class ProfileScreen extends StatelessWidget {
 
             Column(
               children: [
-                _profileTab("assets/images/index1.png", "Edit Profile"),
+                _profileTab("assets/images/index1.png", "Edit Profile", () {}),
                 Divider(),
-                _profileTab("assets/images/index2.png", "Payment Management"),
+                _profileTab(
+                  "assets/images/index2.png",
+                  "Payment Management",
+                  () {},
+                ),
                 Divider(),
-                _profileTab("assets/images/setting.png", "Settings "),
+                _profileTab("assets/images/setting.png", "Settings ", () {}),
                 Divider(),
-                _profileTab("assets/images/logout.png", "Log out"),
+                _profileTab("assets/images/logout.png", "Log out", () {
+                  context.goNamed(AppRouteNames.login);
+                }),
                 Divider(),
               ],
             ),
@@ -56,14 +64,17 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _profileTab(String image, String title) {
-    return Row(
-      children: [
-        Image.asset(image, height: 50.h, width: 50.w),
-        Text(title),
-        Spacer(),
-        Icon(Icons.arrow_forward_ios_outlined),
-      ],
+  Widget _profileTab(String image, String title, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Image.asset(image, height: 50.h, width: 50.w),
+          Text(title),
+          Spacer(),
+          Icon(Icons.arrow_forward_ios_outlined),
+        ],
+      ),
     );
   }
 }
