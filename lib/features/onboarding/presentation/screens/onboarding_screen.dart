@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/onboarding/presentation/providers/onboarding_provider.dart';
 
-import '../role_select/select_role_screen.dart';
-
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _pageController = PageController();
-  int currentIndex = 0;
 
   final List<Map<String, String>> onboardingData = [
     {
       "title": "Parts at Your Fingertips",
       "description":
           "No more leaving the job site. Get your parts delivered while you keep working.",
-
       "image": "assets/icons/onboarding1.png",
     },
     {
@@ -31,13 +31,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "title": "Secure Smart Pickups",
       "description":
           "Our network of independent Runners ensure your parts arrive safe and on time.",
-
       "image": "assets/icons/onboarding3.png",
     },
   ];
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(onboardingIndexProvider);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -47,9 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _pageController,
                 itemCount: onboardingData.length,
                 onPageChanged: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
+                  ref.read(onboardingIndexProvider.notifier).state = index;
                 },
                 itemBuilder: (context, index) {
                   return Padding(
@@ -83,34 +88,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
+            // Dot indicators
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 onboardingData.length,
                 (index) => AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: currentIndex == index ? 30 : 8,
                   height: 12,
                   decoration: BoxDecoration(
                     color: currentIndex == index
-                        ? Color(0xffFF6633)
-                        : Color(0xffFFC4B0),
+                        ? const Color(0xffFF6633)
+                        : const Color(0xffFFC4B0),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xffFF6633),
+                    backgroundColor: const Color(0xffFF6633),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -118,27 +124,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: () {
                     if (currentIndex < onboardingData.length - 1) {
                       _pageController.nextPage(
-                        duration: Duration(milliseconds: 300),
+                        duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,
                       );
                     } else {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => SelectRoleScreen()),
-                      );
+                      context.go(AppRouteNames.selectRoleScreen);
                     }
                   },
                   child: Text(
                     currentIndex == onboardingData.length - 1
                         ? "Get Started"
                         : "Next",
-                    style: TextStyle(color: Color(0xffffffff)),
+                    style: const TextStyle(color: Color(0xffffffff)),
                   ),
                 ),
               ),
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
           ],
         ),
       ),

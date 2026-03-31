@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
-import '../../../../core/routes/route_name.dart';
+import '../../../../core/routes/app_route_names.dart';
 import '../../../../core/widget/CustomTextFIeld.dart';
 
 class SignupScreen extends StatelessWidget {

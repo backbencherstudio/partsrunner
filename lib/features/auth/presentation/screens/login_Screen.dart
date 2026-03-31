@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:partsrunner/core/widget/CustomTextFIeld.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 
-import '../../../../core/routes/route_name.dart';
+import '../../../../core/routes/app_route_names.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
