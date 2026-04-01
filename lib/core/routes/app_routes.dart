@@ -4,7 +4,11 @@ import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
 import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/new_password_screen.dart';
+import 'package:partsrunner/features/auth/presentation/screens/otp_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
@@ -76,12 +80,13 @@ class AppRoutes {
           GoRoute(
             path: 'otp',
             name: AppRouteNames.otp,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) =>
+                OtpScreen(previousRoute: state.extra as String? ?? ''),
           ),
           GoRoute(
             path: 'completeInfo',
             name: AppRouteNames.completeInfo,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const CompleteInfoScreen(),
           ),
           GoRoute(
             path: 'login',
@@ -91,12 +96,12 @@ class AppRoutes {
           GoRoute(
             path: 'forgetPassword',
             name: AppRouteNames.forgetPassword,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const ForgotPasswordScreen(),
           ),
           GoRoute(
             path: 'newPassword',
             name: AppRouteNames.newPassword,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const NewPasswordScreen(),
           ),
         ],
       ),
@@ -108,7 +113,7 @@ class AppRoutes {
         builder: (context, state) => HomeScreen(),
         routes: [
           GoRoute(
-            path: 'requestNewDelivery', // ✅ no leading /
+            path: 'requestNewDelivery',
             name: AppRouteNames.requestNewDelivery,
             builder: (context, state) => const Placeholder(),
           ),
@@ -144,7 +149,7 @@ class AppRoutes {
         builder: (context, state) => const Placeholder(),
         routes: [
           GoRoute(
-            path: 'packageDetails', // ✅ no leading /
+            path: 'packageDetails',
             name: AppRouteNames.packageDetails,
             builder: (context, state) => const Placeholder(),
           ),
@@ -158,7 +163,7 @@ class AppRoutes {
         builder: (context, state) => const Placeholder(),
         routes: [
           GoRoute(
-            path: 'orderDetails', // ✅ no leading /
+            path: 'orderDetails',
             name: AppRouteNames.orderDetails,
             builder: (context, state) => const Placeholder(),
           ),
@@ -172,7 +177,7 @@ class AppRoutes {
         builder: (context, state) => const Placeholder(),
         routes: [
           GoRoute(
-            path: 'withdraw', // ✅ no leading /
+            path: 'withdraw',
             name: AppRouteNames.withdraw,
             builder: (context, state) => const Placeholder(),
           ),
@@ -196,7 +201,7 @@ class AppRoutes {
         builder: (context, state) => const Placeholder(),
         routes: [
           GoRoute(
-            path: 'editProfile', // ✅ no leading /
+            path: 'editProfile',
             name: AppRouteNames.editProfile,
             builder: (context, state) => const Placeholder(),
           ),

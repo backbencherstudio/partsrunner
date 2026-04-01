@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<UserRole> isContractor() async {
+    return UserRole.contractor;
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -34,9 +50,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding:  EdgeInsets.all(
-                    16.0,
-                  ),
+                  padding: EdgeInsets.all(16.0),
                   child: Column(
                     children: [
                       Row(

@@ -1,10 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
-import 'package:partsrunner/core/widget/CustomTextFIeld.dart';
-import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
-import 'package:partsrunner/features/auth/presentation/widgets/auth_method_widget.dart';
+import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
+import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart';
+import 'package:partsrunner/features/auth/presentation/widgets/mobile_phone_field.dart';
+import 'package:partsrunner/features/auth/presentation/widgets/or_divider.dart';
 
 class SignupScreen extends StatelessWidget {
   const SignupScreen({super.key});
@@ -80,40 +83,7 @@ class SignupScreen extends StatelessWidget {
                     "Mobile number",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  IntlPhoneField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xffFAFAFB),
-
-                      hintStyle: const TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: Color(0xff535353)),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: Color(0xff535353)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: const BorderSide(color: Color(0xff535353)),
-                      ),
-                    ),
-                    initialCountryCode: 'BD',
-                    onChanged: (phone) {
-                      phoneController.text = phone.completeNumber;
-                      print("Phone: ${phoneController.text}");
-                    },
-                    onCountryChanged: (country) {
-                      print('Country changed to: ${country.name}');
-                    },
-                    validator: (value) {
-                      if (value == null || value.number.isEmpty) {
-                        return 'Phone number is required';
-                      }
-                      return null;
-                    },
-                  ),
+                  MobilePhoneField(phoneController: phoneController),
                   SizedBox(height: 15),
                   Text(
                     "Password",
@@ -154,55 +124,30 @@ class SignupScreen extends StatelessWidget {
                     },
                   ),
                   SizedBox(height: 15),
-
-                  Text(
-                    "Company Name",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  CustomTextField(
-                    hintText: "Enter Your Company Name",
-                    isPassword: true,
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password can't be empty";
-                      }
-                      if (value.length < 6) {
-                        return "Password must be at least 6 characters";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 15),
-                  Text(
-                    "Business Address",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  CustomTextField(
-                    hintText: "Enter Your Company Name",
-                    isPassword: true,
-                    controller: passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password can't be empty";
-                      }
-                      if (value.length < 6) {
-                        return "Password must be at least 6 characters";
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 15),
-
                   CustomButton(
                     text: "Create Account",
                     submit: () {
-                      // Navigator.pushNamed(context, RouteNames.loginScreen);
+                      context.goNamed(
+                        AppRouteNames.otp,
+                        extra: AppRouteNames.signup,
+                      );
                     },
                     backgroundColor: Color(0xffFF4000),
                     textColor: Colors.white,
                   ),
-                  SizedBox(height: 15),
+                  32.verticalSpace,
+                  OrDivider(),
+                  24.verticalSpace,
+                  CustomButton(
+                    icon: Image.asset("assets/icons/google_icon.png"),
+                    text: "Sign up with Google",
+                    submit: () {
+                      context.goNamed(AppRouteNames.completeInfo);
+                    },
+                    backgroundColor: Color(0x080e1e0d).withOpacity(0.05),
+                    textColor: Colors.black,
+                  ),
+                  24.verticalSpace,
                   Center(
                     child: RichText(
                       text: TextSpan(
@@ -212,15 +157,21 @@ class SignupScreen extends StatelessWidget {
                             style: TextStyle(color: Colors.black),
                           ),
                           TextSpan(
-                            text: "Login  ",
-                            style: TextStyle(color: Color(0xffFF4000)),
+                            text: "Login",
+                            style: TextStyle(
+                              color: Color(0xffFF4000),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                context.goNamed(AppRouteNames.login);
+                              },
                           ),
                         ],
                       ),
                     ),
                   ),
-
-                  SizedBox(height: 15),
+                  38.verticalSpace,
                 ],
               ),
             ),

@@ -1,11 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
   final Color? backgroundColor;
   final Color? textColor;
   final VoidCallback submit;
+  final Widget? icon;
 
   const CustomButton({
     super.key,
@@ -13,6 +15,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor,
     this.textColor,
     required this.submit,
+    this.icon,
   });
 
   @override
@@ -24,19 +27,22 @@ class CustomButton extends StatelessWidget {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Color(0xffFF4000), width: 2),
           color: backgroundColor,
         ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 20,
-              fontFamily: 'Industry',
-              fontWeight: FontWeight.bold,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[icon!, 10.horizontalSpace],
+            Text(
+              text,
+              style: TextStyle(
+                color: textColor,
+                fontSize: 20,
+                fontFamily: 'Industry',
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
