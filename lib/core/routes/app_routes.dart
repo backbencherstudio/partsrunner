@@ -15,6 +15,7 @@ import 'package:partsrunner/features/auth/presentation/screens/otp_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
+import 'package:partsrunner/features/checkout/presentation/screens/checkout_screen.dart';
 import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/my_order_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/order_details_screen.dart';
@@ -26,6 +27,7 @@ import 'package:partsrunner/features/profile/presentation/screens/edit_profile_s
 import 'package:partsrunner/features/profile/presentation/screens/payment_management_screen.dart';
 import 'package:partsrunner/features/profile/presentation/screens/profile_screen.dart';
 import 'package:partsrunner/features/profile/presentation/screens/settings_screen.dart';
+import 'package:partsrunner/features/request_new_delivery/presentation/screens/request_new_delivery_screen.dart';
 import 'package:partsrunner/features/search/presentation/screens/search_result_screen.dart';
 import 'package:partsrunner/features/splash/presentation/screens/splash_screen.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/transaction_details_screen.dart';
@@ -35,7 +37,7 @@ import 'package:partsrunner/features/wallet/presentation/screens/withdraw_screen
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutePaths.bottomNav,
+    initialLocation: AppRoutePaths.requestNewDelivery,
     routes: [
       // Core
       GoRoute(
@@ -138,12 +140,12 @@ class AppRoutes {
           GoRoute(
             path: 'requestNewDelivery',
             name: AppRouteNames.requestNewDelivery,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const RequestNewDeliveryScreen(),
           ),
           GoRoute(
             path: 'checkout',
             name: AppRouteNames.checkout,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const CheckoutScreen(),
           ),
           GoRoute(
             path: 'jobDetails',

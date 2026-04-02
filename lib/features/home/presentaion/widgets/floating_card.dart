@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 
 class FloatingCard extends StatefulWidget {
@@ -75,7 +77,9 @@ class _FloatingCardState extends State<FloatingCard> {
                 CustomButton(
                   borderRadius: 24.r,
                   text: "Start Plan",
-                  submit: () {},
+                  submit: () {
+                    context.pushNamed(AppRouteNames.requestNewDelivery);
+                  },
                   backgroundColor: AppColor.primary,
                   textColor: Colors.white,
                 ),

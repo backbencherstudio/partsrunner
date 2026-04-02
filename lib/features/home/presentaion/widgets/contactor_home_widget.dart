@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
 import 'package:partsrunner/features/home/presentaion/widgets/section_header.dart';
@@ -106,7 +108,9 @@ class ContactorHomeWidget extends StatelessWidget {
                           textColor: AppColor.primary,
                           borderRadius: 100,
                           text: "View Details",
-                          submit: () {},
+                          submit: () {
+                            context.pushNamed(AppRouteNames.orderDetails);
+                          },
                         ),
                       ),
                     ],

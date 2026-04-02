@@ -174,16 +174,15 @@ class EditProfileScreen extends StatelessWidget {
               CustomButton(
                 backgroundColor: AppColor.primary,
                 textColor: Colors.white,
-                text: "Create Account",
+                text: "Update Profile",
                 submit: () {
                   context.goNamed(
                     AppRouteNames.message,
                     extra: {
                       'title': 'Congratulation!',
                       'imagePath': 'assets/icons/success.png',
-                      'message':
-                          "Your account is created complete. Let's get started!",
-                      'buttonText': 'Get Started',
+                      'message': "Your profile is updated.",
+                      'buttonText': 'Back',
                       'routeName': AppRouteNames.bottomNav,
                     },
                   );
