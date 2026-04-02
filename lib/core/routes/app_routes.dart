@@ -5,6 +5,7 @@ import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
 import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
+import 'package:partsrunner/features/activeTracking/presentaion/screen/active_tracking_screen.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
@@ -15,6 +16,8 @@ import 'package:partsrunner/features/auth/presentation/screens/select_role_scree
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
+import 'package:partsrunner/features/my_order/presentation/screens/my_order_screen.dart';
+import 'package:partsrunner/features/my_order/presentation/screens/order_details_screen.dart';
 import 'package:partsrunner/features/notification/presentation/screens/notication_screen.dart';
 import 'package:partsrunner/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:partsrunner/features/package_details/presentation/screens/package_details_screen.dart';
@@ -159,7 +162,7 @@ class AppRoutes {
       GoRoute(
         path: '/activeTracking',
         name: AppRouteNames.activeTracking,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) => const ActiveTrackingScreen(),
       ),
 
       // Job
@@ -180,12 +183,12 @@ class AppRoutes {
       GoRoute(
         path: '/myOrder',
         name: AppRouteNames.myOrder,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) => const MyOrderScreen(),
         routes: [
           GoRoute(
             path: 'orderDetails',
             name: AppRouteNames.orderDetails,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const OrderDetailsScreen(),
           ),
         ],
       ),

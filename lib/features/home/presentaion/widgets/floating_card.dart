@@ -124,16 +124,14 @@ class _FloatingCardState extends State<FloatingCard> {
                         ],
                       ),
                     ),
-                    Expanded(
-                      child: CupertinoSwitch(
-                        value: _pushNotificationEnabled,
-                        activeTrackColor: AppColor.primary,
-                        onChanged: (value) {
-                          setState(() {
-                            _pushNotificationEnabled = value;
-                          });
-                        },
-                      ),
+                    CupertinoSwitch(
+                      value: _pushNotificationEnabled,
+                      activeTrackColor: AppColor.primary,
+                      onChanged: (value) {
+                        setState(() {
+                          _pushNotificationEnabled = value;
+                        });
+                      },
                     ),
                   ],
                 ),
