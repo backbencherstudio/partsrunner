@@ -1,24 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
+import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
+import 'package:partsrunner/features/wallet/presentation/screens/wallet_screen.dart';
 import '../../../activeTracking/presentaion/screen/active_tracking_screen.dart';
 import '../../../home/presentaion/screens/home_screen.dart';
 import '../../../my_order/presentation/screens/my_order_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../providers/bottom_nav_provider.dart';
 
-class BottomNavScreen extends ConsumerWidget {
+class BottomNavScreen extends ConsumerStatefulWidget {
   const BottomNavScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BottomNavScreen> createState() => _BottomNavScreenState();
+}
+
+class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
+  late UserRole _userRole;
+
+  @override
+  void initState() {
+    getUserRole();
+    super.initState();
+  }
+
+  Future getUserRole() async {
+    _userRole = UserRole.runner;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavProvider);
 
     final screens = [
-      const HomeScreen(),
-      const ActiveTrackingScreen(),
-      const MyOrderScreen(),
-      const ProfileScreen(),
+      HomeScreen(userRole: _userRole),
+      _userRole == UserRole.contractor
+          ? const ActiveTrackingScreen()
+          : ActiveJobsScreen(),
+      _userRole == UserRole.contractor ? const MyOrderScreen() : WalletScreen(),
+      ProfileScreen(userRole: _userRole),
     ];
 
     return Scaffold(
@@ -46,8 +68,22 @@ class BottomNavScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem("assets/images/index0.png", 0, currentIndex, ref),
-              _buildNavItem("assets/images/index1.png", 1, currentIndex, ref),
-              _buildNavItem("assets/images/index2.png", 2, currentIndex, ref),
+              _buildNavItem(
+                _userRole == UserRole.contractor
+                    ? "assets/images/index1.png"
+                    : "assets/images/index2.png",
+                1,
+                currentIndex,
+                ref,
+              ),
+              _buildNavItem(
+                _userRole == UserRole.contractor
+                    ? "assets/images/index2.png"
+                    : "assets/images/index2.2.png",
+                2,
+                currentIndex,
+                ref,
+              ),
               _buildNavItem("assets/images/profile.png", 3, currentIndex, ref),
             ],
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key, required this.height});
@@ -69,16 +71,21 @@ class HomeHeader extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
-                    ),
-                    child: const Icon(
-                      Icons.notifications_none_outlined,
-                      color: Colors.white,
-                      size: 26,
+                  GestureDetector(
+                    onTap: () {
+                      context.pushNamed(AppRouteNames.notification);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: const Icon(
+                        Icons.notifications_none_outlined,
+                        color: Colors.white,
+                        size: 26,
+                      ),
                     ),
                   ),
                 ],
@@ -99,16 +106,21 @@ class HomeHeader extends StatelessWidget {
                   ),
                   suffixIcon: Padding(
                     padding: const EdgeInsets.all(6),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: const Color(0xffFFECE6),
-                      ),
-                      child: const Icon(
-                        Icons.search,
-                        color: Color(0xffFF4000),
-                        size: 26,
+                    child: GestureDetector(
+                      onTap: () {
+                        context.goNamed(AppRouteNames.search);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: const Color(0xffFFECE6),
+                        ),
+                        child: const Icon(
+                          Icons.search,
+                          color: Color(0xffFF4000),
+                          size: 26,
+                        ),
                       ),
                     ),
                   ),

@@ -7,24 +7,14 @@ import 'package:partsrunner/features/home/presentaion/widgets/home_header.dart';
 import 'package:partsrunner/features/home/presentaion/widgets/runner_home_widget.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.userRole});
+  final UserRole userRole;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late UserRole _userRole;
-
-  @override
-  void initState() {
-    getUserRole();
-    super.initState();
-  }
-
-  Future getUserRole() async {
-    _userRole = UserRole.contractor;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,19 +28,19 @@ class _HomeScreenState extends State<HomeScreen> {
               clipBehavior: Clip.none,
               children: [
                 HomeHeader(
-                  height: _userRole == UserRole.contractor ? 300.h : 280.h,
+                  height: widget.userRole == UserRole.contractor ? 300.h : 280.h,
                 ),
                 Positioned(
-                  bottom: _userRole == UserRole.contractor ? -80 : -50,
+                  bottom: widget.userRole == UserRole.contractor ? -80 : -50,
                   left: 20,
                   right: 20,
-                  child: _userRole == UserRole.contractor
+                  child: widget.userRole == UserRole.contractor
                       ? FloatingCard(isContactor: true)
                       : FloatingCard(),
                 ),
               ],
             ),
-            if (_userRole == UserRole.contractor) ...[
+            if (widget.userRole == UserRole.contractor) ...[
               100.verticalSpace,
               ContactorHomeWidget(),
             ] else ...[

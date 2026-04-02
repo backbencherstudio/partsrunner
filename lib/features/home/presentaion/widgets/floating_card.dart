@@ -1,13 +1,20 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 
-class FloatingCard extends StatelessWidget {
+class FloatingCard extends StatefulWidget {
   const FloatingCard({super.key, this.isContactor = false});
 
   final bool isContactor;
 
+  @override
+  State<FloatingCard> createState() => _FloatingCardState();
+}
+
+class _FloatingCardState extends State<FloatingCard> {
+  bool _pushNotificationEnabled = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,7 +31,7 @@ class FloatingCard extends StatelessWidget {
           ),
         ],
       ),
-      child: isContactor
+      child: widget.isContactor
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -118,12 +125,14 @@ class FloatingCard extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: CustomButton(
-                        borderRadius: 24.r,
-                        text: "Start Plan",
-                        submit: () {},
-                        backgroundColor: AppColor.primary,
-                        textColor: Colors.white,
+                      child: CupertinoSwitch(
+                        value: _pushNotificationEnabled,
+                        activeTrackColor: AppColor.primary,
+                        onChanged: (value) {
+                          setState(() {
+                            _pushNotificationEnabled = value;
+                          });
+                        },
                       ),
                     ),
                   ],

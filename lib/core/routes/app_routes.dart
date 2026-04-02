@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
 import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
+import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
@@ -13,12 +15,24 @@ import 'package:partsrunner/features/auth/presentation/screens/select_role_scree
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
+import 'package:partsrunner/features/notification/presentation/screens/notication_screen.dart';
 import 'package:partsrunner/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:partsrunner/features/package_details/presentation/screens/package_details_screen.dart';
+import 'package:partsrunner/features/profile/presentation/screens/delivery_history_screen.dart';
+import 'package:partsrunner/features/profile/presentation/screens/edit_profile_screen.dart';
+import 'package:partsrunner/features/profile/presentation/screens/payment_management_screen.dart';
+import 'package:partsrunner/features/profile/presentation/screens/profile_screen.dart';
+import 'package:partsrunner/features/profile/presentation/screens/settings_screen.dart';
+import 'package:partsrunner/features/search/presentation/screens/search_result_screen.dart';
 import 'package:partsrunner/features/splash/presentation/screens/splash_screen.dart';
+import 'package:partsrunner/features/wallet/presentation/screens/transaction_details_screen.dart';
+import 'package:partsrunner/features/wallet/presentation/screens/transaction_history_screen.dart';
+import 'package:partsrunner/features/wallet/presentation/screens/wallet_screen.dart';
+import 'package:partsrunner/features/wallet/presentation/screens/withdraw_screen.dart';
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutePaths.splash,
+    initialLocation: AppRoutePaths.bottomNav,
     routes: [
       // Core
       GoRoute(
@@ -58,7 +72,7 @@ class AppRoutes {
       GoRoute(
         path: '/notification',
         name: AppRouteNames.notification,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) => const NoticationScreen(),
       ),
 
       // Auth
@@ -110,8 +124,14 @@ class AppRoutes {
       GoRoute(
         path: '/home',
         name: AppRouteNames.home,
-        builder: (context, state) => HomeScreen(),
+        builder: (context, state) =>
+            HomeScreen(userRole: state.extra as UserRole),
         routes: [
+          GoRoute(
+            path: 'search',
+            name: AppRouteNames.search,
+            builder: (context, state) => const SearchResultScreen(),
+          ),
           GoRoute(
             path: 'requestNewDelivery',
             name: AppRouteNames.requestNewDelivery,
@@ -146,12 +166,12 @@ class AppRoutes {
       GoRoute(
         path: '/job',
         name: AppRouteNames.job,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) => const ActiveJobsScreen(),
         routes: [
           GoRoute(
             path: 'packageDetails',
             name: AppRouteNames.packageDetails,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const PackageDetailsScreen(),
           ),
         ],
       ),
@@ -174,22 +194,22 @@ class AppRoutes {
       GoRoute(
         path: '/wallet',
         name: AppRouteNames.wallet,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) => const WalletScreen(),
         routes: [
           GoRoute(
             path: 'withdraw',
             name: AppRouteNames.withdraw,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const WithdrawScreen(),
           ),
           GoRoute(
             path: 'transactionHistory',
             name: AppRouteNames.transactionHistory,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const TransactionHistoryScreen(),
           ),
           GoRoute(
             path: 'transactionDetails',
             name: AppRouteNames.transactionDetails,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const TransactionDetailsScreen(),
           ),
         ],
       ),
@@ -198,27 +218,28 @@ class AppRoutes {
       GoRoute(
         path: '/profile',
         name: AppRouteNames.profile,
-        builder: (context, state) => const Placeholder(),
+        builder: (context, state) =>
+            ProfileScreen(userRole: state.extra as UserRole),
         routes: [
           GoRoute(
             path: 'editProfile',
             name: AppRouteNames.editProfile,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const EditProfileScreen(),
           ),
           GoRoute(
             path: 'deliveryHistory',
             name: AppRouteNames.deliveryHistory,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const DeliveryHistoryScreen(),
           ),
           GoRoute(
             path: 'paymentManagement',
             name: AppRouteNames.paymentManagement,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const PaymentManagementScreen(),
           ),
           GoRoute(
             path: 'settings',
             name: AppRouteNames.settings,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const SettingsScreen(),
           ),
         ],
       ),
