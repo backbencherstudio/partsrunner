@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future getUserRole() async {
-    _userRole = UserRole.runner;
+    _userRole = UserRole.contractor;
   }
 
   @override

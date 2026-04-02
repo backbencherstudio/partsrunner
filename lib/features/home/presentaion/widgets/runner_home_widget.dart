@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/features/home/presentaion/widgets/no_active_jobs_widget.dart';
+import 'package:partsrunner/features/home/presentaion/widgets/request_card.dart';
 import 'package:partsrunner/features/home/presentaion/widgets/runner_report_item.dart';
 
-class RunnerHomeWidget extends StatelessWidget {
+class RunnerHomeWidget extends StatefulWidget {
   const RunnerHomeWidget({super.key});
+
+  @override
+  State<RunnerHomeWidget> createState() => _RunnerHomeWidgetState();
+}
+
+class _RunnerHomeWidgetState extends State<RunnerHomeWidget> {
+  late bool hasRequest;
+  @override
+  void initState() {
+    hasRequest = getRequest();
+    super.initState();
+  }
+
+  bool getRequest() {
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +45,16 @@ class RunnerHomeWidget extends StatelessWidget {
             ],
           ),
           24.verticalSpace,
-          // NoActiveJobsWidget(),
-          ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemBuilder: (context, index) => CustomContainer(
-              child: Column(
-                children: [
-                  Row(children: []),
-                  Row(children: []),
-                  Row(children: []),
-                  Row(children: []),
-                  Row(children: []),
-                  CustomButton(text: "View Details", submit: () {}),
-                ],
-              ),
-            ),
-            separatorBuilder: (_, _) => 12.verticalSpace,
-            itemCount: 5,
-          ),
+          hasRequest
+              ? ListView.separated(
+                  padding: EdgeInsets.zero,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) => RequestCard(),
+                  separatorBuilder: (_, _) => 12.verticalSpace,
+                  itemCount: 5,
+                )
+              : NoActiveJobsWidget(),
         ],
       ),
     );
