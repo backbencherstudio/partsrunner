@@ -8,6 +8,8 @@ class CustomButton extends StatelessWidget {
   final Color? textColor;
   final VoidCallback submit;
   final Widget? icon;
+  final double? borderRadius;
+  final Border? border;
 
   const CustomButton({
     super.key,
@@ -16,6 +18,8 @@ class CustomButton extends StatelessWidget {
     this.textColor,
     required this.submit,
     this.icon,
+    this.borderRadius,
+    this.border,
   });
 
   @override
@@ -26,8 +30,9 @@ class CustomButton extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.9,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
           color: backgroundColor,
+          border: border,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

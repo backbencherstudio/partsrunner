@@ -22,12 +22,14 @@ class BottomNavScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
+      extendBody: true,
       backgroundColor: Color(0xffF6F7F7),
       body: screens[currentIndex],
       bottomNavigationBar: Padding(
         padding: EdgeInsets.all(8.0),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
+          height: 72.h,
+          margin: EdgeInsets.only(bottom: 15.h),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(50.r),
