@@ -17,6 +17,8 @@ import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dar
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/checkout/presentation/screens/checkout_screen.dart';
 import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
+import 'package:partsrunner/features/job_details/presentation/screens/active_job_details_screen.dart';
+import 'package:partsrunner/features/job_details/presentation/screens/job_details_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/my_order_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/order_details_screen.dart';
 import 'package:partsrunner/features/notification/presentation/screens/notication_screen.dart';
@@ -37,7 +39,7 @@ import 'package:partsrunner/features/wallet/presentation/screens/withdraw_screen
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutePaths.requestNewDelivery,
+    initialLocation: AppRoutePaths.splash,
     routes: [
       // Core
       GoRoute(
@@ -150,12 +152,12 @@ class AppRoutes {
           GoRoute(
             path: 'jobDetails',
             name: AppRouteNames.jobDetails,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const JobDetailsScreen(),
           ),
           GoRoute(
             path: 'activeJobDetails',
             name: AppRouteNames.activeJobDetails,
-            builder: (context, state) => const Placeholder(),
+            builder: (context, state) => const ActiveJobDetailsScreen(),
           ),
         ],
       ),

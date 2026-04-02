@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
 
@@ -12,7 +14,6 @@ class RequestCard extends StatelessWidget {
     return CustomContainer(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,7 +140,9 @@ class RequestCard extends StatelessWidget {
             border: Border.all(color: AppColor.primary, width: 2),
             text: "View Details",
             textColor: AppColor.primary,
-            submit: () {},
+            submit: () {
+              context.pushNamed(AppRouteNames.jobDetails);
+            },
           ),
         ],
       ),

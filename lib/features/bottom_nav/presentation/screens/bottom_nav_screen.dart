@@ -27,7 +27,7 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   }
 
   Future getUserRole() async {
-    _userRole = UserRole.contractor;
+    _userRole = UserRole.runner;
   }
 
   @override
