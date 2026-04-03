@@ -68,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 CupertinoSwitch(
                   value: _pushNotificationEnabled,
-                  activeColor: AppColor.primary,
+                  activeTrackColor: AppColor.primary,
                   onChanged: (value) {
                     setState(() {
                       _pushNotificationEnabled = value;

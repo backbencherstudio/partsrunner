@@ -182,7 +182,7 @@ class _NoticationScreenState extends State<NoticationScreen> {
             const SizedBox(height: 16),
             ..._todayNotifications
                 .map((e) => _buildNotificationCard(e, true))
-                .toList(),
+                ,
           ],
           if (_yesterdayNotifications.isNotEmpty) ...[
             const SizedBox(height: 16),
@@ -197,7 +197,7 @@ class _NoticationScreenState extends State<NoticationScreen> {
             const SizedBox(height: 16),
             ..._yesterdayNotifications
                 .map((e) => _buildNotificationCard(e, false))
-                .toList(),
+                ,
           ],
         ],
       ),
