@@ -1,107 +1,208 @@
-class ApiEndPoint {
-  static const String baseUrl = 'https://mvpitch.com';
-  //static const String baseUrl = 'https://7025aa2bacb2.ngrok-free.app';
-  static const String socketUrl = 'https://mvpitch.com';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-  static String imagePath(String imageUrl) =>
-      '$baseUrl/uploads/images/$imageUrl';
+/// API Endpoints for Dan Weimer App
+/// Uses flutter_dotenv to load BASE_URL from .env file
+///
+/// Setup:
+/// 1. Add to pubspec.yaml:
+///      dependencies:
+///        flutter_dotenv: ^5.2.1
+///
+///    flutter:
+///      assets:
+///        - .env
+///
+/// 2. In main.dart before runApp():
+///      await dotenv.load(fileName: '.env');
+///
+/// 🔒 = Requires Authentication (Bearer Token)
 
+class ApiEndpoints {
+  ApiEndpoints._();
 
-  // auth
-  static const String login = '$baseUrl/api/users/login';
-  static const String checkUser = '$baseUrl/api/users/check';
-  static const String createAdminAccount = '$baseUrl/api/users/register';
-  static const String getUserDetails = '$baseUrl/api/users/check';
-  static const String forgotPassword =
-      '$baseUrl/api/users/request-forgot-password-otp';
-  static const String resetPassword =
-      '$baseUrl/api/users/reset-forgot-password';
-  static const String changeEmail = '$baseUrl/api/users/emailUpdate';
-  static String updateUser(String userId) =>
-      '$baseUrl/api/users/update-profile/$userId';
+  // ─────────────────────────────────────────
+  // BASE URL (loaded from .env)
+  // ─────────────────────────────────────────
+  static String get baseUrl =>
+      dotenv.env['BASE_URL'] ?? 'https://danweimer.pixelstack.cloud';
 
-  //
-  static const String addNewPlayer = '$baseUrl/api/admin/new-palyer-create';
-  static const String createMatch = '$baseUrl/api/admin/create-match';
-  static String updateMatch(String matchId) =>
-      '$baseUrl/api/match/simple_updateMatch/$matchId';
-  static const String getAllParentList = '$baseUrl/api/admin/all-parents';
+  // ─────────────────────────────────────────
+  // AUTH
+  // ─────────────────────────────────────────
+  static String get register => '$baseUrl/api/auth/register';
+  static String get verifyEmail => '$baseUrl/api/auth/verify-email';
+  static String get contractorCreate =>
+      '$baseUrl/api/auth/contractor/create'; // 🔒
+  static String get runnerCreate => '$baseUrl/api/auth/runner/create'; // 🔒
+  static String get login => '$baseUrl/api/auth/login';
+  static String get me => '$baseUrl/api/auth/me'; // 🔒 GET
+  static String get updateUser => '$baseUrl/api/auth/update'; // 🔒 PATCH
+  static String get forgotPassword => '$baseUrl/api/auth/forgot-password';
+  static String get resendVerificationEmail =>
+      '$baseUrl/api/auth/resend-verification-email';
+  static String get resetPassword => '$baseUrl/api/auth/reset-password';
+  static String get changePassword =>
+      '$baseUrl/api/auth/change-password'; // 🔒
+  static String get requestEmailChange =>
+      '$baseUrl/api/auth/request-email-change'; // 🔒
+  static String get changeEmail => '$baseUrl/api/auth/change-email'; // 🔒
 
-  // admin home
-  static const String adminHomeData = '$baseUrl/api/admin/home-data';
+  // ─────────────────────────────────────────
+  // DEVICE TOKEN 🔒
+  // ─────────────────────────────────────────
+  static String get deviceTokenRegister => '$baseUrl/api/device-tokens'; // POST
+  static String get deviceTokenDelete => '$baseUrl/api/device-tokens'; // DELETE
+  static String get deviceTokenMe => '$baseUrl/api/device-tokens/me'; // GET
 
-  // user management
-  static const String getAllPlayerList = '$baseUrl/api/admin//all-Player';
+  // ─────────────────────────────────────────
+  // CONTRACTOR DELIVERY 🔒
+  // ─────────────────────────────────────────
+  static String get contractorDeliveries =>
+      '$baseUrl/api/contractor/deliveries'; // POST, GET
+  static String get contractorDeliveriesHome =>
+      '$baseUrl/api/contractor/deliveries/home';
+  static String get contractorDeliveriesCurrentShipping =>
+      '$baseUrl/api/contractor/deliveries/current-shipping';
+  static String get contractorDeliveriesRecentShipping =>
+      '$baseUrl/api/contractor/deliveries/recent-shipping';
 
-  // match management
-  static String getAllMatchList =
-      '$baseUrl/api/match/all-match';
+  /// GET, PATCH, DELETE
+  static String contractorDeliveryById(String id) =>
+      '$baseUrl/api/contractor/deliveries/$id';
 
-  static String selectPlayerForMatch(String matchId) =>
-      '$baseUrl/api/admin/$matchId/update-players';
+  // ─────────────────────────────────────────
+  // RUNNER AVAILABILITY 🔒
+  // ─────────────────────────────────────────
+  static String get runnerGoOnline =>
+      '$baseUrl/api/runner/availability/go-online';
+  static String get runnerGoOffline =>
+      '$baseUrl/api/runner/availability/go-offline';
+  static String get runnerUpdateLocation =>
+      '$baseUrl/api/runner/availability/update-location';
 
-  static String editMatch(String matchId) =>
-      "$baseUrl/api/match/one-match-details/$matchId";
+  // ─────────────────────────────────────────
+  // RUNNER DELIVERY 🔒
+  // ─────────────────────────────────────────
+  static String get runnerDeliveries => '$baseUrl/api/delivery';
+  static String get runnerDeliveryNewRequests =>
+      '$baseUrl/api/delivery/new-requests';
+  static String get runnerDeliveryHome => '$baseUrl/api/delivery/home';
+  static String runnerDeliveryById(String id) => '$baseUrl/api/delivery/$id';
+  static String get runnerAcceptOffer => '$baseUrl/api/delivery/accept-offer';
+  static String get runnerRejectOffer => '$baseUrl/api/delivery/reject-offer';
+  static String get runnerUpdateDeliveryStatus =>
+      '$baseUrl/api/delivery/update-status';
+  static String get runnerLiveLocation => '$baseUrl/api/delivery/live-location';
 
-  static String matchDetail(String matchId) =>
-      "$baseUrl/api/match/one-match-details/$matchId";
+  // ─────────────────────────────────────────
+  // RUNNER STRIPE CONNECT 🔒
+  // ─────────────────────────────────────────
+  static String get runnerStripeConnectAccount =>
+      '$baseUrl/api/runner/stripe-connect/connect-account';
+  static String get runnerStripeOnboardingLink =>
+      '$baseUrl/api/runner/stripe-connect/onboarding-link';
+  static String get runnerStripeConnectStatus =>
+      '$baseUrl/api/runner/stripe-connect/status';
 
-  static String matchStart(String matchId) =>
-      "$baseUrl/api/match//time-mangement/$matchId";
-  static String mathResultPublish(String matchId) =>
-      "$baseUrl/api/match/updateMatch/$matchId";
+  // ─────────────────────────────────────────
+  // RUNNER WITHDRAWAL 🔒
+  // ─────────────────────────────────────────
+  static String get runnerWithdrawalRequest =>
+      '$baseUrl/api/runner/withdrawal/request';
+  static String get runnerWithdrawalHistory =>
+      '$baseUrl/api/runner/withdrawal/history';
+  static String get runnerWalletSummary =>
+      '$baseUrl/api/runner/withdrawal/wallet-summary';
+  static String get runnerEarningsOverview =>
+      '$baseUrl/api/runner/withdrawal/earnings-overview';
 
-  static String startVote(String matchId) =>
-      "$baseUrl/api/vote/$matchId/start-voting";
-  static String submitVote = "$baseUrl/api/vote/vote";
+  // ─────────────────────────────────────────
+  // PAYMENT
+  // ─────────────────────────────────────────
+  static String get stripeWebhook => '$baseUrl/api/payment/stripe/webhook';
+  static String get paypalSuccess => '$baseUrl/api/payment/paypal/success';
+  static String get paypalCancel => '$baseUrl/api/payment/paypal/cancel';
+  static String get paypalWebhook => '$baseUrl/api/payment/paypal/webhook';
 
-  static String getOnePlayerDetail(String playerId) =>
-      "$baseUrl/api/admin/single-player/$playerId";
+  // ─────────────────────────────────────────
+  // ADMIN — Payment Transaction 🔒
+  // ─────────────────────────────────────────
+  static String get adminPaymentTransactions =>
+      '$baseUrl/api/admin/payment-transaction';
+  static String adminPaymentTransactionById(String id) =>
+      '$baseUrl/api/admin/payment-transaction/$id'; // GET, DELETE
 
-  static String oneMatchAllParents(String matchId) =>
-      "$baseUrl/api/admin/onematchAllparents/$matchId";
+  // ─────────────────────────────────────────
+  // ADMIN — User 🔒
+  // ─────────────────────────────────────────
+  static String get adminUsers => '$baseUrl/api/admin/user'; // POST, GET
+  static String adminUserById(String id) =>
+      '$baseUrl/api/admin/user/$id'; // GET, PATCH, DELETE
+  static String adminApproveUser(String id) =>
+      '$baseUrl/api/admin/user/$id/approve';
+  static String adminRejectUser(String id) =>
+      '$baseUrl/api/admin/user/$id/reject';
 
-  static String voteHandOver(String matchId) =>
-      "$baseUrl/api/vote/vote-hand-over/$matchId";
+  // ─────────────────────────────────────────
+  // ADMIN — Notification 🔒
+  // ─────────────────────────────────────────
+  static String get adminNotifications =>
+      '$baseUrl/api/admin/notification'; // GET, DELETE
+  static String adminDeleteNotification(String id) =>
+      '$baseUrl/api/admin/notification/$id';
 
-  static String votHandOverRequest(String matchId) =>
-      "$baseUrl/api/vote/totalvoteOnematch/$matchId";
+  // ─────────────────────────────────────────
+  // ADMIN — Delivery Fee Config 🔒
+  // ─────────────────────────────────────────
+  static String get adminDeliveryFeeConfig =>
+      '$baseUrl/api/admin/delivery-fee-config'; // GET, PUT
 
-  static String totalHanoverVote(String matchId) =>
-      "$baseUrl/api/vote/matches/$matchId/not-given-votes/count";
+  // ─────────────────────────────────────────
+  // ADMIN — Contractor 🔒
+  // ─────────────────────────────────────────
+  static String get adminContractors => '$baseUrl/api/admin/contractor';
+  static String adminContractorById(String id) =>
+      '$baseUrl/api/admin/contractor/$id';
+  static String adminSuspendContractor(String id) =>
+      '$baseUrl/api/admin/contractor/$id/suspend';
+  static String adminActivateContractor(String id) =>
+      '$baseUrl/api/admin/contractor/$id/active';
 
-  static String acceptHandOver(String matchId, String parentId) =>
-      "$baseUrl/api/vote/accept_handoverVote/$matchId/$parentId";
+  // ─────────────────────────────────────────
+  // ADMIN — Runner 🔒
+  // ─────────────────────────────────────────
+  static String get adminRunners => '$baseUrl/api/admin/runner';
+  static String adminRunnerById(String id) => '$baseUrl/api/admin/runner/$id';
+  static String adminSuspendRunner(String id) =>
+      '$baseUrl/api/admin/runner/$id/suspend';
+  static String adminActivateRunner(String id) =>
+      '$baseUrl/api/admin/runner/$id/active';
 
-  static const String getNotification = '/api/notification/manger-notification';
+  // ─────────────────────────────────────────
+  // ADMIN — Supplier 🔒
+  // ─────────────────────────────────────────
+  static String get adminSuppliers =>
+      '$baseUrl/api/admin/supplier'; // POST, GET
+  static String adminSupplierById(String id) =>
+      '$baseUrl/api/admin/supplier/$id'; // GET, PATCH, DELETE
 
-  static String voteEnd(String matchId) =>
-      "$baseUrl/api/vote/$matchId/end-voting";
+  // ─────────────────────────────────────────
+  // ADMIN — Order 🔒
+  // ─────────────────────────────────────────
+  static String get adminOrders => '$baseUrl/api/admin/order';
+  static String adminOrderById(String id) => '$baseUrl/api/admin/order/$id';
 
-  static String oneParentAllMatchPast(String parentId) =>
-      "$baseUrl/api/match/parentallmatch/$parentId";
+  // ─────────────────────────────────────────
+  // ADMIN — Dashboard 🔒
+  // ─────────────────────────────────────────
+  static String get adminDashboard => '$baseUrl/api/admin/dashboard';
 
-  static String manOfTheMatch(String matchId) =>
-      "$baseUrl/api/vote/$matchId/results";
-
-  static String playerSubstitution(String matchId) =>
-      "$baseUrl/api/match/substitution/$matchId";
-
-  static String managerPlayerOfTheMatch(String matchId) =>
-      "$baseUrl/api/admin/$matchId/manager-player-of-the-match";
-
-  static String oneManagerAllMatch =
-      "$baseUrl/api/users/oneuser/as-Amangaer/allmatches";
-
-  static String adminAllMatchHistory = "$baseUrl/api/admin/all-matches";
-  static String oneMatchDetail(String matchId) =>
-      "$baseUrl/api/match/one-match-details/$matchId";
-  static String editPLayer(String playersId) =>
-      "$baseUrl/api/admin/palyer-data-upadte/$playersId";
-  static String playerDelete(String playersId) =>
-      "$baseUrl/api/admin/delete-player/$playersId";
-  static String matchDelete(String matchId) =>
-      "$baseUrl/api/match/delete-match/$matchId";
-  static String matchCancel(String matchId) =>
-      "$baseUrl/api/match/cancel-match/$matchId";
+  // ─────────────────────────────────────────
+  // ADMIN — Withdrawal 🔒
+  // ─────────────────────────────────────────
+  static String get adminWithdrawals => '$baseUrl/api/admin/withdrawal';
+  static String adminApproveWithdrawal(String id) =>
+      '$baseUrl/api/admin/withdrawal/$id/approve';
+  static String adminRejectWithdrawal(String id) =>
+      '$baseUrl/api/admin/withdrawal/$id/reject';
 }

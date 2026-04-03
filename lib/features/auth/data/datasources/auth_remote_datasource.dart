@@ -1,4 +1,5 @@
 import 'package:partsrunner/core/ApiService/ApiClient.dart';
+import 'package:partsrunner/core/ApiService/ApiEndPoint.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/auth/data/models/user_model.dart';
 
@@ -48,7 +49,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     final response = await _apiClient.post(
-      'https://danweimer.pixelstack.cloud/api/auth/login',
+      ApiEndpoints.login,
       body: {'email': identifier, 'password': password},
     );
     print(response);
