@@ -51,7 +51,10 @@ class SelectRoleScreen extends ConsumerWidget {
               onTap: () async {
                 ref.read(selectedRoleProvider.notifier).state =
                     UserRole.contractor;
-                await pref.then((value) => value.setString('role', UserRole.contractor.toString()));
+                await pref.then(
+                  (value) =>
+                      value.setString('userRole', UserRole.contractor.name),
+                );
                 if (context.mounted) {
                   context.goNamed(AppRouteNames.signup);
                 }
@@ -66,7 +69,9 @@ class SelectRoleScreen extends ConsumerWidget {
               isSelected: selectedRole == UserRole.runner,
               onTap: () async {
                 ref.read(selectedRoleProvider.notifier).state = UserRole.runner;
-                await pref.then((value) => value.setString('user_role', UserRole.runner.toString()));
+                await pref.then(
+                  (value) => value.setString('userRole', UserRole.runner.name),
+                );
                 if (context.mounted) {
                   context.goNamed(AppRouteNames.signup);
                 }

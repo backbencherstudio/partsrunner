@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key, required this.userRole});
   final UserRole userRole;
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +76,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   context.pushNamed(AppRouteNames.settings);
                 }),
                 Divider(),
-                _profileTab("assets/images/logout.png", "Log out", () {
+                _profileTab("assets/images/logout.png", "Log out", () async {
+                  ref.invalidate(bottomNavProvider);
                   context.goNamed(AppRouteNames.login);
                 }),
                 Divider(),

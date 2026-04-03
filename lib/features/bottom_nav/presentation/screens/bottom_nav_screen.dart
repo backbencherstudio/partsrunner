@@ -10,85 +10,89 @@ import '../../../my_order/presentation/screens/my_order_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../providers/bottom_nav_provider.dart';
 
-class BottomNavScreen extends ConsumerStatefulWidget {
+class BottomNavScreen extends ConsumerWidget {
   const BottomNavScreen({super.key});
 
   @override
-  ConsumerState<BottomNavScreen> createState() => _BottomNavScreenState();
-}
-
-class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
-  late UserRole _userRole;
-
-  @override
-  void initState() {
-    getUserRole();
-    super.initState();
-  }
-
-  Future getUserRole() async {
-    _userRole = UserRole.runner;
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavProvider);
+    final userRoleAsync = ref.watch(userRoleProvider);
 
-    final screens = [
-      HomeScreen(userRole: _userRole),
-      _userRole == UserRole.contractor
-          ? const ActiveTrackingScreen()
-          : ActiveJobsScreen(),
-      _userRole == UserRole.contractor ? const MyOrderScreen() : WalletScreen(),
-      ProfileScreen(userRole: _userRole),
-    ];
+    return userRoleAsync.when(
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) =>
+          const Scaffold(body: Center(child: Text('Failed to load user role'))),
+      data: (userRole) {
+        final screens = [
+          HomeScreen(userRole: userRole),
+          userRole == UserRole.contractor
+              ? const ActiveTrackingScreen()
+              : ActiveJobsScreen(),
+          userRole == UserRole.contractor
+              ? const MyOrderScreen()
+              : WalletScreen(),
+          ProfileScreen(userRole: userRole),
+        ];
 
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: Color(0xffF6F7F7),
-      body: screens[currentIndex],
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Container(
-          height: 72.h,
-          margin: EdgeInsets.only(bottom: 15.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(50.r),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.3),
-                spreadRadius: 1.r,
-                blurRadius: 5.r,
-                offset: Offset(0, 2),
+        return Scaffold(
+          extendBody: true,
+          backgroundColor: const Color(0xffF6F7F7),
+          body: screens[currentIndex],
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 72.h,
+              margin: EdgeInsets.only(bottom: 15.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(50.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.3),
+                    spreadRadius: 1.r,
+                    blurRadius: 5.r,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    "assets/images/index0.png",
+                    0,
+                    currentIndex,
+                    ref,
+                  ),
+                  _buildNavItem(
+                    userRole == UserRole.contractor
+                        ? "assets/images/index1.png"
+                        : "assets/images/index2.png",
+                    1,
+                    currentIndex,
+                    ref,
+                  ),
+                  _buildNavItem(
+                    userRole == UserRole.contractor
+                        ? "assets/images/index2.png"
+                        : "assets/images/index2.2.png",
+                    2,
+                    currentIndex,
+                    ref,
+                  ),
+                  _buildNavItem(
+                    "assets/images/profile.png",
+                    3,
+                    currentIndex,
+                    ref,
+                  ),
+                ],
+              ),
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem("assets/images/index0.png", 0, currentIndex, ref),
-              _buildNavItem(
-                _userRole == UserRole.contractor
-                    ? "assets/images/index1.png"
-                    : "assets/images/index2.png",
-                1,
-                currentIndex,
-                ref,
-              ),
-              _buildNavItem(
-                _userRole == UserRole.contractor
-                    ? "assets/images/index2.png"
-                    : "assets/images/index2.2.png",
-                2,
-                currentIndex,
-                ref,
-              ),
-              _buildNavItem("assets/images/profile.png", 3, currentIndex, ref),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -107,12 +111,12 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
         padding: EdgeInsets.all(8.r),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isSelect ? Color(0xffFF4000) : Colors.transparent,
+          color: isSelect ? const Color(0xffFF4000) : Colors.transparent,
         ),
         child: Image.asset(
           imagePath,
           height: 40.h,
-          color: isSelect ? Color(0xffFFFFFF) : Color(0xffFF4000),
+          color: isSelect ? const Color(0xffFFFFFF) : const Color(0xffFF4000),
         ),
       ),
     );
