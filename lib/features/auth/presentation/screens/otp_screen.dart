@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class OtpScreen extends StatelessWidget {
-  const OtpScreen({super.key});
+  const OtpScreen({super.key, required this.previousRoute});
+
+  final String previousRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -72,13 +78,30 @@ class OtpScreen extends StatelessWidget {
             ),
 
             SizedBox(height: 20),
-            
+
             CustomButton(
               text: "Continue",
-              submit: () {},
+              submit: () {
+                if (previousRoute == AppRouteNames.forgetPassword) {
+                  context.goNamed(AppRouteNames.newPassword);
+                } else {
+                  context.goNamed(AppRouteNames.completeInfo);
+                }
+              },
               backgroundColor: Color(0xffFF4000),
               textColor: Colors.white,
             ),
+            if (previousRoute == AppRouteNames.forgetPassword) ...[
+              8.verticalSpace,
+              CustomButton(
+                icon: Icon(Icons.arrow_back, size: 20, color: AppColor.primary),
+                text: "Back to Login",
+                submit: () {
+                  context.goNamed(AppRouteNames.login);
+                },
+                textColor: Color(0xffFF4000),
+              ),
+            ],
           ],
         ),
       ),

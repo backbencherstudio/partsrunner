@@ -71,7 +71,7 @@ class ApiEndPoint {
       "$baseUrl/api/vote/matches/$matchId/not-given-votes/count";
 
   static String acceptHandOver(String matchId, String parentId) =>
-      "$baseUrl/api/vote/accept_handoverVote/${matchId}/$parentId";
+      "$baseUrl/api/vote/accept_handoverVote/$matchId/$parentId";
 
   static const String getNotification = '/api/notification/manger-notification';
 

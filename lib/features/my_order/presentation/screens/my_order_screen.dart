@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'completed_screen.dart';
-import 'ongoin_screen.dart';
+import 'ongoing_screen.dart';
 
 class MyOrderScreen extends StatefulWidget {
   const MyOrderScreen({super.key});
@@ -16,105 +16,103 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 60),
-
-          const Text(
-            "My Order",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
-          ),
-
-          SizedBox(height: 20),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 27),
-            child: Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Color(0xffF8FAFB),
-                borderRadius: BorderRadius.circular(12),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            const Text(
+              "My Order",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isOngoing = true;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: isOngoing
-                              ? Color(0xffFCF2EF)
-                              : Color(0xffF8FAFB),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Ongoing",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: isOngoing ? Colors.orange : Colors.black,
+            ),
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF8FAFB),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[200]!),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isOngoing = true;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: isOngoing ? Colors.white : Colors.transparent,
+                            border: isOngoing
+                                ? Border.all(color: const Color(0xffFF4000))
+                                : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Ongoing",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isOngoing
+                                    ? const Color(0xffFF4000)
+                                    : Colors.grey[400],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isOngoing = false;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40,
-                          vertical: 12,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: !isOngoing
-                              ? Color(0xffFCF2EF)
-                              : Color(0xffF8FAFB),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Completed",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: !isOngoing ? Colors.orange : Colors.black,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isOngoing = false;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: !isOngoing ? Colors.white : Colors.transparent,
+                            border: !isOngoing
+                                ? Border.all(color: const Color(0xffFF4000))
+                                : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Completed",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: !isOngoing
+                                    ? const Color(0xffFF4000)
+                                    : Colors.grey[400],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-
-          SizedBox(height: 20),
-
-          Expanded(
-            child: Center(
-              child: isOngoing ? OngoingScreen() : CompletedScreen(),
+            const SizedBox(height: 16),
+            Expanded(
+              child: isOngoing ? const OngoingScreen() : const CompletedScreen(),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

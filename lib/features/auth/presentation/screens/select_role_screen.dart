@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/features/auth/presentation/providers/role_provider.dart';
-
-import '../../../../core/routes/app_route_names.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SelectRoleScreen extends ConsumerWidget {
   const SelectRoleScreen({super.key});
@@ -11,6 +13,7 @@ class SelectRoleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedRole = ref.watch(selectedRoleProvider);
+    final pref = SharedPreferences.getInstance();
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -40,15 +43,21 @@ class SelectRoleScreen extends ConsumerWidget {
             ),
             SizedBox(height: 48.h),
 
-            // Contractor Card
             _roleCard(
               title: "Contractor",
               description:
                   "Find runner easily, create delivery requests, track runners with ETAs.",
               isSelected: selectedRole == UserRole.contractor,
-              onTap: () {
+              onTap: () async {
                 ref.read(selectedRoleProvider.notifier).state =
                     UserRole.contractor;
+                await pref.then(
+                  (value) =>
+                      value.setString('userRole', UserRole.contractor.name),
+                );
+                if (context.mounted) {
+                  context.goNamed(AppRouteNames.signup);
+                }
               },
             ),
             SizedBox(height: 16.h),
@@ -58,9 +67,14 @@ class SelectRoleScreen extends ConsumerWidget {
               description:
                   "Accept jobs, confirm pickups, upload delivery photos, and receive payments in-app.",
               isSelected: selectedRole == UserRole.runner,
-              onTap: () {
+              onTap: () async {
                 ref.read(selectedRoleProvider.notifier).state = UserRole.runner;
-                // Navigator.pushNamed(context, RouteNames.signupScreen);
+                await pref.then(
+                  (value) => value.setString('userRole', UserRole.runner.name),
+                );
+                if (context.mounted) {
+                  context.goNamed(AppRouteNames.signup);
+                }
               },
             ),
 

@@ -1,0 +1,1 @@
+enum UserRole { contractor, runner }
