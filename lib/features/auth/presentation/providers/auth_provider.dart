@@ -10,6 +10,7 @@ import 'package:partsrunner/features/auth/domain/usecases/login_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/signup_usecase.dart';
+import 'package:partsrunner/features/auth/domain/usecases/verify_otp_usecase.dart';
 
 // ---------------------------------------------------------------------------
 // UI-only state providers (unchanged)
@@ -52,6 +53,10 @@ final _resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>(
   (ref) => ResetPasswordUseCase(ref.watch(_authRepositoryProvider)),
 );
 
+final _verifyOtpUseCaseProvider = Provider<VerifyOtpUseCase>(
+  (ref) => VerifyOtpUseCase(ref.watch(_authRepositoryProvider)),
+);
+
 // ---------------------------------------------------------------------------
 // Auth state
 // ---------------------------------------------------------------------------
@@ -88,6 +93,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   late SignupUseCase _signup;
   late SendOtpUseCase _sendOtp;
   late ResetPasswordUseCase _resetPassword;
+  late VerifyOtpUseCase _verifyOtp;
 
   @override
   Future<AuthState> build() async {
@@ -95,6 +101,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     _signup = ref.watch(_signupUseCaseProvider);
     _sendOtp = ref.watch(_sendOtpUseCaseProvider);
     _resetPassword = ref.watch(_resetPasswordUseCaseProvider);
+    _verifyOtp = ref.watch(_verifyOtpUseCaseProvider);
     return const AuthInitial();
   }
 
@@ -121,6 +128,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<void> signup({
     required String name,
     required String email,
+    required String countryCode,
     required String phone,
     required String password,
     required String role,
@@ -128,14 +136,15 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
-          final user = await _signup(
+          await _signup(
             name: name,
             email: email,
+            countryCode: countryCode,
             phone: phone,
             password: password,
             role: role,
           );
-          return AuthSuccess(message: 'Account created', user: user);
+          return const AuthSuccess(message: 'Account created');
         }).then(
           (asyncValue) => asyncValue.when(
             data: (s) => AsyncData(s),
@@ -152,6 +161,25 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         await AsyncValue.guard(() async {
           await _sendOtp(identifier: identifier);
           return const AuthSuccess(message: 'OTP sent');
+        }).then(
+          (asyncValue) => asyncValue.when(
+            data: (s) => AsyncData(s),
+            loading: () => const AsyncLoading(),
+            error: (e, st) => AsyncData(AuthError(message: _friendly(e))),
+          ),
+        );
+  }
+
+  /// Verify OTP code.
+  Future<void> verifyOtp({
+    required String identifier,
+    required String otp,
+  }) async {
+    state = const AsyncLoading();
+    state =
+        await AsyncValue.guard(() async {
+          final user = await _verifyOtp(identifier: identifier, otp: otp);
+          return AuthSuccess(message: 'OTP verified successfully', user: user);
         }).then(
           (asyncValue) => asyncValue.when(
             data: (s) => AsyncData(s),

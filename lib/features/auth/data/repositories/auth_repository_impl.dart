@@ -15,9 +15,10 @@ class AuthRepositoryImpl implements AuthRepository {
       _remoteDataSource.login(identifier: identifier, password: password);
 
   @override
-  Future<UserEntity> signup({
+  Future<void> signup({
     required String name,
     required String email,
+    required String countryCode,
     required String phone,
     required String password,
     required String role,
@@ -25,6 +26,7 @@ class AuthRepositoryImpl implements AuthRepository {
       _remoteDataSource.signup(
         name: name,
         email: email,
+        countryCode: countryCode,
         phone: phone,
         password: password,
         role: role,
@@ -35,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
       _remoteDataSource.sendOtp(identifier: identifier);
 
   @override
-  Future<bool> verifyOtp({required String identifier, required String otp}) =>
+  Future<UserEntity> verifyOtp({required String identifier, required String otp}) =>
       _remoteDataSource.verifyOtp(identifier: identifier, otp: otp);
 
   @override

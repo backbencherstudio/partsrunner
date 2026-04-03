@@ -3,8 +3,13 @@ import 'package:flutter_intl_phone_field/flutter_intl_phone_field.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MobilePhoneField extends StatelessWidget {
-  const MobilePhoneField({super.key, this.phoneController});
+  const MobilePhoneField({
+    super.key,
+    this.phoneController,
+    this.countryController,
+  });
 
+  final TextEditingController? countryController;
   final TextEditingController? phoneController;
 
   @override
@@ -23,7 +28,7 @@ class MobilePhoneField extends StatelessWidget {
       dropdownDecoration: BoxDecoration(
         border: Border(right: BorderSide(color: Colors.grey)),
       ),
-      // controller: phoneController,
+      controller: phoneController,
       decoration: InputDecoration(
         prefix: 10.horizontalSpace,
         hintText: '000 000 0000',
@@ -49,12 +54,12 @@ class MobilePhoneField extends StatelessWidget {
           ),
         ),
       ),
-      initialCountryCode: 'BD',
       onChanged: (phone) {
-        phoneController?.text = phone.completeNumber;
+        countryController?.text = phone.countryCode;
+        phoneController?.text = phone.number;
       },
       onCountryChanged: (country) {
-        print('Country changed to: ${country.name}');
+        countryController?.text = "+${country.dialCode}";
       },
       validator: (value) {
         if (value == null || value.number.isEmpty) {

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
@@ -24,6 +23,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _countryController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
@@ -32,6 +32,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _countryController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -40,14 +41,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    final role = ref.read(selectedRoleProvider) ?? UserRole.contractor;
-
-    ref.read(authNotifierProvider.notifier).signup(
+    final userRole = ref.read(selectedRoleProvider);
+    if (userRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a role first'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    ref
+        .read(authNotifierProvider.notifier)
+        .signup(
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
+          countryCode: _countryController.text.trim(),
           phone: _phoneController.text.trim(),
           password: _passwordController.text,
-          role: role.name,
+          role: userRole.name,
         );
   }
 
@@ -57,10 +69,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       next.whenData((state) {
         if (state is AuthSuccess) {
           ref.read(authNotifierProvider.notifier).resetState();
-          context.goNamed(
-            AppRouteNames.otp,
-            extra: AppRouteNames.signup,
-          );
+          context.goNamed(AppRouteNames.otp, extra: AppRouteNames.signup);
         } else if (state is AuthError) {
           ref.read(authNotifierProvider.notifier).resetState();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -80,7 +89,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -99,9 +108,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     ),
                   ),
                   16.verticalSpace,
-                  const Text(
+                  Text(
                     "Name",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
                   ),
                   CustomTextField(
                     hintText: "Enter your name",
@@ -140,7 +149,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     "Mobile number",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  MobilePhoneField(phoneController: _phoneController),
+                  MobilePhoneField(
+                    phoneController: _phoneController,
+                    countryController: _countryController,
+                  ),
                   const SizedBox(height: 15),
                   const Text(
                     "Password",
@@ -197,8 +209,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         : () {
                             context.goNamed(AppRouteNames.completeInfo);
                           },
-                    backgroundColor:
-                        const Color(0x080e1e0d).withValues(alpha: 0.05),
+                    backgroundColor: const Color(
+                      0x080e1e0d,
+                    ).withValues(alpha: 0.05),
                     textColor: Colors.black,
                   ),
                   24.verticalSpace,

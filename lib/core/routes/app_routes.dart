@@ -39,7 +39,7 @@ import 'package:partsrunner/features/wallet/presentation/screens/withdraw_screen
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutePaths.splash,
+    initialLocation: AppRoutePaths.selectRole,
     routes: [
       // Core
       GoRoute(

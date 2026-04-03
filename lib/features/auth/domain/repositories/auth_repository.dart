@@ -7,10 +7,11 @@ abstract class AuthRepository {
     required String password,
   });
 
-  /// Register a new user. Returns the newly created [UserEntity].
-  Future<UserEntity> signup({
+  /// Register a new user.
+  Future<void> signup({
     required String name,
     required String email,
+    required String countryCode,
     required String phone,
     required String password,
     required String role, // 'contractor' | 'runner'
@@ -19,8 +20,8 @@ abstract class AuthRepository {
   /// Send OTP to the given phone number or email.
   Future<void> sendOtp({required String identifier});
 
-  /// Verify OTP code.
-  Future<bool> verifyOtp({
+  /// Verify OTP code. Returns the authenticated [UserEntity].
+  Future<UserEntity> verifyOtp({
     required String identifier,
     required String otp,
   });
@@ -30,4 +31,12 @@ abstract class AuthRepository {
     required String identifier,
     required String newPassword,
   });
+
+  // Future<void> contractorCreate({
+  //   required String name,
+  //   required String email,
+  //   required String phone,
+  //   required String password,
+  //   required String role, // 'contractor' | 'runner'
+  // });
 }
