@@ -5,7 +5,7 @@ class CustomButton extends StatelessWidget {
   final String text;
   final Color? backgroundColor;
   final Color? textColor;
-  final VoidCallback submit;
+  final VoidCallback? submit;
   final Widget? icon;
   final double? borderRadius;
   final Border? border;
@@ -16,7 +16,7 @@ class CustomButton extends StatelessWidget {
     required this.text,
     this.backgroundColor,
     this.textColor,
-    required this.submit,
+    this.submit,
     this.icon,
     this.borderRadius,
     this.border,
@@ -25,30 +25,34 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: submit,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.9,
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
-          color: backgroundColor,
-          border: border,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[icon!, 10.horizontalSpace],
-            Text(
-              text,
-              style: TextStyle(
-                color: textColor,
-                fontSize: textSize ?? 20.sp,
-                fontFamily: 'Industry',
-                fontWeight: FontWeight.bold,
+    final bool isDisabled = submit == null;
+    return Opacity(
+      opacity: isDisabled ? 0.6 : 1.0,
+      child: GestureDetector(
+        onTap: submit,
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.9,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
+            color: backgroundColor,
+            border: border,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[icon!, 10.horizontalSpace],
+              Text(
+                text,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: textSize ?? 20.sp,
+                  fontFamily: 'Industry',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

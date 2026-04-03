@@ -1,47 +1,94 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'TokenStorage.dart';
+
 class ApiClient {
-  final Map<String, String> defaultHeaders;
-  final String? token;
+  final Dio _dio;
+  final TokenStorage _tokenStorage;
 
-  ApiClient({this.token, this.defaultHeaders = const {"Content-Type": "application/json"}});
+  ApiClient({TokenStorage? tokenStorage}) 
+      : _tokenStorage = tokenStorage ?? TokenStorage(),
+        _dio = Dio(BaseOptions(
+          headers: {"Content-Type": "application/json"},
+        )) {
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        final token = await _tokenStorage.getToken();
+        if (token != null) {
+          options.headers["Authorization"] = "Bearer $token";
+        }
+        return handler.next(options);
+      },
+    ));
+  }
 
-  Map<String, String> _buildHeaders(Map<String, String>? headers) {
-    final allHeaders = {...defaultHeaders, ...?headers};
-    if (token != null) {
-      allHeaders['Authorization'] = 'Bearer $token';
+  Future<dynamic> get(String endpoint, {Map<String, dynamic>? queryParameters, Map<String, dynamic>? headers}) async {
+    try {
+      final response = await _dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+        options: headers != null ? Options(headers: headers) : null,
+      );
+      return _processResponse(response);
+    } on DioException catch (e) {
+      return _handleDioError(e);
     }
-    return allHeaders;
   }
 
-  // Changed return type to Future<dynamic>
-  Future<dynamic> get(String endpoint, {Map<String, String>? headers}) async {
-    final response = await http.get(Uri.parse(endpoint), headers: _buildHeaders(headers));
-    return _processResponse(response, endpoint);
+  Future<dynamic> post(String endpoint, {Map<String, dynamic>? headers, dynamic body}) async {
+    try {
+      final response = await _dio.post(
+        endpoint,
+        data: body,
+        options: headers != null ? Options(headers: headers) : null,
+      );
+      return _processResponse(response);
+    } on DioException catch (e) {
+      return _handleDioError(e);
+    }
   }
 
-  Future<dynamic> post(String endpoint, {Map<String, String>? headers, Map<String, dynamic>? body}) async {
-    final response = await http.post(
-      Uri.parse(endpoint),
-      headers: _buildHeaders(headers),
-      body: body != null ? jsonEncode(body) : null,
-    );
-    return _processResponse(response, endpoint);
+  Future<dynamic> put(String endpoint, {Map<String, dynamic>? headers, dynamic body}) async {
+    try {
+      final response = await _dio.put(
+        endpoint,
+        data: body,
+        options: headers != null ? Options(headers: headers) : null,
+      );
+      return _processResponse(response);
+    } on DioException catch (e) {
+      return _handleDioError(e);
+    }
   }
 
-  // The critical fix is here
-  dynamic _processResponse(http.Response response, String url) {
+  Future<dynamic> delete(String endpoint, {Map<String, dynamic>? headers, dynamic body}) async {
+    try {
+      final response = await _dio.delete(
+        endpoint,
+        data: body,
+        options: headers != null ? Options(headers: headers) : null,
+      );
+      return _processResponse(response);
+    } on DioException catch (e) {
+      return _handleDioError(e);
+    }
+  }
+
+  dynamic _processResponse(Response response) {
     final statusCode = response.statusCode;
-    final responseBody = response.body;
+    final responseData = response.data;
 
-    if (statusCode >= 200 && statusCode < 300) {
-      if (responseBody.isNotEmpty) {
-        // We REMOVED "as Map<String, dynamic>" to allow Lists
-        return jsonDecode(responseBody);
-      }
-      return {};
+    if (statusCode != null && statusCode >= 200 && statusCode < 300) {
+      return responseData ?? {};
     } else {
-      throw Exception('API Error: $statusCode $responseBody');
+      throw Exception('API Error: $statusCode $responseData');
+    }
+  }
+
+  dynamic _handleDioError(DioException e) {
+    if (e.response != null) {
+      throw Exception('API Error: ${e.response?.statusCode} ${e.response?.data}');
+    } else {
+      throw Exception('API Error: ${e.message}');
     }
   }
 }

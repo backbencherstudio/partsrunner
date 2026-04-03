@@ -9,11 +9,13 @@ class TokenStorage {
     final res = await SharedPreferences.getInstance();
     await res.setString(_key, token);
   }
+
   Future<String?> getToken() async {
     final res = await SharedPreferences.getInstance();
     return res.getString(_key);
   }
-  Future<void> removeToken(String token) async {
+
+  Future<void> removeToken() async {
     final res = await SharedPreferences.getInstance();
     await res.remove(_key);
   }

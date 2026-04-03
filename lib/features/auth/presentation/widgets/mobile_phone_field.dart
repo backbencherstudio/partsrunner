@@ -51,8 +51,7 @@ class MobilePhoneField extends StatelessWidget {
       ),
       initialCountryCode: 'BD',
       onChanged: (phone) {
-        // phoneController.text = phone.completeNumber;
-        // print("Phone: ${phoneController.text}");
+        phoneController?.text = phone.completeNumber;
       },
       onCountryChanged: (country) {
         print('Country changed to: ${country.name}');
