@@ -16,7 +16,7 @@ import 'package:partsrunner/features/auth/presentation/screens/select_role_scree
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/checkout/presentation/screens/checkout_screen.dart';
-import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
+import 'package:partsrunner/features/home/presentation/screens/home_screen.dart';
 import 'package:partsrunner/features/job_details/presentation/screens/active_job_details_screen.dart';
 import 'package:partsrunner/features/job_details/presentation/screens/job_details_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/my_order_screen.dart';
@@ -39,7 +39,7 @@ import 'package:partsrunner/features/wallet/presentation/screens/withdraw_screen
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutePaths.selectRole,
+    initialLocation: AppRoutePaths.login,
     routes: [
       // Core
       GoRoute(
@@ -101,8 +101,15 @@ class AppRoutes {
           GoRoute(
             path: 'otp',
             name: AppRouteNames.otp,
-            builder: (context, state) =>
-                OtpScreen(previousRoute: state.extra as String? ?? ''),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return OtpScreen(
+                previousRoute: extra?['previousRoute'] ?? '',
+                email: extra?['email'] ?? '',
+                phone: extra?['phone'] ?? '',
+                countryCode: extra?['countryCode'] ?? '',
+              );
+            },
           ),
           GoRoute(
             path: 'completeInfo',
@@ -122,7 +129,15 @@ class AppRoutes {
           GoRoute(
             path: 'newPassword',
             name: AppRouteNames.newPassword,
-            builder: (context, state) => const NewPasswordScreen(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NewPasswordScreen(
+                email: extra?['email'] ?? '',
+                phone: extra?['phone'] ?? '',
+                countryCode: extra?['countryCode'] ?? '',
+                otp: extra?['otp'] ?? '',
+              );
+            },
           ),
         ],
       ),

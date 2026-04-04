@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/contactor_home_widget.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/floating_card.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/home_header.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/runner_home_widget.dart';
+import 'package:partsrunner/features/home/presentation/widgets/contactor_home_widget.dart';
+import 'package:partsrunner/features/home/presentation/widgets/floating_card.dart';
+import 'package:partsrunner/features/home/presentation/widgets/home_header.dart';
+import 'package:partsrunner/features/home/presentation/widgets/runner_home_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.userRole});

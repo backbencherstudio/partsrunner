@@ -13,6 +13,7 @@ import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart'
 import 'package:partsrunner/features/auth/presentation/widgets/auth_method_widget.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/mobile_phone_field.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/or_divider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -26,6 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isProfileCompleted = false;
 
   @override
   void dispose() {
@@ -33,6 +35,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     _phoneController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isProfileCompleted();
   }
 
   void _submit() {
@@ -48,6 +56,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         .login(identifier: identifier, password: _passwordController.text);
   }
 
+  Future<void> isProfileCompleted() async {
+    final pref = await SharedPreferences.getInstance();
+    _isProfileCompleted = pref.getBool('isProfileCompleted') ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Listen for auth state changes and react accordingly
@@ -55,19 +68,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       next.whenData((state) {
         if (state is AuthSuccess) {
           ref.read(authNotifierProvider.notifier).resetState();
-          final user = state.user;
-          print(user);
-          // context.goNamed(
-          //   AppRouteNames.message,
-          //   extra: {
-          //     'title': 'Success',
-          //     'message':
-          //         'Nice to see you again. Get your parts delivered with tracking parts in real-time!',
-          //     'imagePath': 'assets/icons/success.png',
-          //     'buttonText': 'Get Started',
-          //     'routeName': AppRouteNames.bottomNav,
-          //   },
-          // );
+          context.goNamed(
+            AppRouteNames.message,
+            extra: {
+              'title': 'Success',
+              'message':
+                  'Nice to see you again. Get your parts delivered with tracking parts in real-time!',
+              'imagePath': 'assets/icons/success.png',
+              'buttonText': 'Get Started',
+              'routeName': _isProfileCompleted
+                  ? AppRouteNames.bottomNav
+                  : AppRouteNames.completeInfo,
+            },
+          );
         } else if (state is AuthError) {
           ref.read(authNotifierProvider.notifier).resetState();
           ScaffoldMessenger.of(context).showSnackBar(

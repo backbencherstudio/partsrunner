@@ -6,11 +6,17 @@ class ResetPasswordUseCase {
   final AuthRepository _repository;
 
   Future<void> call({
-    required String identifier,
+    String? email,
+    String? phone,
+    String? countryCode,
+    String? otp,
     required String newPassword,
   }) =>
       _repository.resetPassword(
-        identifier: identifier,
+        email: email,
+        phone: phone,
+        countryCode: countryCode,
+        otp: otp,
         newPassword: newPassword,
       );
 }

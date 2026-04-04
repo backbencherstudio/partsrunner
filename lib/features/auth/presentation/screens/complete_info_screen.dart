@@ -10,12 +10,85 @@ import 'package:partsrunner/core/widget/custom_dropdown.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
 import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CompleteInfoScreen extends ConsumerWidget {
+class CompleteInfoScreen extends ConsumerStatefulWidget {
   const CompleteInfoScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CompleteInfoScreen> createState() => _CompleteInfoScreenState();
+}
+
+class _CompleteInfoScreenState extends ConsumerState<CompleteInfoScreen> {
+  final _companyNameController = TextEditingController();
+  final _businessAddressController = TextEditingController();
+  final _vehicleTypeController = TextEditingController();
+  final _vehicleModelController = TextEditingController();
+  final _vehicleIdentificationNumberController = TextEditingController();
+
+  @override
+  void dispose() {
+    _companyNameController.dispose();
+    _businessAddressController.dispose();
+    _vehicleTypeController.dispose();
+    _vehicleModelController.dispose();
+    _vehicleIdentificationNumberController.dispose();
+    super.dispose();
+  }
+
+  void _submit() async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.setBool('isProfileCompleted', true);
+    final selectedRole = ref.read(selectedRoleProvider);
+    if (selectedRole == UserRole.contractor) {
+      ref
+          .read(authNotifierProvider.notifier)
+          .createContractor(
+            companyName: _companyNameController.text,
+            businessAddress: _businessAddressController.text,
+          );
+    } else if (selectedRole == UserRole.runner) {
+      ref
+          .read(authNotifierProvider.notifier)
+          .createRunner(
+            vehicleType: _vehicleTypeController.text,
+            vehicleModel: _vehicleModelController.text,
+            vehicleIdentificationNumber:
+                _vehicleIdentificationNumberController.text,
+          );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AsyncValue<AuthState>>(authNotifierProvider, (prev, next) {
+      next.whenData((state) {
+        if (state is AuthSuccess) {
+          ref.read(authNotifierProvider.notifier).resetState();
+          context.goNamed(
+            AppRouteNames.message,
+            extra: {
+              'title': 'Congratulation!',
+              'imagePath': 'assets/icons/success.png',
+              'message':
+                  "Your profile is completed successfully! Let's get started!",
+              'buttonText': 'Get Started',
+              'routeName': AppRouteNames.bottomNav,
+            },
+          );
+        } else if (state is AuthError) {
+          ref.read(authNotifierProvider.notifier).resetState();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      });
+    });
+
     final selectedRole = ref.read(selectedRoleProvider);
     return Scaffold(
       body: SafeArea(
@@ -37,22 +110,21 @@ class CompleteInfoScreen extends ConsumerWidget {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   8.verticalSpace,
-                  CustomTextField(hintText: "Enter Your Company Name"),
+                  CustomTextField(
+                    controller: _companyNameController,
+                    hintText: "Enter Your Company Name",
+                  ),
                   20.verticalSpace,
                   Text(
                     "Business Address",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   8.verticalSpace,
-                  CustomTextField(hintText: "Enter Business Address"),
-                ] else ...[
-                  Text(
-                    "Runner Name",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  CustomTextField(
+                    controller: _businessAddressController,
+                    hintText: "Enter Business Address",
                   ),
-                  8.verticalSpace,
-                  CustomTextField(hintText: "Enter Your Runner Name"),
-                  20.verticalSpace,
+                ] else ...[
                   Row(
                     children: [
                       Expanded(
@@ -68,6 +140,9 @@ class CompleteInfoScreen extends ConsumerWidget {
                             ),
                             8.verticalSpace,
                             CustomDropdown(
+                              onChanged: (value) {
+                                _vehicleTypeController.text = value ?? '';
+                              },
                               hintText: "Select",
                               items: [
                                 DropdownMenuItem(
@@ -101,6 +176,9 @@ class CompleteInfoScreen extends ConsumerWidget {
                             ),
                             8.verticalSpace,
                             CustomDropdown(
+                              onChanged: (value) {
+                                _vehicleModelController.text = value ?? '';
+                              },
                               hintText: "Select",
                               items: [
                                 DropdownMenuItem(
@@ -129,6 +207,7 @@ class CompleteInfoScreen extends ConsumerWidget {
                   ),
                   8.verticalSpace,
                   CustomTextField(
+                    controller: _vehicleIdentificationNumberController,
                     hintText: "Enter Vehicle Identification Number",
                   ),
                 ],
@@ -137,19 +216,7 @@ class CompleteInfoScreen extends ConsumerWidget {
                   backgroundColor: AppColor.primary,
                   textColor: Colors.white,
                   text: "Create Account",
-                  submit: () {
-                    context.goNamed(
-                      AppRouteNames.message,
-                      extra: {
-                        'title': 'Congratulation!',
-                        'imagePath': 'assets/icons/success.png',
-                        'message':
-                            "Your account is created complete. Let's get started!",
-                        'buttonText': 'Get Started',
-                        'routeName': AppRouteNames.bottomNav,
-                      },
-                    );
-                  },
+                  submit: _submit,
                 ),
               ],
             ),

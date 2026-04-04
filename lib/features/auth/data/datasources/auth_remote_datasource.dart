@@ -39,8 +39,30 @@ abstract class AuthRemoteDataSource {
   });
 
   Future<void> resetPassword({
-    required String identifier,
+    String? email,
+    String? phone,
+    String? countryCode,
+    String? otp,
     required String newPassword,
+  });
+
+  Future<void> forgotPassword({
+    String? email,
+    String? countryCode,
+    String? phone,
+  });
+
+  Future<void> createContractor({
+    required String userId,
+    required String companyName,
+    required String businessAddress,
+  });
+
+  Future<void> createRunner({
+    required String userId,
+    required String vehicleType,
+    required String vehicleModel,
+    required String vehicleIdentificationNumber,
   });
 }
 
@@ -147,9 +169,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> forgotPassword({
+    String? email,
+    String? countryCode,
+    String? phone,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.forgotPassword,
+      body: {'email': email, 'country_code': countryCode, 'phone': phone},
+    );
+    if (response['success'] == true) {
+      return;
+    }
+    throw Exception(response['message'] ?? 'Failed to send OTP');
+  }
+
+  @override
   Future<void> sendOtp({required String identifier}) async {
-    await Future.delayed(const Duration(seconds: 1));
-    // TODO: replace with real API call
+    final response = await _apiClient.post(
+      ApiEndpoints.resendVerificationEmail,
+      body: {'email': identifier},
+    );
+    if (response is Map<String, dynamic> && response['success'] == true) {
+      return;
+    } else {
+      throw Exception(response['message'] ?? 'Failed to send OTP');
+    }
   }
 
   @override
@@ -181,10 +226,73 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> resetPassword({
-    required String identifier,
+    String? email,
+    String? phone,
+    String? countryCode,
+    String? otp,
     required String newPassword,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
-    // TODO: replace with real API call
+    final response = await _apiClient.post(
+      ApiEndpoints.resetPassword,
+      body: {
+        'email': email,
+        'country_code': countryCode,
+        'phone_number': phone,
+        'token': otp,
+        'password': newPassword,
+      },
+    );
+    
+    if (response['success'] != true) {
+      throw Exception(response['message'] ?? 'Password reset failed');
+    }
+  }
+
+  @override
+  Future<void> createContractor({
+    required String userId,
+    required String companyName,
+    required String businessAddress,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.contractorCreate,
+      body: {
+        'user_id': userId,
+        'company_name': companyName,
+        'business_address': businessAddress,
+      },
+    );
+    print(response);
+    if (response is Map<String, dynamic> && response['success'] == true) {
+      print("Contractor created successfully");
+      return;
+    } else {
+      throw Exception(response['message'] ?? 'Failed to create contractor');
+    }
+  }
+
+  @override
+  Future<void> createRunner({
+    required String userId,
+    required String vehicleType,
+    required String vehicleModel,
+    required String vehicleIdentificationNumber,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.runnerCreate,
+      body: {
+        'user_id': userId,
+        'vehicle_type': vehicleType,
+        'vehicle_model': vehicleModel,
+        'vehicle_identification_number': vehicleIdentificationNumber,
+      },
+    );
+    print("response");
+    if (response is Map<String, dynamic> && response['success'] == true) {
+      print("Runner created successfully");
+      return;
+    } else {
+      throw Exception(response['message'] ?? 'Failed to create runner');
+    }
   }
 }

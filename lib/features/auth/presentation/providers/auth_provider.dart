@@ -6,11 +6,15 @@ import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasourc
 import 'package:partsrunner/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/domain/repositories/auth_repository.dart';
+import 'package:partsrunner/features/auth/domain/usecases/create_contractor_usecase.dart';
+import 'package:partsrunner/features/auth/domain/usecases/create_runner_usecase.dart';
+import 'package:partsrunner/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/login_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/send_otp_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/signup_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/verify_otp_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ---------------------------------------------------------------------------
 // UI-only state providers (unchanged)
@@ -23,6 +27,14 @@ final authMethodProvider = StateProvider<AuthMethod?>(
 final rememberMeProvider = StateProvider<bool>((ref) => false);
 
 final selectedRoleProvider = StateProvider<UserRole?>((ref) => null);
+
+// ---------------------------------------------------------------------------
+// Resend OTP state providers
+// ---------------------------------------------------------------------------
+
+final resendTimerProvider = StateProvider<int>((ref) => 0);
+final canResendProvider = StateProvider<bool>((ref) => true);
+final isResendingProvider = StateProvider<bool>((ref) => false);
 
 // ---------------------------------------------------------------------------
 // Dependency providers
@@ -45,6 +57,10 @@ final _signupUseCaseProvider = Provider<SignupUseCase>(
   (ref) => SignupUseCase(ref.watch(_authRepositoryProvider)),
 );
 
+final _forgotPasswordUseCaseProvider = Provider<ForgotPasswordUsecase>(
+  (ref) => ForgotPasswordUsecase(ref.watch(_authRepositoryProvider)),
+);
+
 final _sendOtpUseCaseProvider = Provider<SendOtpUseCase>(
   (ref) => SendOtpUseCase(ref.watch(_authRepositoryProvider)),
 );
@@ -55,6 +71,14 @@ final _resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>(
 
 final _verifyOtpUseCaseProvider = Provider<VerifyOtpUseCase>(
   (ref) => VerifyOtpUseCase(ref.watch(_authRepositoryProvider)),
+);
+
+final _createContractorUseCaseProvider = Provider<CreateContractorUsecase>(
+  (ref) => CreateContractorUsecase(ref.watch(_authRepositoryProvider)),
+);
+
+final _createRunnerUseCaseProvider = Provider<CreateRunnerUsecase>(
+  (ref) => CreateRunnerUsecase(ref.watch(_authRepositoryProvider)),
 );
 
 // ---------------------------------------------------------------------------
@@ -94,6 +118,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   late SendOtpUseCase _sendOtp;
   late ResetPasswordUseCase _resetPassword;
   late VerifyOtpUseCase _verifyOtp;
+  late ForgotPasswordUsecase _forgotPassword;
+  late CreateContractorUsecase _createContractor;
+  late CreateRunnerUsecase _createRunner;
 
   @override
   Future<AuthState> build() async {
@@ -102,6 +129,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     _sendOtp = ref.watch(_sendOtpUseCaseProvider);
     _resetPassword = ref.watch(_resetPasswordUseCaseProvider);
     _verifyOtp = ref.watch(_verifyOtpUseCaseProvider);
+    _forgotPassword = ref.watch(_forgotPasswordUseCaseProvider);
+    _createContractor = ref.watch(_createContractorUseCaseProvider);
+    _createRunner = ref.watch(_createRunnerUseCaseProvider);
     return const AuthInitial();
   }
 
@@ -175,10 +205,12 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     required String identifier,
     required String otp,
   }) async {
+    final pref = await SharedPreferences.getInstance();
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
           final user = await _verifyOtp(identifier: identifier, otp: otp);
+          pref.setString('userId', user.id.toString());
           return AuthSuccess(message: 'OTP verified successfully', user: user);
         }).then(
           (asyncValue) => asyncValue.when(
@@ -191,17 +223,100 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   /// Reset password for [identifier].
   Future<void> resetPassword({
-    required String identifier,
+    required String? email,
+    required String? phone,
+    required String? countryCode,
+    required String? otp,
     required String newPassword,
   }) async {
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
           await _resetPassword(
-            identifier: identifier,
+            email: email,
+            phone: phone,
+            countryCode: countryCode,
+            otp: otp,
             newPassword: newPassword,
           );
           return const AuthSuccess(message: 'Password reset');
+        }).then(
+          (asyncValue) => asyncValue.when(
+            data: (s) => AsyncData(s),
+            loading: () => const AsyncLoading(),
+            error: (e, st) => AsyncData(AuthError(message: _friendly(e))),
+          ),
+        );
+  }
+
+  Future<void> forgotPassword({
+    String? email,
+    String? countryCode,
+    String? phone,
+  }) async {
+    state = const AsyncLoading();
+    state =
+        await AsyncValue.guard(() async {
+          await _forgotPassword(email: email, countryCode: countryCode, phone: phone);
+          return const AuthSuccess(message: 'Password reset');
+        }).then(
+          (asyncValue) => asyncValue.when(
+            data: (s) => AsyncData(s),
+            loading: () => const AsyncLoading(),
+            error: (e, st) => AsyncData(AuthError(message: _friendly(e))),
+          ),
+        );
+  }
+
+  Future<void> createContractor({
+    required String companyName,
+    required String businessAddress,
+  }) async {
+    final pref = await SharedPreferences.getInstance();
+    final userId = pref.getString('userId');
+    if (userId == null) {
+      state = AsyncData(AuthError(message: 'User ID not found'));
+      return;
+    }
+    state = const AsyncLoading();
+    state =
+        await AsyncValue.guard(() async {
+          await _createContractor(
+            userId: userId,
+            companyName: companyName,
+            businessAddress: businessAddress,
+          );
+          return const AuthSuccess(message: 'Contractor created');
+        }).then(
+          (asyncValue) => asyncValue.when(
+            data: (s) => AsyncData(s),
+            loading: () => const AsyncLoading(),
+            error: (e, st) => AsyncData(AuthError(message: _friendly(e))),
+          ),
+        );
+  }
+
+  Future<void> createRunner({
+    required String vehicleType,
+    required String vehicleModel,
+    required String vehicleIdentificationNumber,
+  }) async {
+    final pref = await SharedPreferences.getInstance();
+    final userId = pref.getString('userId');
+    if (userId == null) {
+      state = AsyncData(AuthError(message: 'User ID not found'));
+      return;
+    }
+    state = const AsyncLoading();
+    state =
+        await AsyncValue.guard(() async {
+          await _createRunner(
+            userId: userId,
+            vehicleType: vehicleType,
+            vehicleModel: vehicleModel,
+            vehicleIdentificationNumber: vehicleIdentificationNumber,
+          );
+          return const AuthSuccess(message: 'Runner created');
         }).then(
           (asyncValue) => asyncValue.when(
             data: (s) => AsyncData(s),

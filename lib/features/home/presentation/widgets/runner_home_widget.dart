@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/no_active_jobs_widget.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/request_card.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/runner_report_item.dart';
+import 'package:partsrunner/features/home/presentation/widgets/no_active_jobs_widget.dart';
+import 'package:partsrunner/features/home/presentation/widgets/request_card.dart';
+import 'package:partsrunner/features/home/presentation/widgets/runner_report_item.dart';
 
 class RunnerHomeWidget extends StatefulWidget {
   const RunnerHomeWidget({super.key});

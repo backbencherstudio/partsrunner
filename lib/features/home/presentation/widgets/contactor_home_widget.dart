@@ -5,7 +5,7 @@ import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
-import 'package:partsrunner/features/home/presentaion/widgets/section_header.dart';
+import 'package:partsrunner/features/home/presentation/widgets/section_header.dart';
 import 'package:partsrunner/features/activeTracking/presentaion/widgets/tracking_item.dart';
 
 class ContactorHomeWidget extends StatelessWidget {

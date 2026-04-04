@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/helpers/helper_functions.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
@@ -38,6 +39,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    final userRole = ref.read(selectedRoleProvider);
+    print(userRole);
+    super.initState();
+  }
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
@@ -69,7 +77,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       next.whenData((state) {
         if (state is AuthSuccess) {
           ref.read(authNotifierProvider.notifier).resetState();
-          context.goNamed(AppRouteNames.otp, extra: AppRouteNames.signup);
+          context.goNamed(
+            AppRouteNames.otp,
+            extra: {
+              "previousRoute": AppRouteNames.signup,
+              "email": _emailController.text.trim(),
+            },
+          );
         } else if (state is AuthError) {
           ref.read(authNotifierProvider.notifier).resetState();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -96,109 +110,90 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  16.verticalSpace,
                   Center(
-                    child: Column(
-                      children: [
-                        AuthHeader(
-                          title: "Create Your Account",
-                          subtitle: "Sign up and enjoy your experience",
-                        ),
-                        24.verticalSpace,
-                      ],
+                    child: AuthHeader(
+                      title: "Create Your Account",
+                      subtitle: "Sign up and enjoy your experience",
                     ),
                   ),
-                  16.verticalSpace,
+                  24.verticalSpace,
                   Text(
                     "Name",
-                    style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  8.verticalSpace,
                   CustomTextField(
                     hintText: "Enter your name",
                     isPassword: false,
                     controller: _nameController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Name can't be empty";
-                      }
-                      return null;
-                    },
+                    validator: (value) => HelperFunctions.validateName(value),
                   ),
-                  const SizedBox(height: 15),
-                  const Text(
+                  24.verticalSpace,
+                  Text(
                     "Email",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  8.verticalSpace,
                   CustomTextField(
                     hintText: "Email",
                     isPassword: false,
                     controller: _emailController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Email can't be empty";
-                      }
-                      if (!RegExp(
-                        r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$",
-                      ).hasMatch(value)) {
-                        return "Enter a valid email";
-                      }
-                      return null;
-                    },
+                    validator: (value) => HelperFunctions.validateEmail(value),
                   ),
-                  const SizedBox(height: 15),
+                  24.verticalSpace,
                   const Text(
                     "Mobile number",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  8.verticalSpace,
                   MobilePhoneField(
                     phoneController: _phoneController,
                     countryController: _countryController,
                   ),
-                  const SizedBox(height: 15),
+                  24.verticalSpace,
                   const Text(
                     "Password",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  8.verticalSpace,
                   CustomTextField(
                     hintText: "Password",
                     isPassword: true,
                     controller: _passwordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password can't be empty";
-                      }
-                      if (value.length < 6) {
-                        return "Password must be at least 6 characters";
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        HelperFunctions.validatePassword(value),
                   ),
-                  const SizedBox(height: 15),
+                  24.verticalSpace,
                   const Text(
                     "Confirm Password",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
+                  8.verticalSpace,
                   CustomTextField(
                     hintText: "Confirm Password",
                     isPassword: true,
                     controller: _confirmPasswordController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return "Password can't be empty";
-                      }
-                      if (value != _passwordController.text) {
-                        return "Passwords do not match";
-                      }
-                      return null;
-                    },
+                    validator: (value) =>
+                        HelperFunctions.validateConfirmPassword(
+                          value,
+                          _passwordController.text,
+                        ),
                   ),
-                  const SizedBox(height: 15),
+                  24.verticalSpace,
                   CustomButton(
                     text: isLoading ? "Creating account..." : "Create Account",
                     submit: isLoading ? null : _submit,
                     backgroundColor: const Color(0xffFF4000),
                     textColor: Colors.white,
                   ),
-                  32.verticalSpace,
+                  24.verticalSpace,
                   const OrDivider(),
                   24.verticalSpace,
                   CustomButton(

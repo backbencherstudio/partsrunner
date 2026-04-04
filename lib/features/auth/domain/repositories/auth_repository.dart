@@ -28,15 +28,29 @@ abstract class AuthRepository {
 
   /// Reset password after OTP verification.
   Future<void> resetPassword({
-    required String identifier,
+    String? email,
+    String? phone,
+    String? countryCode,
+    String? otp,
     required String newPassword,
   });
 
-  // Future<void> contractorCreate({
-  //   required String name,
-  //   required String email,
-  //   required String phone,
-  //   required String password,
-  //   required String role, // 'contractor' | 'runner'
-  // });
+  Future<void> forgotPassword({
+    String? email,
+    String? countryCode,
+    String? phone,
+  });
+
+  Future<void> createContractor({
+    required String userId,
+    required String companyName,
+    required String businessAddress,
+  });
+
+  Future<void> createRunner({
+    required String userId,
+    required String vehicleType,
+    required String vehicleModel,
+    required String vehicleIdentificationNumber,
+  });
 }

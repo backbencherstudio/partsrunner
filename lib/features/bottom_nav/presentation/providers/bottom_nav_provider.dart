@@ -1,15 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/constant/user_role.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:partsrunner/core/ApiService/ApiClient.dart';
+import 'package:partsrunner/features/bottom_nav/data/datasources/bottom_nav_remote_datasource.dart';
+import 'package:partsrunner/features/bottom_nav/data/models/bottom_nav_model.dart';
+import 'package:partsrunner/features/bottom_nav/data/repositories/bottom_nav_repository_impl.dart';
+import 'package:partsrunner/features/bottom_nav/domain/repositories/bottom_nav_repository.dart';
+import 'package:partsrunner/features/bottom_nav/domain/usecases/get_user_usecase.dart';
 
 final bottomNavProvider = StateProvider<int>((ref) => 0);
 
-final userRoleProvider = FutureProvider<UserRole>((ref) async {
-  final pref = await SharedPreferences.getInstance();
-  final roleString = pref.getString("userRole");
+// Provider for ApiClient
+final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
-  return UserRole.values.firstWhere(
-    (e) => e.name == roleString,
-    orElse: () => UserRole.contractor,
+// Provider for remote datasource
+final bottomNavRemoteDatasourceProvider = Provider<BottomNavRemoteDatasource>((
+  ref,
+) {
+  return BottomNavRemoteDataSourceImpl(apiClient: ref.read(apiClientProvider));
+});
+
+// Provider for repository
+final bottomNavRepositoryProvider = Provider<BottomNavRepository>((ref) {
+  return BottomNavRepositoryImpl(
+    remoteDatasource: ref.read(bottomNavRemoteDatasourceProvider),
   );
+});
+
+// Provider for GetUserUsecase
+final getUserUsecaseProvider = Provider<GetUserUsecase>((ref) {
+  return GetUserUsecase(ref.read(bottomNavRepositoryProvider));
+});
+
+// Provider for user data using the usecase
+final userProvider = FutureProvider<BottomNavModel>((ref) async {
+  print("User: ${ref.read(getUserUsecaseProvider).call()}");
+  return ref.read(getUserUsecaseProvider).call();
 });

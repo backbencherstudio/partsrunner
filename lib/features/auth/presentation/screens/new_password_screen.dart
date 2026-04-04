@@ -11,9 +11,18 @@ import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart'
 class NewPasswordScreen extends ConsumerStatefulWidget {
   /// [identifier] is the email/phone used during the forgot password flow,
   /// passed via route extra so we know who to reset the password for.
-  const NewPasswordScreen({super.key, this.identifier = ''});
+  const NewPasswordScreen({
+    super.key,
+    this.email,
+    this.phone,
+    this.countryCode,
+    this.otp,
+  });
 
-  final String identifier;
+  final String? email;
+  final String? phone;
+  final String? countryCode;
+  final String? otp;
 
   @override
   ConsumerState<NewPasswordScreen> createState() => _NewPasswordScreenState();
@@ -35,7 +44,10 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     ref.read(authNotifierProvider.notifier).resetPassword(
-          identifier: widget.identifier,
+          email: widget.email,
+          phone: widget.phone,
+          countryCode: widget.countryCode,
+          otp: widget.otp,
           newPassword: _passwordController.text,
         );
   }

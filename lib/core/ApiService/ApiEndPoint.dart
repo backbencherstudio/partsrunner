@@ -41,8 +41,7 @@ class ApiEndpoints {
   static String get resendVerificationEmail =>
       '$baseUrl/api/auth/resend-verification-email';
   static String get resetPassword => '$baseUrl/api/auth/reset-password';
-  static String get changePassword =>
-      '$baseUrl/api/auth/change-password'; // 🔒
+  static String get changePassword => '$baseUrl/api/auth/change-password'; // 🔒
   static String get requestEmailChange =>
       '$baseUrl/api/auth/request-email-change'; // 🔒
   static String get changeEmail => '$baseUrl/api/auth/change-email'; // 🔒

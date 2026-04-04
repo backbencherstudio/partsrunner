@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/constant/auth_method.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
+import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
 import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart';
+import 'package:partsrunner/features/auth/presentation/widgets/auth_method_widget.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/mobile_phone_field.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
@@ -18,7 +21,9 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
+  final _countryCodeController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
 
   @override
   void dispose() {
@@ -27,11 +32,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   }
 
   void _sendOtp() {
-    final identifier = _phoneController.text.trim();
-    if (identifier.isEmpty) {
+    if (_emailController.text.trim().isEmpty &&
+        _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter your phone number'),
+          content: Text('Please enter your email or phone number'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -39,7 +44,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     }
     ref
         .read(authNotifierProvider.notifier)
-        .sendOtp(identifier: identifier);
+        .forgotPassword(
+          email: _emailController.text.trim(),
+          countryCode: _countryCodeController.text.trim(),
+          phone: _phoneController.text.trim(),
+        );
   }
 
   @override
@@ -50,7 +59,12 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           ref.read(authNotifierProvider.notifier).resetState();
           context.goNamed(
             AppRouteNames.otp,
-            extra: AppRouteNames.forgetPassword,
+            extra: {
+              "previousRoute": AppRouteNames.forgetPassword,
+              "email": _emailController.text.trim(),
+              "phone": _phoneController.text.trim(),
+              "countryCode": _countryCodeController.text.trim(),
+            },
           );
         } else if (state is AuthError) {
           ref.read(authNotifierProvider.notifier).resetState();
@@ -66,6 +80,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     });
 
     final isLoading = ref.watch(authNotifierProvider).isLoading;
+    final state = ref.watch(authMethodProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -73,21 +88,49 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           child: Padding(
             padding: EdgeInsets.all(24.sp),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                16.verticalSpace,
                 AuthHeader(
                   title: "Forgot Password",
-                  subtitle:
-                      "Please enter your phone number to receive an OTP",
+                  subtitle: "Please enter your phone number to receive an OTP",
                   hasLogo: false,
                 ),
                 24.verticalSpace,
-                const Text(
-                  "Mobile number",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                const AuthMethodWidget(),
+                24.verticalSpace,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        state == AuthMethod.email ? "Email" : "Phone",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    8.verticalSpace,
+                    state == AuthMethod.phone
+                        ? MobilePhoneField(
+                            countryController: _countryCodeController,
+                            phoneController: _phoneController,
+                          )
+                        : CustomTextField(
+                            hintText: "Enter your email",
+                            isPassword: false,
+                            controller: _emailController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Email can't be empty";
+                              }
+                              return null;
+                            },
+                          ),
+                  ],
                 ),
-                8.verticalSpace,
-                MobilePhoneField(phoneController: _phoneController),
                 24.verticalSpace,
                 CustomButton(
                   backgroundColor: AppColor.primary,

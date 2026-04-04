@@ -5,34 +5,45 @@ import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/wallet_screen.dart';
 import '../../../activeTracking/presentaion/screen/active_tracking_screen.dart';
-import '../../../home/presentaion/screens/home_screen.dart';
+import '../../../home/presentation/screens/home_screen.dart';
 import '../../../my_order/presentation/screens/my_order_screen.dart';
 import '../../../profile/presentation/screens/profile_screen.dart';
 import '../providers/bottom_nav_provider.dart';
 
-class BottomNavScreen extends ConsumerWidget {
+class BottomNavScreen extends ConsumerStatefulWidget {
   const BottomNavScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = ref.watch(bottomNavProvider);
-    final userRoleAsync = ref.watch(userRoleProvider);
+  ConsumerState<BottomNavScreen> createState() => _BottomNavScreenState();
+}
 
-    return userRoleAsync.when(
+class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final currentIndex = ref.watch(bottomNavProvider);
+    final userAsync = ref.watch(userProvider);
+
+    return userAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) =>
-          const Scaffold(body: Center(child: Text('Failed to load user role'))),
-      data: (userRole) {
+          const Scaffold(body: Center(child: Text('Failed to load user data'))),
+      data: (user) {
         final screens = [
-          HomeScreen(userRole: userRole),
-          userRole == UserRole.contractor
+          HomeScreen(
+            userRole: user.type == "CONTRACTOR"
+                ? UserRole.contractor
+                : UserRole.runner,
+          ),
+          user.type == "CONTRACTOR"
               ? const ActiveTrackingScreen()
               : ActiveJobsScreen(),
-          userRole == UserRole.contractor
-              ? const MyOrderScreen()
-              : WalletScreen(),
-          ProfileScreen(userRole: userRole),
+          user.type == "CONTRACTOR" ? const MyOrderScreen() : WalletScreen(),
+          ProfileScreen(
+            userRole: user.type == "CONTRACTOR"
+                ? UserRole.contractor
+                : UserRole.runner,
+          ),
         ];
 
         return Scaffold(
@@ -66,7 +77,7 @@ class BottomNavScreen extends ConsumerWidget {
                     ref,
                   ),
                   _buildNavItem(
-                    userRole == UserRole.contractor
+                    user.type == "CONTRACTOR"
                         ? "assets/images/index1.png"
                         : "assets/images/index2.png",
                     1,
@@ -74,7 +85,7 @@ class BottomNavScreen extends ConsumerWidget {
                     ref,
                   ),
                   _buildNavItem(
-                    userRole == UserRole.contractor
+                    user.type == "CONTRACTOR"
                         ? "assets/images/index2.png"
                         : "assets/images/index2.2.png",
                     2,
