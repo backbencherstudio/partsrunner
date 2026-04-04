@@ -10,7 +10,6 @@ import 'package:partsrunner/core/widget/custom_dropdown.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
 import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/auth/presentation/widgets/auth_header.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class CompleteInfoScreen extends ConsumerStatefulWidget {
   const CompleteInfoScreen({super.key});
@@ -37,8 +36,6 @@ class _CompleteInfoScreenState extends ConsumerState<CompleteInfoScreen> {
   }
 
   void _submit() async {
-    final pref = await SharedPreferences.getInstance();
-    await pref.setBool('isProfileCompleted', true);
     final selectedRole = ref.read(selectedRoleProvider);
     if (selectedRole == UserRole.contractor) {
       ref
@@ -70,10 +67,9 @@ class _CompleteInfoScreenState extends ConsumerState<CompleteInfoScreen> {
             extra: {
               'title': 'Congratulation!',
               'imagePath': 'assets/icons/success.png',
-              'message':
-                  "Your profile is completed successfully! Let's get started!",
+              'message': "Your account is created complete. Let's get started!",
               'buttonText': 'Get Started',
-              'routeName': AppRouteNames.bottomNav,
+              'routeName': AppRouteNames.login,
             },
           );
         } else if (state is AuthError) {

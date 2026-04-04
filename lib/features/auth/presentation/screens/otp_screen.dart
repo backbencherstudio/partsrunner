@@ -92,17 +92,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 },
               );
             } else {
-              context.goNamed(
-                AppRouteNames.message,
-                extra: {
-                  'title': 'Congratulation!',
-                  'imagePath': 'assets/icons/success.png',
-                  'message':
-                      "Your account is created complete. Let's get started!",
-                  'buttonText': 'Get Started',
-                  'routeName': AppRouteNames.login,
-                },
-              );
+              context.goNamed(AppRouteNames.completeInfo);
             }
           }
         } else if (state is AuthError) {
