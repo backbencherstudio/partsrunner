@@ -1,5 +1,5 @@
-import 'package:partsrunner/core/ApiService/ApiClient.dart';
-import 'package:partsrunner/core/ApiService/ApiEndPoint.dart';
+import 'package:partsrunner/core/api_service/api_client.dart';
+import 'package:partsrunner/core/api_service/api_end_point.dart';
 import 'package:partsrunner/features/bottom_nav/data/models/bottom_nav_model.dart';
 
 abstract class BottomNavRemoteDatasource {
