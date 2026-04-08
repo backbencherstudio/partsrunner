@@ -8,11 +8,13 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefix;
   final String? label;
   final Widget? suffix;
+  final bool readOnly;
 
   const CustomTextField({
     super.key,
     required this.hintText,
     this.isPassword = false,
+    this.readOnly = false,
     this.controller,
     this.validator,
     this.prefix,
@@ -46,6 +48,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             const SizedBox(height: 8),
           ],
           TextFormField(
+            readOnly: widget.readOnly,
             controller: widget.controller,
             obscureText: widget.isPassword ? _obscureText : false,
             style: const TextStyle(color: Colors.black),
@@ -76,6 +79,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 ),
               ),
               enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(
+                  color: const Color(0xff80e1e05).withValues(alpha: 0.05),
+                ),
+              ),
+              disabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide(
                   color: const Color(0xff80e1e05).withValues(alpha: 0.05),

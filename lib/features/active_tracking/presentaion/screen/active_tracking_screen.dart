@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:partsrunner/features/activeTracking/presentaion/widgets/tracking_item.dart';
+import 'package:partsrunner/features/active_tracking/presentaion/widgets/tracking_item.dart';
 
 class ActiveTrackingScreen extends StatelessWidget {
   const ActiveTrackingScreen({super.key});

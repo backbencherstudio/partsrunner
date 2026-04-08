@@ -10,8 +10,6 @@ class CheckoutScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final deliveryState = ref.watch(requestDeliveryNotifierProvider);
-    final isFormValid = ref.watch(isFormValidProvider);
-    final deliveryDetails = ref.watch(deliveryDetailsProvider);
 
     ref.listen<RequestDeliveryState>(requestDeliveryNotifierProvider, (
       previous,
@@ -48,19 +46,17 @@ class CheckoutScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildDetailColumn(
               'From',
-              deliveryDetails['sender']?['address'] ??
-                  '2715 Ash Dr. San Jose, South Dakota 83475',
+              "${ref.read(supplierProvider)?.location}, ${ref.read(supplierProvider)?.street}, ${ref.read(supplierProvider)?.city}, ${ref.read(supplierProvider)?.zipCode}",
             ),
             const SizedBox(height: 16),
             _buildDetailColumn(
               'To',
-              deliveryDetails['receiver']?['address'] ??
-                  '2464 Royal Ln. Mesa, New Jersey 45463',
+              ref.read(deliveryAddressControllerProvider).text,
             ),
             const SizedBox(height: 16),
             _buildDetailColumn(
               'Package Weight',
-              '${deliveryDetails['package']?['weight'] ?? '2.3'} KG',
+              '${ref.read(packageWeightControllerProvider).text} KG',
             ),
             const SizedBox(height: 24),
             Divider(color: Colors.grey[300]),
@@ -115,12 +111,11 @@ class CheckoutScreen extends ConsumerWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: ElevatedButton(
-            onPressed: (deliveryState is RequestDeliveryLoading || !isFormValid)
+            onPressed: (deliveryState is RequestDeliveryLoading)
                 ? null
                 : () => _submitDeliveryRequest(context, ref),
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  (deliveryState is RequestDeliveryLoading || !isFormValid)
+              backgroundColor: (deliveryState is RequestDeliveryLoading)
                   ? Colors.grey
                   : Colors.deepOrange,
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -416,8 +411,6 @@ class CheckoutScreen extends ConsumerWidget {
   }
 
   void _showSuccessBottomSheet(BuildContext context, WidgetRef ref) {
-    final deliveryDetails = ref.watch(deliveryDetailsProvider);
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -484,14 +477,12 @@ class CheckoutScreen extends ConsumerWidget {
                     const SizedBox(height: 8),
                     _buildTrackingDetailRow(
                       'From:',
-                      deliveryDetails['sender']?['address'] ??
-                          'Melbourne, VIC 3000',
+                      "${ref.read(supplierProvider)?.location}, ${ref.read(supplierProvider)?.street}, ${ref.read(supplierProvider)?.city}, ${ref.read(supplierProvider)?.zipCode}",
                     ),
                     const SizedBox(height: 8),
                     _buildTrackingDetailRow(
                       'Send to:',
-                      deliveryDetails['receiver']?['address'] ??
-                          'Jakarta Pusat',
+                      ref.read(deliveryAddressControllerProvider).text,
                     ),
                     const SizedBox(height: 8),
                     _buildTrackingDetailRow('Pickup method:', 'Runner Pickup'),

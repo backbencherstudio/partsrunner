@@ -1,9 +1,9 @@
-import 'package:partsrunner/features/request_delivery/data/datasources/request_delivery_datasource.dart';
+import 'package:partsrunner/features/request_delivery/data/datasources/request_delivery_remote_datasource.dart';
 import 'package:partsrunner/features/request_delivery/domain/entities/supplier_entity.dart';
 import 'package:partsrunner/features/request_delivery/domain/repositories/request_delivery_repository.dart';
 
 class RequestDeliveryRepositoryImpl extends RequestDeliveryRepository {
-  final RequestDeliveryDatasource _datasource;
+  final RequestDeliveryRemoteDatasource _datasource;
   
   RequestDeliveryRepositoryImpl(this._datasource);
   

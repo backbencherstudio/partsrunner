@@ -4,7 +4,7 @@ import 'package:partsrunner/features/request_delivery/data/models/supplier_model
 
 import '../../domain/entities/supplier_entity.dart';
 
-abstract class RequestDeliveryDatasource {
+abstract class RequestDeliveryRemoteDatasource {
   Future<List<SupplierEntity>> getSuppliers();
   Future<void> createRequestDelivery({
     required String packageName,
@@ -19,10 +19,10 @@ abstract class RequestDeliveryDatasource {
   });
 }
 
-class RequestDeliveryDatasourceImpl implements RequestDeliveryDatasource {
+class RequestDeliveryRemoteDatasourceImpl implements RequestDeliveryRemoteDatasource {
   final ApiClient _apiClient;
 
-  RequestDeliveryDatasourceImpl({required ApiClient apiClient})
+  RequestDeliveryRemoteDatasourceImpl({required ApiClient apiClient})
     : _apiClient = apiClient;
 
   @override

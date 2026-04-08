@@ -5,7 +5,11 @@ import 'package:partsrunner/core/api_service/api_endpoint.dart';
 abstract class HomeRemoteDatasource {
   /// for runner
   Future<void> changeAvailability(bool isOnline);
-  Future<void> getDelivery();
+  Future<void> getDeliveryRunner();
+
+  /// for contractor
+  Future<void> getDeliveryContractor();
+  Future<void> getNewRequests();
 }
 
 class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
@@ -39,10 +43,22 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
       }
     }
   }
+
+  @override
+  Future<void> getDeliveryRunner() async {
+    final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
+  }
+
+  @override
+  Future<void> getDeliveryContractor() async {
+    final response = await _apiClient.get(
+      ApiEndpoints.contractorDeliveriesHome,
+    );
+  }
   
   @override
-  Future<void> getDelivery() async {
-    final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
-    
+  Future<void> getNewRequests() {
+    // TODO: implement getNewRequests
+    throw UnimplementedError();
   }
 }

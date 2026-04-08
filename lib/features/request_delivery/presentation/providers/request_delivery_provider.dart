@@ -1,29 +1,52 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/features/request_delivery/domain/entities/supplier_entity.dart';
 import 'package:partsrunner/features/request_delivery/domain/usecases/get_suppliers.dart';
 import 'package:partsrunner/features/request_delivery/domain/usecases/create_request_delivery.dart';
 import 'package:partsrunner/features/request_delivery/domain/repositories/request_delivery_repository.dart';
 import 'package:partsrunner/features/request_delivery/data/repositories/request_delivery_repository_impl.dart';
-import 'package:partsrunner/features/request_delivery/data/datasources/request_delivery_datasource.dart';
+import 'package:partsrunner/features/request_delivery/data/datasources/request_delivery_remote_datasource.dart';
 import 'package:partsrunner/core/api_service/api_client.dart';
 
 // ---------------------------------------------------------------------------
 // UI state providers
 // ---------------------------------------------------------------------------
 
-final paymentMethodProvider = StateProvider<int>(
-  (ref) => 0,
-); // 0: Visa, 1: Add New Card, 2: Paypal
+final paymentMethodProvider = StateProvider<int>((ref) => 0);
 final isStepTwoProvider = StateProvider<bool>((ref) => false);
+final supplierProvider = StateProvider<SupplierEntity?>((ref) => null);
 
 // ---------------------------------------------------------------------------
-// Form data providers
+// TextEditingControllers
 // ---------------------------------------------------------------------------
 
-final packageInfoProvider = StateProvider<Map<String, String>>((ref) => {});
-final senderInfoProvider = StateProvider<Map<String, String>>((ref) => {});
-final receiverInfoProvider = StateProvider<Map<String, String>>((ref) => {});
-final specialInstructionsProvider = StateProvider<String>((ref) => '');
+final packageNameControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final packageWeightControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final pickupDateControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final pickupTimeControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final technicianNameControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final technicianPhoneControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final deliveryAddressControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final specialInstructionsControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
+final paymentProviderControllerProvider = Provider<TextEditingController>(
+  (ref) => TextEditingController(),
+);
 
 // ---------------------------------------------------------------------------
 // Request delivery state
@@ -91,79 +114,28 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
     _ref.read(isStepTwoProvider.notifier).state = !_ref.read(isStepTwoProvider);
   }
 
-  void updatePackageInfo(String key, String value) {
-    final currentInfo = _ref.read(packageInfoProvider);
-    _ref.read(packageInfoProvider.notifier).state = {
-      ...currentInfo,
-      key: value,
-    };
-  }
-
-  void updateSenderInfo(String key, String value) {
-    final currentInfo = _ref.read(senderInfoProvider);
-    _ref.read(senderInfoProvider.notifier).state = {...currentInfo, key: value};
-  }
-
-  void updateReceiverInfo(String key, String value) {
-    final currentInfo = _ref.read(receiverInfoProvider);
-    _ref.read(receiverInfoProvider.notifier).state = {
-      ...currentInfo,
-      key: value,
-    };
-  }
-
-  void updateSpecialInstructions(String instructions) {
-    _ref.read(specialInstructionsProvider.notifier).state = instructions;
-  }
-
   Future<void> submitDeliveryRequest() async {
     state = const RequestDeliveryLoading();
 
     try {
-      final packageInfo = _ref.read(packageInfoProvider);
-      final senderInfo = _ref.read(senderInfoProvider);
-      final receiverInfo = _ref.read(receiverInfoProvider);
-      final specialInstructions = _ref.read(specialInstructionsProvider);
       final paymentMethod = _ref.read(paymentMethodProvider);
-
-      // Validate required fields
-      if (packageInfo['name']?.isEmpty ?? true) {
-        throw Exception('Package name is required');
-      }
-      if (packageInfo['weight']?.isEmpty ?? true) {
-        throw Exception('Package weight is required');
-      }
-      if (senderInfo['name']?.isEmpty ?? true) {
-        throw Exception('Sender name is required');
-      }
-      if (senderInfo['phone']?.isEmpty ?? true) {
-        throw Exception('Sender phone is required');
-      }
-      if (receiverInfo['name']?.isEmpty ?? true) {
-        throw Exception('Receiver name is required');
-      }
-      if (receiverInfo['address']?.isEmpty ?? true) {
-        throw Exception('Delivery address is required');
-      }
-
-      // Parse weight
-      final weight = double.tryParse(packageInfo['weight'] ?? '');
-      if (weight == null || weight <= 0) {
-        throw Exception('Invalid package weight');
-      }
 
       // Get payment provider string
       final paymentProvider = _getPaymentProviderString(paymentMethod);
 
       await _createRequestDelivery(
-        packageName: packageInfo['name']!,
-        weight: weight,
-        supplierId: packageInfo['supplierId'] ?? '',
-        pickupDate: packageInfo['pickupDate'] ?? '',
-        technicianName: senderInfo['name']!,
-        technicianPhone: senderInfo['phone']!,
-        deliveryAddress: receiverInfo['address']!,
-        specialInstructions: specialInstructions,
+        packageName: _ref.read(packageNameControllerProvider).text,
+        weight: double.parse(_ref.read(packageWeightControllerProvider).text),
+        supplierId: _ref.read(supplierProvider)?.id ?? '',
+        pickupDate:
+            _ref.read(pickupDateControllerProvider).text +
+            _ref.read(pickupTimeControllerProvider).text,
+        technicianName: _ref.read(technicianNameControllerProvider).text,
+        technicianPhone: _ref.read(technicianPhoneControllerProvider).text,
+        deliveryAddress: _ref.read(deliveryAddressControllerProvider).text,
+        specialInstructions: _ref
+            .read(specialInstructionsControllerProvider)
+            .text,
         paymentProvider: paymentProvider,
       );
 
@@ -180,13 +152,13 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
   String _getPaymentProviderString(int method) {
     switch (method) {
       case 0:
-        return 'visa';
+        return 'stripe';
       case 1:
-        return 'new_card';
+        return 'stripe'; // Add New Card - still uses Stripe
       case 2:
         return 'paypal';
       default:
-        return 'visa';
+        return 'stripe';
     }
   }
 
@@ -203,8 +175,36 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
     }
   }
 
+  void submit() {
+    print("""
+Request Delivery Submission:
+- Package Name: ${_ref.read(packageNameControllerProvider).text}
+- Package Weight: ${_ref.read(packageWeightControllerProvider).text}
+- Supplier ID: ${_ref.read(supplierProvider)?.id}
+- Pickup Date: ${_ref.read(pickupDateControllerProvider).text} ${_ref.read(pickupTimeControllerProvider).text}
+- Technician Name: ${_ref.read(technicianNameControllerProvider).text}
+- Technician Phone: ${_ref.read(technicianPhoneControllerProvider).text}
+- Delivery Address: ${_ref.read(deliveryAddressControllerProvider).text}
+- Special Instructions: ${_ref.read(specialInstructionsControllerProvider).text}
+- Payment Provider: ${_getPaymentProviderString(_ref.read(paymentMethodProvider))}
+""");
+  }
+
   void resetState() {
     state = const RequestDeliveryInitial();
+  }
+
+  @override
+  void dispose() {
+    // Dispose all TextEditingControllers
+    _ref.read(packageNameControllerProvider).dispose();
+    _ref.read(packageWeightControllerProvider).dispose();
+    _ref.read(technicianNameControllerProvider).dispose();
+    _ref.read(technicianPhoneControllerProvider).dispose();
+    _ref.read(deliveryAddressControllerProvider).dispose();
+    _ref.read(specialInstructionsControllerProvider).dispose();
+    _ref.read(paymentProviderControllerProvider).dispose();
+    super.dispose();
   }
 }
 
@@ -215,9 +215,9 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
 // Dependency injection providers
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
-final requestDeliveryDatasourceProvider = Provider<RequestDeliveryDatasource>(
+final requestDeliveryDatasourceProvider = Provider<RequestDeliveryRemoteDatasource>(
   (ref) =>
-      RequestDeliveryDatasourceImpl(apiClient: ref.read(apiClientProvider)),
+      RequestDeliveryRemoteDatasourceImpl(apiClient: ref.read(apiClientProvider)),
 );
 
 final requestDeliveryRepositoryProvider = Provider<RequestDeliveryRepository>(
@@ -242,45 +242,6 @@ final requestDeliveryNotifierProvider =
         ref: ref,
       ),
     );
-
-// ---------------------------------------------------------------------------
-// Helper providers for form validation
-// ---------------------------------------------------------------------------
-
-final isFormValidProvider = Provider<bool>((ref) {
-  final packageInfo = ref.watch(packageInfoProvider);
-  final senderInfo = ref.watch(senderInfoProvider);
-  final receiverInfo = ref.watch(receiverInfoProvider);
-
-  // Check if required fields are filled
-  final hasPackageName = packageInfo['name']?.isNotEmpty ?? false;
-  final hasWeight = packageInfo['weight']?.isNotEmpty ?? false;
-  final hasSenderName = senderInfo['name']?.isNotEmpty ?? false;
-  final hasSenderPhone = senderInfo['phone']?.isNotEmpty ?? false;
-  final hasReceiverName = receiverInfo['name']?.isNotEmpty ?? false;
-  final hasReceiverAddress = receiverInfo['address']?.isNotEmpty ?? false;
-
-  return hasPackageName &&
-      hasWeight &&
-      hasSenderName &&
-      hasSenderPhone &&
-      hasReceiverName &&
-      hasReceiverAddress;
-});
-
-final deliveryDetailsProvider = Provider<Map<String, dynamic>>((ref) {
-  final packageInfo = ref.watch(packageInfoProvider);
-  final senderInfo = ref.watch(senderInfoProvider);
-  final receiverInfo = ref.watch(receiverInfoProvider);
-  final specialInstructions = ref.watch(specialInstructionsProvider);
-
-  return {
-    'package': packageInfo,
-    'sender': senderInfo,
-    'receiver': receiverInfo,
-    'specialInstructions': specialInstructions,
-  };
-});
 
 final suppliersProvider = Provider<List<SupplierEntity>?>((ref) {
   final state = ref.watch(requestDeliveryNotifierProvider);
