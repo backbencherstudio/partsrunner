@@ -1,10 +1,11 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:partsrunner/core/api_service/api_client.dart';
-import 'package:partsrunner/core/api_service/api_end_point.dart';
+import 'package:partsrunner/core/api_service/api_endpoint.dart';
 
 abstract class HomeRemoteDatasource {
-  Future<void> runnerGoOnline();
-  Future<void> runnerGoOffline();
+  /// for runner
+  Future<void> changeAvailability(bool isOnline);
+  Future<void> getDelivery();
 }
 
 class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
@@ -14,27 +15,34 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
     : _apiClient = apiClient;
 
   @override
-  Future<void> runnerGoOffline() async {
-    await Geolocator.requestPermission();
-    Position pos = await Geolocator.getCurrentPosition();
-    final response = await _apiClient.post(
-      ApiEndpoints.runnerGoOffline,
-      body: {"lat": pos.latitude, "lng": pos.longitude},
-    );
-    if (response['success']) {
-      return;
+  Future<void> changeAvailability(bool isOnline) async {
+    print('changeAvailability: $isOnline');
+    if (isOnline) {
+      await Geolocator.requestPermission();
+      Position pos = await Geolocator.getCurrentPosition();
+      print('Position: ${pos.latitude}, ${pos.longitude}');
+      final response = await _apiClient.post(
+        ApiEndpoints.runnerGoOffline,
+        body: {"lat": pos.latitude, "lng": pos.longitude},
+      );
+      if (response['success']) {
+        return;
+      } else {
+        throw Exception(response['message']);
+      }
     } else {
-      throw Exception(response['message']);
+      final response = await _apiClient.post(ApiEndpoints.runnerGoOnline);
+      if (response['success']) {
+        return;
+      } else {
+        throw Exception(response['message']);
+      }
     }
   }
-
+  
   @override
-  Future<void> runnerGoOnline() async {
-    final response = await _apiClient.post(ApiEndpoints.runnerGoOnline);
-    if (response['success']) {
-      return;
-    } else {
-      throw Exception(response['message']);
-    }
+  Future<void> getDelivery() async {
+    final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
+    
   }
 }

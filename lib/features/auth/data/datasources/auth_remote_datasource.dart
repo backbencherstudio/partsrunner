@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:partsrunner/core/api_service/api_client.dart';
-import 'package:partsrunner/core/api_service/api_end_point.dart';
+import 'package:partsrunner/core/api_service/api_endpoint.dart';
 import 'package:partsrunner/core/api_service/token_storage.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/auth/data/models/user_model.dart';
@@ -87,7 +87,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         response['authorization'] != null) {
       final auth = response['authorization'];
       final accessToken = auth['access_token'] as String;
-
+      print('Access Token: $accessToken');
       // Store token
       final tokenStorage = TokenStorage();
       await tokenStorage.saveToken(accessToken);
@@ -278,7 +278,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String vehicleModel,
     required String vehicleIdentificationNumber,
   }) async {
-    print("$userId\n$vehicleType\n$vehicleModel\n$vehicleIdentificationNumber");
     final response = await _apiClient.post(
       ApiEndpoints.runnerCreate,
       body: {
@@ -288,9 +287,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'vehicle_identification_number': vehicleIdentificationNumber,
       },
     );
-    print(response);
     if (response is Map<String, dynamic> && response['success'] == true) {
-      print("Runner created successfully");
       return;
     } else {
       throw Exception(response['message'] ?? 'Failed to create runner');

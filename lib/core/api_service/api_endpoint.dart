@@ -20,11 +20,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ApiEndpoints {
   ApiEndpoints._();
 
+  static final bool _isLocal = true;
+
   // ─────────────────────────────────────────
   // BASE URL (loaded from .env)
   // ─────────────────────────────────────────
-  static String get baseUrl =>
-      dotenv.env['BASE_URL'] ?? 'https://danweimer.pixelstack.cloud';
+  static String get baseUrl => _isLocal
+      ? 'https://wall-charleston-carolina-exercise.trycloudflare.com'
+      : dotenv.env['BASE_URL'] ??
+            'https://wall-charleston-carolina-exercise.trycloudflare.com';
 
   // ─────────────────────────────────────────
   // AUTH
@@ -58,6 +62,8 @@ class ApiEndpoints {
   // ─────────────────────────────────────────
   static String get contractorDeliveries =>
       '$baseUrl/api/contractor/deliveries'; // POST, GET
+  static String get contractorSuppliers =>
+      '$baseUrl/api/contractor/suppliers';
   static String get contractorDeliveriesHome =>
       '$baseUrl/api/contractor/deliveries/home';
   static String get contractorDeliveriesCurrentShipping =>

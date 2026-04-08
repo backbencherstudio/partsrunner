@@ -1,25 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
+import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
 
-class FloatingCard extends StatefulWidget {
+class FloatingCard extends ConsumerStatefulWidget {
   const FloatingCard({super.key, this.isContactor = false});
 
   final bool isContactor;
 
   @override
-  State<FloatingCard> createState() => _FloatingCardState();
+  ConsumerState<FloatingCard> createState() => _FloatingCardState();
 }
 
-class _FloatingCardState extends State<FloatingCard> {
+class _FloatingCardState extends ConsumerState<FloatingCard> {
   bool _pushNotificationEnabled = false;
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
@@ -135,6 +138,10 @@ class _FloatingCardState extends State<FloatingCard> {
                         setState(() {
                           _pushNotificationEnabled = value;
                         });
+                        // value ?
+                        ref
+                            .read(homeNotifierProvider.notifier)
+                            .changeAvailability(value);
                       },
                     ),
                   ],

@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/request_delivery/presentation/providers/request_delivery_provider.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({super.key});
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final deliveryState = ref.watch(requestDeliveryNotifierProvider);
+    final isFormValid = ref.watch(isFormValidProvider);
+    final deliveryDetails = ref.watch(deliveryDetailsProvider);
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
-  int _selectedPaymentMethod = 0; // 0: Visa, 1: Add New Card, 2: Paypal
+    ref.listen<RequestDeliveryState>(requestDeliveryNotifierProvider, (
+      previous,
+      next,
+    ) {
+      if (next is RequestDeliverySuccess) {
+        _showSuccessBottomSheet(context, ref);
+      } else if (next is RequestDeliveryError) {
+        _showErrorSnackBar(context, next.message);
+      }
+    });
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -21,7 +31,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () {},
+          onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Checkout',
@@ -38,12 +48,20 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             const SizedBox(height: 16),
             _buildDetailColumn(
               'From',
-              '2715 Ash Dr. San Jose, South Dakota 83475',
+              deliveryDetails['sender']?['address'] ??
+                  '2715 Ash Dr. San Jose, South Dakota 83475',
             ),
             const SizedBox(height: 16),
-            _buildDetailColumn('To', '2464 Royal Ln. Mesa, New Jersey 45463'),
+            _buildDetailColumn(
+              'To',
+              deliveryDetails['receiver']?['address'] ??
+                  '2464 Royal Ln. Mesa, New Jersey 45463',
+            ),
             const SizedBox(height: 16),
-            _buildDetailColumn('Package Weight', '2.3 KG'),
+            _buildDetailColumn(
+              'Package Weight',
+              '${deliveryDetails['package']?['weight'] ?? '2.3'} KG',
+            ),
             const SizedBox(height: 24),
             Divider(color: Colors.grey[300]),
             const SizedBox(height: 16),
@@ -70,6 +88,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               subtitle: 'Expired on 12/25',
               icon: Icons.credit_card,
               iconColor: Colors.blue,
+              ref: ref,
             ),
             const SizedBox(height: 12),
             _buildPaymentOption(
@@ -77,7 +96,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               title: 'Add New Card',
               icon: Icons.credit_card_outlined,
               iconColor: Colors.deepOrange,
-              onTap: _showAddNewCardBottomSheet,
+              onTap: () => _showAddNewCardBottomSheet(context),
+              ref: ref,
             ),
             const SizedBox(height: 12),
             _buildPaymentOption(
@@ -85,6 +105,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               title: 'Paypal',
               icon: Icons.paypal,
               iconColor: Colors.blue[800],
+              ref: ref,
             ),
             const SizedBox(height: 40),
           ],
@@ -94,22 +115,36 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: ElevatedButton(
-            onPressed: _showSuccessBottomSheet,
+            onPressed: (deliveryState is RequestDeliveryLoading || !isFormValid)
+                ? null
+                : () => _submitDeliveryRequest(context, ref),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
+              backgroundColor:
+                  (deliveryState is RequestDeliveryLoading || !isFormValid)
+                  ? Colors.grey
+                  : Colors.deepOrange,
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: const Text(
-              'Pay Now',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
+            child: deliveryState is RequestDeliveryLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text(
+                    'Pay Now',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -187,20 +222,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     required IconData icon,
     Color? iconColor,
     VoidCallback? onTap,
+    required WidgetRef ref,
   }) {
-    bool isSelected = _selectedPaymentMethod == index;
+    bool isSelected = index == ref.watch(paymentMethodProvider);
     return GestureDetector(
       onTap: () {
-        setState(() {
-          _selectedPaymentMethod = index;
-        });
+        ref.read(paymentMethodProvider.notifier).state = index;
         if (onTap != null) onTap();
       },
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.deepOrange.withOpacity(0.05)
+              ? Colors.deepOrange.withValues(alpha: 0.05)
               : Colors.white,
           border: Border.all(
             color: isSelected ? Colors.deepOrange : Colors.grey[300]!,
@@ -245,7 +279,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _showAddNewCardBottomSheet() {
+  void _showAddNewCardBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -377,7 +411,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _showSuccessBottomSheet() {
+  void _submitDeliveryRequest(BuildContext context, WidgetRef ref) {
+    ref.read(requestDeliveryNotifierProvider.notifier).submitDeliveryRequest();
+  }
+
+  void _showSuccessBottomSheet(BuildContext context, WidgetRef ref) {
+    final deliveryDetails = ref.watch(deliveryDetailsProvider);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -402,7 +442,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-              // Placeholder for the Box Image
               Stack(
                 alignment: Alignment.topRight,
                 children: [
@@ -443,9 +482,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   children: [
                     _buildTrackingDetailRow('Tracking ID:', 'SND-23901823'),
                     const SizedBox(height: 8),
-                    _buildTrackingDetailRow('From:', 'Melbourne, VIC 3000'),
+                    _buildTrackingDetailRow(
+                      'From:',
+                      deliveryDetails['sender']?['address'] ??
+                          'Melbourne, VIC 3000',
+                    ),
                     const SizedBox(height: 8),
-                    _buildTrackingDetailRow('Send to:', 'Jakarta Pusat'),
+                    _buildTrackingDetailRow(
+                      'Send to:',
+                      deliveryDetails['receiver']?['address'] ??
+                          'Jakarta Pusat',
+                    ),
                     const SizedBox(height: 8),
                     _buildTrackingDetailRow('Pickup method:', 'Runner Pickup'),
                   ],
@@ -455,7 +502,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => context.goNamed(AppRouteNames.bottomNav),
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.goNamed(AppRouteNames.bottomNav);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepOrange,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -478,6 +528,22 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         );
       },
+    );
+  }
+
+  void _showErrorSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+        action: SnackBarAction(
+          label: 'Dismiss',
+          textColor: Colors.white,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
+        ),
+      ),
     );
   }
 
