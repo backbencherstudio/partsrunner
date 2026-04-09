@@ -62,8 +62,9 @@ class ApiEndpoints {
   // ─────────────────────────────────────────
   static String get contractorDeliveries =>
       '$baseUrl/api/contractor/deliveries'; // POST, GET
-  static String get contractorSuppliers =>
-      '$baseUrl/api/contractor/suppliers';
+  static String get contractorActiveTracking =>
+      '$baseUrl/api/contractor/deliveries/active-tracking';
+  static String get contractorSuppliers => '$baseUrl/api/contractor/suppliers';
   static String get contractorDeliveriesHome =>
       '$baseUrl/api/contractor/deliveries/home';
   static String get contractorDeliveriesCurrentShipping =>

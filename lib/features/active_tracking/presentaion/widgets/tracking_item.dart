@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/order_tracker.dart';
+import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 
 class TrackingItem extends StatelessWidget {
-  final Map<String, dynamic> item;
+  final ActiveDeliveryModel item;
 
   const TrackingItem({super.key, required this.item});
 
@@ -15,17 +16,17 @@ class TrackingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = item['name'] as String;
-    final id = item['id'] as String;
-    final runner = item['runner'] as String;
-    final supplier = item['supplier'] as String;
-    final price = item['price'] as String;
-    final eta = item['eta'] as String;
-    final status = item['status'] as String;
-    final statusColor = item['statusColor'] as Color;
-    final progress = (item['progress'] as num).toDouble();
-    final message = item['message'] as String? ?? '';
-    final showTimer = item['showTimer'] as bool? ?? false;
+    final name = item.packageName;
+    final id = item.id;
+    final runner = item.runner.id;
+    final supplier = item.supplier.name;
+    final price = item.totalAmount;
+    final eta = "item";
+    final status = item.status;
+    final statusColor = Colors.greenAccent;
+    final progress = '';
+    final message = '';
+    final showTimer = false;
 
     final hasMessage = message.trim().isNotEmpty;
 
@@ -191,7 +192,7 @@ class TrackingItem extends StatelessWidget {
                 ),
               ),
             ] else ...[
-              OrderTracker(status: _getStatus(progress)),
+              OrderTracker(status: _getStatus(20)),
             ],
 
             const SizedBox(height: 20),

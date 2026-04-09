@@ -18,21 +18,21 @@ class ContactorHomeWidget extends StatelessWidget {
       child: Column(
         children: [
           SectionHeader(title: "Current Shipping", viewAll: () {}),
-          16.verticalSpace,
-          TrackingItem(
-            item: const {
-              "name": "Apple Watch Series 8",
-              "id": "VTY7162E",
-              "runner": "Michael S.",
-              "supplier": "Auto Supply Co.",
-              "price": "\$125.00",
-              "eta": "12 mins",
-              "status": "In Progress",
-              "statusColor": Colors.green,
-              "progress": 0.66,
-              "message": "",
-            },
-          ),
+          // 16.verticalSpace,
+          // TrackingItem(
+          //   item: const {
+          //     "name": "Apple Watch Series 8",
+          //     "id": "VTY7162E",
+          //     "runner": "Michael S.",
+          //     "supplier": "Auto Supply Co.",
+          //     "price": "\$125.00",
+          //     "eta": "12 mins",
+          //     "status": "In Progress",
+          //     "statusColor": Colors.green,
+          //     "progress": 0.66,
+          //     "message": "",
+          //   },
+          // ),
           24.verticalSpace,
           SectionHeader(title: "Recent Shipping", viewAll: () {}),
           16.verticalSpace,
