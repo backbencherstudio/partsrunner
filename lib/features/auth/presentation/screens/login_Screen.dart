@@ -24,10 +24,69 @@ class LoginScreen extends ConsumerStatefulWidget {
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
+  void dispose() {
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _submit() {
+    if (!_formKey.currentState!.validate()) return;
+
+    final authMethod = ref.read(authMethodProvider);
+    final identifier = authMethod == AuthMethod.phone
+        ? _phoneController.text.trim()
+        : _emailController.text.trim();
+
+    ref
+        .read(authNotifierProvider.notifier)
+        .login(identifier: identifier, password: _passwordController.text);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Listen for auth state changes and react accordingly
+    ref.listen<AsyncValue<AuthState>>(authNotifierProvider, (prev, next) {
+      next.whenData((state) {
+        if (state is AuthSuccess) {
+          ref.read(authNotifierProvider.notifier).resetState();
+          context.goNamed(
+            AppRouteNames.message,
+            extra: {
+              'title': 'Success',
+              'message':
+                  'Nice to see you again. Get your parts delivered with tracking parts in real-time!',
+              'imagePath': 'assets/icons/success.png',
+              'buttonText': 'Get Started',
+              'routeName': AppRouteNames.bottomNav,
+            },
+          );
+        } else if (state is AuthError) {
+          ref.read(authNotifierProvider.notifier).resetState();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      });
+    });
+
+    final authAsync = ref.watch(authNotifierProvider);
+    final isLoading = authAsync.isLoading;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -43,18 +102,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     subtitle: "Login to your account",
                   ),
                   20.verticalSpace,
-                  AuthMethodWidget(),
+                  const AuthMethodWidget(),
                   24.verticalSpace,
+
+                  // Email / Phone field (switches on auth method)
                   Consumer(
                     builder: (context, ref, child) {
                       final state = ref.watch(authMethodProvider);
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               state == AuthMethod.email ? "Email" : "Phone",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -62,7 +124,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           8.verticalSpace,
                           state == AuthMethod.phone
-                              ? MobilePhoneField()
+                              ? MobilePhoneField(
+                                  phoneController: _phoneController,
+                                )
                               : CustomTextField(
                                   hintText: "Enter your email",
                                   isPassword: false,
@@ -92,6 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ),
+                  8.verticalSpace,
                   CustomTextField(
                     hintText: "Enter your password",
                     isPassword: true,
@@ -126,7 +191,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       : Icons.circle_outlined,
                                 ),
                                 4.horizontalSpace,
-                                Text("Remember me"),
+                                const Text("Remember me"),
                               ],
                             ),
                           );
@@ -136,7 +201,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         onTap: () {
                           context.goNamed(AppRouteNames.forgetPassword);
                         },
-                        child: Text(
+                        child: const Text(
                           "Forgot password?",
                           style: TextStyle(color: AppColor.primary),
                         ),
@@ -147,46 +212,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   24.verticalSpace,
 
                   CustomButton(
-                    text: "Continue",
-                    submit: () {
-                      context.goNamed(
-                        AppRouteNames.message,
-                        extra: {
-                          'title': 'Success',
-                          'message':
-                              'Nice to see you again. Get your parts delivered with tracking parts in real-time!',
-                          'imagePath': 'assets/icons/success.png',
-                          'buttonText': 'Get Started',
-                          'routeName': AppRouteNames.bottomNav,
-                        },
-                      );
-                    },
-                    backgroundColor: Color(0xffFF4000),
+                    text: isLoading ? "Please wait..." : "Continue",
+                    submit: isLoading ? null : _submit,
+                    backgroundColor: const Color(0xffFF4000),
                     textColor: Colors.white,
                   ),
                   32.verticalSpace,
-                  OrDivider(),
+                  const OrDivider(),
                   24.verticalSpace,
                   CustomButton(
                     icon: Image.asset("assets/icons/google_icon.png"),
-                    text: "Sign up with Google",
-                    submit: () {
-                      context.goNamed(AppRouteNames.bottomNav);
-                    },
-                    backgroundColor: Color(0x080e1e0d).withValues(alpha: 0.05),
+                    text: "Sign in with Google",
+                    submit: isLoading
+                        ? null
+                        : () {
+                            context.goNamed(AppRouteNames.bottomNav);
+                          },
+                    backgroundColor: const Color(
+                      0x080e1e0d,
+                    ).withValues(alpha: 0.05),
                     textColor: Colors.black,
                   ),
                   24.verticalSpace,
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: "Don't have an account? ",
                           style: TextStyle(color: Colors.black),
                         ),
                         TextSpan(
                           text: "Sign Up",
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0xffFF4000),
                             fontWeight: FontWeight.bold,
                           ),

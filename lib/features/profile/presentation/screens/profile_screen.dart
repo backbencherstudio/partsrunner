@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/services/api_service/token_storage.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
@@ -78,7 +79,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Divider(),
                 _profileTab("assets/images/logout.png", "Log out", () async {
                   ref.invalidate(bottomNavProvider);
-                  context.goNamed(AppRouteNames.login);
+                  final tokenStorage = TokenStorage();
+                  await tokenStorage.removeToken();
+                  if (context.mounted) {
+                    context.goNamed(AppRouteNames.login);
+                  }
                 }),
                 Divider(),
               ],

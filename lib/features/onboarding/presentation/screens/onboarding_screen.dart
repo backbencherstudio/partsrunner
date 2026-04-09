@@ -130,7 +130,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       curve: Curves.easeIn,
                     );
                   } else {
-                    context.goNamed(AppRouteNames.selectRole);
+                    context.goNamed(AppRouteNames.login);
                   }
                 },
                 child: Text(

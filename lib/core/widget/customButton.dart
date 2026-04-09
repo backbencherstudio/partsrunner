@@ -5,22 +5,24 @@ class CustomButton extends StatelessWidget {
   final String text;
   final Color? backgroundColor;
   final Color? textColor;
-  final VoidCallback submit;
+  final VoidCallback? submit;
   final Widget? icon;
   final double? borderRadius;
   final Border? border;
   final double? textSize;
+  final EdgeInsetsGeometry? margin;
 
   const CustomButton({
     super.key,
     required this.text,
     this.backgroundColor,
     this.textColor,
-    required this.submit,
+    this.submit,
     this.icon,
     this.borderRadius,
     this.border,
     this.textSize,
+    this.margin,
   });
 
   @override
@@ -28,8 +30,9 @@ class CustomButton extends StatelessWidget {
     return GestureDetector(
       onTap: submit,
       child: Container(
+        margin: margin,
         width: MediaQuery.of(context).size.width * 0.9,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
           color: backgroundColor,

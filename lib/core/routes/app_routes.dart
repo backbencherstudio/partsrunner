@@ -5,7 +5,7 @@ import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
 import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
-import 'package:partsrunner/features/activeTracking/presentaion/screen/active_tracking_screen.dart';
+import 'package:partsrunner/features/active_tracking/presentaion/screen/active_tracking_screen.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
@@ -15,8 +15,8 @@ import 'package:partsrunner/features/auth/presentation/screens/otp_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
-import 'package:partsrunner/features/checkout/presentation/screens/checkout_screen.dart';
-import 'package:partsrunner/features/home/presentaion/screens/home_screen.dart';
+import 'package:partsrunner/features/request_delivery/presentation/screens/checkout_screen.dart';
+import 'package:partsrunner/features/home/presentation/screens/home_screen.dart';
 import 'package:partsrunner/features/job_details/presentation/screens/active_job_details_screen.dart';
 import 'package:partsrunner/features/job_details/presentation/screens/job_details_screen.dart';
 import 'package:partsrunner/features/my_order/presentation/screens/my_order_screen.dart';
@@ -29,7 +29,7 @@ import 'package:partsrunner/features/profile/presentation/screens/edit_profile_s
 import 'package:partsrunner/features/profile/presentation/screens/payment_management_screen.dart';
 import 'package:partsrunner/features/profile/presentation/screens/profile_screen.dart';
 import 'package:partsrunner/features/profile/presentation/screens/settings_screen.dart';
-import 'package:partsrunner/features/request_new_delivery/presentation/screens/request_new_delivery_screen.dart';
+import 'package:partsrunner/features/request_delivery/presentation/screens/request_delivery_screen.dart';
 import 'package:partsrunner/features/search/presentation/screens/search_result_screen.dart';
 import 'package:partsrunner/features/splash/presentation/screens/splash_screen.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/transaction_details_screen.dart';
@@ -101,8 +101,15 @@ class AppRoutes {
           GoRoute(
             path: 'otp',
             name: AppRouteNames.otp,
-            builder: (context, state) =>
-                OtpScreen(previousRoute: state.extra as String? ?? ''),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return OtpScreen(
+                previousRoute: extra?['previousRoute'] ?? '',
+                email: extra?['email'] ?? '',
+                phone: extra?['phone'] ?? '',
+                countryCode: extra?['countryCode'] ?? '',
+              );
+            },
           ),
           GoRoute(
             path: 'completeInfo',
@@ -122,7 +129,15 @@ class AppRoutes {
           GoRoute(
             path: 'newPassword',
             name: AppRouteNames.newPassword,
-            builder: (context, state) => const NewPasswordScreen(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NewPasswordScreen(
+                email: extra?['email'] ?? '',
+                phone: extra?['phone'] ?? '',
+                countryCode: extra?['countryCode'] ?? '',
+                otp: extra?['otp'] ?? '',
+              );
+            },
           ),
         ],
       ),
@@ -142,7 +157,7 @@ class AppRoutes {
           GoRoute(
             path: 'requestNewDelivery',
             name: AppRouteNames.requestNewDelivery,
-            builder: (context, state) => const RequestNewDeliveryScreen(),
+            builder: (context, state) => const RequestDeliveryScreen(),
           ),
           GoRoute(
             path: 'checkout',

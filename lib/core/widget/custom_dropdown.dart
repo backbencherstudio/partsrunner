@@ -7,6 +7,9 @@ class CustomDropdown<T> extends StatelessWidget {
   final void Function(T?)? onChanged;
   final String? Function(T?)? validator;
   final Widget? prefix;
+  final VoidCallback? onReload;
+  final bool isLoading;
+  final String? error;
 
   const CustomDropdown({
     super.key,
@@ -16,10 +19,75 @@ class CustomDropdown<T> extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.prefix,
+    this.onReload,
+    this.isLoading = false,
+    this.error,
   });
 
   @override
   Widget build(BuildContext context) {
+        if (isLoading) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade50,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.grey.shade600,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Loading...',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (error != null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.shade50,
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(color: Colors.red.shade200),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red.shade600, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Failed to load',
+                  style: TextStyle(color: Colors.red.shade600, fontSize: 14),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.refresh, color: Colors.red.shade600, size: 20),
+                onPressed: onReload,),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<T>(

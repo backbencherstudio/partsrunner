@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/core/services/api_service/token_storage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,11 +15,22 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(seconds: 1), () async {
       if (mounted) {
-        context.goNamed(AppRouteNames.onboarding);
+        final isLoggedIn = await _isLoggedin();
+        if (isLoggedIn) {
+          context.goNamed(AppRouteNames.bottomNav);
+        } else {
+          context.goNamed(AppRouteNames.onboarding);
+        }
       }
     });
+  }
+
+  Future<bool> _isLoggedin() async {
+    final tokenStorage = TokenStorage();
+    final token = await tokenStorage.getToken();
+    return token != null;
   }
 
   @override
