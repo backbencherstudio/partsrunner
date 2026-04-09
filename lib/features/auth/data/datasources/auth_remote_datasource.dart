@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:partsrunner/core/api_service/api_client.dart';
-import 'package:partsrunner/core/api_service/api_endpoint.dart';
-import 'package:partsrunner/core/api_service/token_storage.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api_service/token_storage.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/auth/data/models/user_model.dart';
 

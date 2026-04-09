@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/constant/auth_method.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';

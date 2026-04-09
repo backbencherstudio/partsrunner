@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/features/bottom_nav/data/datasources/bottom_nav_remote_datasource.dart';
 import 'package:partsrunner/features/bottom_nav/data/models/bottom_nav_model.dart';
 import 'package:partsrunner/features/bottom_nav/data/repositories/bottom_nav_repository_impl.dart';

@@ -7,11 +7,24 @@ import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/features/request_delivery/presentation/providers/request_delivery_provider.dart';
 import 'package:partsrunner/features/request_delivery/presentation/widgets/request_header.dart';
 
-class CheckoutScreen extends ConsumerWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
+}
+
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
+  @override
+  // void dispose() {
+  //   // Invalidating the notifier triggers RequestDeliveryNotifier.dispose(),
+  //   // which resets all form controllers and state providers.
+  //   ref.invalidate(requestDeliveryNotifierProvider);
+  //   super.dispose();
+  // }
+
+  @override
+  Widget build(BuildContext context) {
     final deliveryState = ref.watch(requestDeliveryNotifierProvider);
 
     ref.listen<RequestDeliveryState>(requestDeliveryNotifierProvider, (
@@ -19,7 +32,7 @@ class CheckoutScreen extends ConsumerWidget {
       next,
     ) {
       if (next is RequestDeliverySuccess) {
-        _showSuccessBottomSheet(context, ref);
+        _showSuccessBottomSheet(context);
       } else if (next is RequestDeliveryError) {
         _showErrorSnackBar(context, next.message);
       }
@@ -86,16 +99,14 @@ class CheckoutScreen extends ConsumerWidget {
               subtitle: 'Expired on 12/25',
               icon: Icons.credit_card,
               iconColor: Colors.blue,
-              ref: ref,
             ),
             const SizedBox(height: 12),
             _buildPaymentOption(
               index: 1,
-              title: 'Add New Card',
+              title: 'Card',
               icon: Icons.credit_card_outlined,
               iconColor: Colors.deepOrange,
-              onTap: () => _showAddNewCardBottomSheet(context),
-              ref: ref,
+              // onTap: () => _showAddNewCardBottomSheet(context),
             ),
             const SizedBox(height: 12),
             _buildPaymentOption(
@@ -103,7 +114,6 @@ class CheckoutScreen extends ConsumerWidget {
               title: 'Paypal',
               icon: Icons.paypal,
               iconColor: Colors.blue[800],
-              ref: ref,
             ),
             const SizedBox(height: 40),
           ],
@@ -118,7 +128,7 @@ class CheckoutScreen extends ConsumerWidget {
             backgroundColor: AppColor.primary,
             submit: (deliveryState is RequestDeliveryLoading)
                 ? null
-                : () => _submitDeliveryRequest(context, ref),
+                : () => _submitDeliveryRequest(context),
           ),
         ),
       ),
@@ -189,7 +199,6 @@ class CheckoutScreen extends ConsumerWidget {
     required IconData icon,
     Color? iconColor,
     VoidCallback? onTap,
-    required WidgetRef ref,
   }) {
     bool isSelected = index == ref.watch(paymentMethodProvider);
     return GestureDetector(
@@ -378,11 +387,13 @@ class CheckoutScreen extends ConsumerWidget {
     );
   }
 
-  void _submitDeliveryRequest(BuildContext context, WidgetRef ref) {
-    ref.read(requestDeliveryNotifierProvider.notifier).submitDeliveryRequest();
+  void _submitDeliveryRequest(BuildContext context) {
+    ref
+        .read(requestDeliveryNotifierProvider.notifier)
+        .submitDeliveryRequest(context);
   }
 
-  void _showSuccessBottomSheet(BuildContext context, WidgetRef ref) {
+  void _showSuccessBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

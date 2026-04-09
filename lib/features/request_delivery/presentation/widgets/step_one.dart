@@ -12,6 +12,8 @@ class StepOne extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final suppliers = ref.watch(suppliersProvider);
+    final date = ref.watch(pickupDateProvider);
+    final time = ref.watch(pickupTimeProvider);
     final suppliersLoading = ref.watch(suppliersLoadingProvider);
     final suppliersError = ref.watch(suppliersErrorProvider);
 
@@ -97,18 +99,19 @@ class StepOne extends ConsumerWidget {
               DateTime? pickedDate = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
-                firstDate: DateTime(2000),
+                firstDate: DateTime.now(),
                 lastDate: DateTime(2101),
               );
 
               if (pickedDate != null) {
-                ref.read(pickupDateControllerProvider).text =
-                    '${pickedDate.day}/${pickedDate.month}/${pickedDate.year}';
+                ref.read(pickupDateProvider.notifier).state = pickedDate;
               }
             },
             child: const Icon(Icons.calendar_today_outlined),
           ),
-          controller: ref.read(pickupDateControllerProvider),
+          controller: TextEditingController(
+            text: "${date.day}/${date.month}/${date.year}",
+          ),
         ),
         CustomTextField(
           readOnly: true,
@@ -122,13 +125,14 @@ class StepOne extends ConsumerWidget {
               );
 
               if (pickedTime != null) {
-                ref.read(pickupTimeControllerProvider).text =
-                    '${pickedTime.hourOfPeriod}:${pickedTime.minute} ${pickedTime.period.name.toUpperCase()}';
+                ref.read(pickupTimeProvider.notifier).state = pickedTime;
               }
             },
             child: const Icon(Icons.access_time),
           ),
-          controller: ref.read(pickupTimeControllerProvider),
+          controller: TextEditingController(
+            text: ref.read(pickupTimeProvider).format(context),
+          ),
         ),
       ],
     );

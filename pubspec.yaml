@@ -26,6 +26,7 @@ dependencies:
   flutter_dotenv: ^6.0.0
   geolocator: ^14.0.2
   date_picker_plus: ^7.0.0
+  flutter_stripe: ^12.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

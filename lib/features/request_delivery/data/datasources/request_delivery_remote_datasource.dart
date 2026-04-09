@@ -1,5 +1,7 @@
-import 'package:partsrunner/core/api_service/api_client.dart';
-import 'package:partsrunner/core/api_service/api_endpoint.dart';
+import 'package:flutter/material.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/payment_service/stripe_service.dart';
 import 'package:partsrunner/features/request_delivery/data/models/supplier_model.dart';
 
 import '../../domain/entities/supplier_entity.dart';
@@ -7,6 +9,7 @@ import '../../domain/entities/supplier_entity.dart';
 abstract class RequestDeliveryRemoteDatasource {
   Future<List<SupplierEntity>> getSuppliers();
   Future<void> createRequestDelivery({
+    required BuildContext context,
     required String packageName,
     required double weight,
     required String supplierId,
@@ -19,7 +22,8 @@ abstract class RequestDeliveryRemoteDatasource {
   });
 }
 
-class RequestDeliveryRemoteDatasourceImpl implements RequestDeliveryRemoteDatasource {
+class RequestDeliveryRemoteDatasourceImpl
+    implements RequestDeliveryRemoteDatasource {
   final ApiClient _apiClient;
 
   RequestDeliveryRemoteDatasourceImpl({required ApiClient apiClient})
@@ -39,6 +43,7 @@ class RequestDeliveryRemoteDatasourceImpl implements RequestDeliveryRemoteDataso
 
   @override
   Future<void> createRequestDelivery({
+    required BuildContext context,
     required String packageName,
     required double weight,
     required String supplierId,
@@ -50,7 +55,7 @@ class RequestDeliveryRemoteDatasourceImpl implements RequestDeliveryRemoteDataso
     required String paymentProvider,
   }) async {
     try {
-      await _apiClient.post(
+      final response = await _apiClient.post(
         ApiEndpoints.contractorDeliveries,
         body: {
           'package_name': packageName,
@@ -64,8 +69,31 @@ class RequestDeliveryRemoteDatasourceImpl implements RequestDeliveryRemoteDataso
           'payment_provider': paymentProvider,
         },
       );
+      print(response['data']);
+      if (!context.mounted) {
+        throw Exception("Widget is no longer mounted. Process cancelled.");
+      }
+      bool isSuccess = false;
+      if (paymentProvider == 'stripe') {
+        final clientSecret = response['data']['client_secret'];
+        isSuccess = await StripeService.instance.processPayment(
+          context: context,
+          clientSecret: clientSecret,
+        );
+      }
+      if (paymentProvider == 'paypal') {
+        // isSuccess = await PaypalService.instance.processPayment(
+        //   context: context,
+        //   clientSecret: clientSecret,
+        // );
+      }
+
+      if (isSuccess) {
+        return print("Payment Success");
+      }
+      throw Exception("Payment Failed");
     } catch (e) {
-      rethrow;
+      throw Exception("Payment Failed: $e");
     }
   }
 }

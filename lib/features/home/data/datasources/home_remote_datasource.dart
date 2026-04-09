@@ -1,6 +1,6 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:partsrunner/core/api_service/api_client.dart';
-import 'package:partsrunner/core/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
 import 'package:partsrunner/features/home/data/models/shipping_summary_model.dart';
 
 abstract class HomeRemoteDatasource {

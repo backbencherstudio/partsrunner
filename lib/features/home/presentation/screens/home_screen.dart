@@ -31,11 +31,10 @@ class HomeScreen extends ConsumerWidget {
                   userRole == UserRole.contractor
                       ? FloatingCard(isContactor: true)
                       : FloatingCard(),
+                  20.verticalSpace,
                   if (userRole == UserRole.contractor) ...[
-                    100.verticalSpace,
                     ContactorHomeWidget(),
                   ] else ...[
-                    80.verticalSpace,
                     RunnerHomeWidget(),
                   ],
                 ],

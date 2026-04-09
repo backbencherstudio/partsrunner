@@ -6,7 +6,7 @@ import 'package:partsrunner/features/request_delivery/domain/usecases/create_req
 import 'package:partsrunner/features/request_delivery/domain/repositories/request_delivery_repository.dart';
 import 'package:partsrunner/features/request_delivery/data/repositories/request_delivery_repository_impl.dart';
 import 'package:partsrunner/features/request_delivery/data/datasources/request_delivery_remote_datasource.dart';
-import 'package:partsrunner/core/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api_service/api_client.dart';
 
 // ---------------------------------------------------------------------------
 // UI state providers
@@ -15,6 +15,8 @@ import 'package:partsrunner/core/api_service/api_client.dart';
 final paymentMethodProvider = StateProvider<int>((ref) => 0);
 final isStepTwoProvider = StateProvider<bool>((ref) => false);
 final supplierProvider = StateProvider<SupplierEntity?>((ref) => null);
+final pickupDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final pickupTimeProvider = StateProvider<TimeOfDay>((ref) => TimeOfDay.now());
 
 // ---------------------------------------------------------------------------
 // TextEditingControllers
@@ -24,12 +26,6 @@ final packageNameControllerProvider = Provider<TextEditingController>(
   (ref) => TextEditingController(),
 );
 final packageWeightControllerProvider = Provider<TextEditingController>(
-  (ref) => TextEditingController(),
-);
-final pickupDateControllerProvider = Provider<TextEditingController>(
-  (ref) => TextEditingController(),
-);
-final pickupTimeControllerProvider = Provider<TextEditingController>(
   (ref) => TextEditingController(),
 );
 final technicianNameControllerProvider = Provider<TextEditingController>(
@@ -114,7 +110,7 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
     _ref.read(isStepTwoProvider.notifier).state = !_ref.read(isStepTwoProvider);
   }
 
-  Future<void> submitDeliveryRequest() async {
+  Future<void> submitDeliveryRequest(BuildContext context) async {
     state = const RequestDeliveryLoading();
 
     try {
@@ -124,12 +120,14 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
       final paymentProvider = _getPaymentProviderString(paymentMethod);
 
       await _createRequestDelivery(
+        context: context,
         packageName: _ref.read(packageNameControllerProvider).text,
         weight: double.parse(_ref.read(packageWeightControllerProvider).text),
         supplierId: _ref.read(supplierProvider)?.id ?? '',
-        pickupDate:
-            _ref.read(pickupDateControllerProvider).text +
-            _ref.read(pickupTimeControllerProvider).text,
+        pickupDate: formatToIso(
+          _ref.read(pickupDateProvider),
+          _ref.read(pickupTimeProvider),
+        ),
         technicianName: _ref.read(technicianNameControllerProvider).text,
         technicianPhone: _ref.read(technicianPhoneControllerProvider).text,
         deliveryAddress: _ref.read(deliveryAddressControllerProvider).text,
@@ -162,6 +160,21 @@ class RequestDeliveryNotifier extends StateNotifier<RequestDeliveryState> {
     }
   }
 
+  String formatToIso(DateTime date, TimeOfDay time) {
+    // 1. Create a new DateTime merging both variables
+    final mergedDateTime = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+
+    // 2. Convert to UTC and get the ISO string
+    // .toUtc() adds the 'Z' (Zulu/UTC) suffix
+    return mergedDateTime.toUtc().toIso8601String();
+  }
+
   Future<void> getSuppliers() async {
     state = const RequestDeliverySuppliersLoading();
 
@@ -181,7 +194,7 @@ Request Delivery Submission:
 - Package Name: ${_ref.read(packageNameControllerProvider).text}
 - Package Weight: ${_ref.read(packageWeightControllerProvider).text}
 - Supplier ID: ${_ref.read(supplierProvider)?.id}
-- Pickup Date: ${_ref.read(pickupDateControllerProvider).text} ${_ref.read(pickupTimeControllerProvider).text}
+- Pickup Date: ${_ref.read(pickupDateProvider)} ${_ref.read(pickupTimeProvider)}
 - Technician Name: ${_ref.read(technicianNameControllerProvider).text}
 - Technician Phone: ${_ref.read(technicianPhoneControllerProvider).text}
 - Delivery Address: ${_ref.read(deliveryAddressControllerProvider).text}
@@ -196,14 +209,18 @@ Request Delivery Submission:
 
   @override
   void dispose() {
-    // Dispose all TextEditingControllers
-    _ref.read(packageNameControllerProvider).dispose();
-    _ref.read(packageWeightControllerProvider).dispose();
-    _ref.read(technicianNameControllerProvider).dispose();
-    _ref.read(technicianPhoneControllerProvider).dispose();
-    _ref.read(deliveryAddressControllerProvider).dispose();
-    _ref.read(specialInstructionsControllerProvider).dispose();
-    _ref.read(paymentProviderControllerProvider).dispose();
+    _ref.read(supplierProvider.notifier).state = null;
+    _ref.read(pickupDateProvider.notifier).state = DateTime.now();
+    _ref.read(pickupTimeProvider.notifier).state = TimeOfDay.now();
+    _ref.read(paymentMethodProvider.notifier).state = 0;
+    _ref.read(isStepTwoProvider.notifier).state = false;
+    _ref.read(packageNameControllerProvider).clear();
+    _ref.read(packageWeightControllerProvider).clear();
+    _ref.read(technicianNameControllerProvider).clear();
+    _ref.read(technicianPhoneControllerProvider).clear();
+    _ref.read(deliveryAddressControllerProvider).clear();
+    _ref.read(specialInstructionsControllerProvider).clear();
+    _ref.read(paymentProviderControllerProvider).clear();
     super.dispose();
   }
 }
@@ -215,10 +232,12 @@ Request Delivery Submission:
 // Dependency injection providers
 final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
-final requestDeliveryDatasourceProvider = Provider<RequestDeliveryRemoteDatasource>(
-  (ref) =>
-      RequestDeliveryRemoteDatasourceImpl(apiClient: ref.read(apiClientProvider)),
-);
+final requestDeliveryDatasourceProvider =
+    Provider<RequestDeliveryRemoteDatasource>(
+      (ref) => RequestDeliveryRemoteDatasourceImpl(
+        apiClient: ref.read(apiClientProvider),
+      ),
+    );
 
 final requestDeliveryRepositoryProvider = Provider<RequestDeliveryRepository>(
   (ref) => RequestDeliveryRepositoryImpl(
