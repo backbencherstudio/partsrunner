@@ -26,9 +26,9 @@ class ApiEndpoints {
   // BASE URL (loaded from .env)
   // ─────────────────────────────────────────
   static String get baseUrl => _isLocal
-      ? 'https://wall-charleston-carolina-exercise.trycloudflare.com'
+      ? 'https://wind-limits-quite-legislative.trycloudflare.com'
       : dotenv.env['BASE_URL'] ??
-            'https://wall-charleston-carolina-exercise.trycloudflare.com';
+            'https://wind-limits-quite-legislative.trycloudflare.com';
 
   // ─────────────────────────────────────────
   // AUTH

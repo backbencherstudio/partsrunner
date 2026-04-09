@@ -4,7 +4,7 @@ import 'package:partsrunner/core/widget/custom_dropdown.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
 import 'package:partsrunner/features/request_delivery/domain/entities/supplier_entity.dart';
 import 'package:partsrunner/features/request_delivery/presentation/providers/request_delivery_provider.dart';
-import 'package:partsrunner/features/request_delivery/presentation/widgets/section_header.dart';
+import 'package:partsrunner/features/request_delivery/presentation/widgets/request_header.dart';
 
 class StepOne extends ConsumerWidget {
   const StepOne({super.key});
@@ -21,7 +21,7 @@ class StepOne extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        RequestInputHeader(title: 'Package Info'),
+        RequestHeader(title: 'Package Info'),
         CustomTextField(
           hintText: 'Enter package name',
           label: 'Package Name',
@@ -35,7 +35,7 @@ class StepOne extends ConsumerWidget {
 
         const SizedBox(height: 24),
 
-        RequestInputHeader(title: 'Sender'),
+        RequestHeader(title: 'Sender'),
         const Text(
           'Supply House Name',
           style: TextStyle(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class RequestInputHeader extends StatelessWidget {
-  const RequestInputHeader({super.key, required this.title});
+class RequestHeader extends StatelessWidget {
+  const RequestHeader({super.key, required this.title});
 
   final String title;
 

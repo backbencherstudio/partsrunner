@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/features/request_delivery/presentation/providers/request_delivery_provider.dart';
+import 'package:partsrunner/features/request_delivery/presentation/widgets/request_header.dart';
 
 class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({super.key});
@@ -42,8 +45,7 @@ class CheckoutScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle('Package Details'),
-            const SizedBox(height: 16),
+            RequestHeader(title: 'Package Details'),
             _buildDetailColumn(
               'From',
               "${ref.read(supplierProvider)?.location}, ${ref.read(supplierProvider)?.street}, ${ref.read(supplierProvider)?.city}, ${ref.read(supplierProvider)?.zipCode}",
@@ -62,7 +64,7 @@ class CheckoutScreen extends ConsumerWidget {
             Divider(color: Colors.grey[300]),
             const SizedBox(height: 16),
 
-            _buildSectionTitle('Price Details'),
+            RequestHeader(title: 'Price Details'),
             const SizedBox(height: 16),
             _buildPriceRow('1 X Package', '\$180.00'),
             const SizedBox(height: 8),
@@ -76,7 +78,7 @@ class CheckoutScreen extends ConsumerWidget {
             ), // Kept as $178.00 per the UI mockup
             const SizedBox(height: 24),
 
-            _buildSectionTitle('Payment Method'),
+            RequestHeader(title: 'Payment Method'),
             const SizedBox(height: 16),
             _buildPaymentOption(
               index: 0,
@@ -110,46 +112,16 @@ class CheckoutScreen extends ConsumerWidget {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: ElevatedButton(
-            onPressed: (deliveryState is RequestDeliveryLoading)
+          child: CustomButton(
+            text: "Pay Now",
+            textColor: AppColor.white,
+            backgroundColor: AppColor.primary,
+            submit: (deliveryState is RequestDeliveryLoading)
                 ? null
                 : () => _submitDeliveryRequest(context, ref),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: (deliveryState is RequestDeliveryLoading)
-                  ? Colors.grey
-                  : Colors.deepOrange,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: deliveryState is RequestDeliveryLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : const Text(
-                    'Pay Now',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 
