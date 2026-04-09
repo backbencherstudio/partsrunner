@@ -1,10 +1,11 @@
-// import 'package:partsrunner/core/api_service/api_client.dart';
-// import 'package:partsrunner/core/api_service/api_endpoint.dart';
+// import 'package:partsrunner/core/services/api_service/api_client.dart';
+// import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+// import 'package:partsrunner/features/my_order/data/models/order_model.dart';
 // import 'package:partsrunner/features/my_order/domain/entities/order_entity.dart';
 
 // abstract class OrderRemoteDatasource {
-//   Future<List<OrderEntity>> getCurrentShipping();
-//   Future<List<OrderEntity>> getRecentShipping();
+//   Future<List<OrderModel>> getCurrentShipping();
+//   Future<List<OrderModel>> getRecentShipping();
 //   Future<OrderEntity> getOrderDetails(String orderId);
 //   Future<void> updateOrder(String orderId);
 //   Future<void> cancelOrder(String orderId);
@@ -19,7 +20,7 @@
 //     final response = await _apiClient.get(
 //       ApiEndpoints.contractorDeliveriesCurrentShipping,
 //     );
-//     // return
+//     return 
 //   }
 
 //   @override
