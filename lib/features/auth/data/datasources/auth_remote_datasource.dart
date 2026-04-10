@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
 import 'package:partsrunner/core/services/api_service/token_storage.dart';
-import 'package:partsrunner/core/constant/user_role.dart';
-import 'package:partsrunner/features/auth/data/models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Remote data source for authentication.
 ///
@@ -17,10 +16,7 @@ import 'package:partsrunner/features/auth/data/models/user_model.dart';
 ///   final json = jsonDecode(response.body) as Map<String, dynamic>;
 ///   return UserModel.fromJson(json['user']);
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login({
-    required String identifier,
-    required String password,
-  });
+  Future<void> login({required String identifier, required String password});
 
   Future<void> signup({
     required String name,
@@ -33,10 +29,7 @@ abstract class AuthRemoteDataSource {
 
   Future<void> sendOtp({required String identifier});
 
-  Future<UserModel> verifyOtp({
-    required String identifier,
-    required String otp,
-  });
+  Future<void> verifyOtp({required String identifier, required String otp});
 
   Future<void> resetPassword({
     String? email,
@@ -73,7 +66,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     : _apiClient = apiClient;
 
   @override
-  Future<UserModel> login({
+  Future<void> login({
     required String identifier,
     required String password,
   }) async {
@@ -100,19 +93,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         );
         final payload = jsonDecode(payloadStr);
 
-        return UserModel(
-          id: payload['sub']?.toString() ?? 'unknown-id',
-          name: identifier.split('@').first,
-          email: payload['email']?.toString() ?? identifier,
-          phone: '',
-          role: UserRole.values.firstWhere(
-            (e) =>
-                e.name.toLowerCase() ==
-                (response['type']?.toString().toLowerCase() ?? 'contractor'),
-            orElse: () => UserRole.contractor,
-          ),
-        );
+        // return UserModel(
+        //   id: payload['sub']?.toString() ?? 'unknown-id',
+        //   name: identifier.split('@').first,
+        //   email: payload['email']?.toString() ?? identifier,
+        //   phone: '',
+        //   role: UserRole.values.firstWhere(
+        //     (e) =>
+        //         e.name.toLowerCase() ==
+        //         (response['type']?.toString().toLowerCase() ?? 'contractor'),
+        //     orElse: () => UserRole.contractor,
+        //   ),
+        // );
       }
+      return;
     }
 
     throw Exception(response['message'] ?? 'Invalid response from server');
@@ -198,7 +192,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<UserModel> verifyOtp({
+  Future<void> verifyOtp({
     required String identifier,
     required String otp,
   }) async {
@@ -208,17 +202,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
 
     if (response is Map<String, dynamic> &&
-        response['success'] == true &&
-        response['user'] != null) {
-      final userJson = response['user'];
-      return UserModel(
-        id: userJson['id']?.toString() ?? 'unknown-id',
-        name: userJson['name']?.toString() ?? '',
-        email: userJson['email']?.toString() ?? '',
-        phone: '', // Not returned in the verify OTP payload
-        role: UserRole
-            .contractor, // Defaulting as role is not included in verify payload
-      );
+        response['success'] == true) {
+      if (response['user'] != null) {
+        final userJson = response['user'];
+        final pref = await SharedPreferences.getInstance();
+        pref.setString('userId', userJson['id'].toString());
+      }
+      // return UserModel(
+      //   id: userJson['id']?.toString() ?? 'unknown-id',
+      //   name: userJson['name']?.toString() ?? '',
+      //   email: userJson['email']?.toString() ?? '',
+      //   phone: '', // Not returned in the verify OTP payload
+      //   role: UserRole
+      //       .contractor, // Defaulting as role is not included in verify payload
+      // );
+      return;
     }
 
     throw Exception(response['message'] ?? 'OTP verification failed');

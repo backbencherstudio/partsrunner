@@ -1,5 +1,4 @@
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -8,7 +7,7 @@ class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
 
   @override
-  Future<UserEntity> login({
+  Future<void> login({
     required String identifier,
     required String password,
   }) => _remoteDataSource.login(identifier: identifier, password: password);
@@ -35,7 +34,7 @@ class AuthRepositoryImpl implements AuthRepository {
       _remoteDataSource.sendOtp(identifier: identifier);
 
   @override
-  Future<UserEntity> verifyOtp({
+  Future<void> verifyOtp({
     required String identifier,
     required String otp,
   }) => _remoteDataSource.verifyOtp(identifier: identifier, otp: otp);

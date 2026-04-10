@@ -33,6 +33,6 @@ final getUserUsecaseProvider = Provider<GetUserUsecase>((ref) {
 
 // Provider for user data using the usecase
 final userProvider = FutureProvider<UserEntity>((ref) async {
-  print("User: ${ref.read(getUserUsecaseProvider).call()}");
-  return ref.read(getUserUsecaseProvider).call();
+  final user = await ref.read(getUserUsecaseProvider).call();
+  return user;
 });

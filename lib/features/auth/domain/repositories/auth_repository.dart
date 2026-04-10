@@ -1,8 +1,6 @@
-import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
-
 abstract class AuthRepository {
   /// Login with email/phone and password. Returns the authenticated [UserEntity].
-  Future<UserEntity> login({
+  Future<void> login({
     required String identifier, // email or phone
     required String password,
   });
@@ -21,7 +19,7 @@ abstract class AuthRepository {
   Future<void> sendOtp({required String identifier});
 
   /// Verify OTP code. Returns the authenticated [UserEntity].
-  Future<UserEntity> verifyOtp({
+  Future<void> verifyOtp({
     required String identifier,
     required String otp,
   });

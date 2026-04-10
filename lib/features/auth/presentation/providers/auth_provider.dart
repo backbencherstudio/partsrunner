@@ -4,7 +4,6 @@ import 'package:partsrunner/core/constant/auth_method.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:partsrunner/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/domain/repositories/auth_repository.dart';
 import 'package:partsrunner/features/auth/domain/usecases/create_contractor_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/create_runner_usecase.dart';
@@ -97,9 +96,8 @@ class AuthInitial extends AuthState {
 /// Auth operation succeeded.
 /// [user] is populated after login/signup; null for OTP/password-reset operations.
 class AuthSuccess extends AuthState {
-  const AuthSuccess({required this.message, this.user});
+  const AuthSuccess({required this.message});
   final String message;
-  final UserEntity? user;
 }
 
 /// An auth operation failed.
@@ -144,7 +142,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state =
         await AsyncValue.guard(() async {
           final user = await _login(identifier: identifier, password: password);
-          return AuthSuccess(message: 'Login successful', user: user);
+          return AuthSuccess(message: 'Login successful');
         }).then(
           (asyncValue) => asyncValue.when(
             data: (s) => AsyncData(s),
@@ -210,8 +208,8 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state =
         await AsyncValue.guard(() async {
           final user = await _verifyOtp(identifier: identifier, otp: otp);
-          pref.setString('userId', user.id.toString());
-          return AuthSuccess(message: 'OTP verified successfully', user: user);
+
+          return AuthSuccess(message: 'OTP verified successfully');
         }).then(
           (asyncValue) => asyncValue.when(
             data: (s) => AsyncData(s),
@@ -257,7 +255,11 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
-          await _forgotPassword(email: email, countryCode: countryCode, phone: phone);
+          await _forgotPassword(
+            email: email,
+            countryCode: countryCode,
+            phone: phone,
+          );
           return const AuthSuccess(message: 'Password reset');
         }).then(
           (asyncValue) => asyncValue.when(

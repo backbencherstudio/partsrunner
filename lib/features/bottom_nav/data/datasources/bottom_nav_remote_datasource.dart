@@ -16,7 +16,7 @@ class BottomNavRemoteDataSourceImpl implements BottomNavRemoteDatasource {
   Future<UserModel> getUser() async {
     try {
       final response = await _apiClient.get(ApiEndpoints.me);
-      print(response['data']);
+      print(response);
       if (response['data'] != null) {
         return UserModel.fromJson(response['data']);
       }

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/services/api_service/token_storage.dart';
-import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/wallet_screen.dart';
@@ -22,12 +21,13 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   Future<void> _handleLogout() async {
-    ref.invalidate(bottomNavProvider);
     final tokenStorage = TokenStorage();
     await tokenStorage.removeToken();
     if (mounted) {
       context.goNamed(AppRouteNames.login);
     }
+    ref.invalidate(bottomNavProvider);
+    ref.invalidate(userProvider);
   }
 
   @override
@@ -36,18 +36,19 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
     final userAsync = ref.watch(userProvider);
 
     // Handle logout based on userAsync state
-    if (userAsync.hasError) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _handleLogout();
-      });
-    }
+    // if (userAsync.hasError) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
+    //     _handleLogout();
+    //   });
+    // }
 
     return userAsync.when(
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (e, _) =>
-          Scaffold(body: Center(child: Text('Failed to load user data'))),
+          Scaffold(body: Center(child: Text('Failed to load user data: $e'))),
       data: (user) {
+        print(user.type);
         final screens = [
           HomeScreen(user: user),
           user.type == "CONTRACTOR"

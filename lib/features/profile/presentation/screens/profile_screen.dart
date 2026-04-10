@@ -54,7 +54,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             Column(
               children: [
                 _profileTab("assets/images/index1.png", "Edit Profile", () {
-                  context.pushNamed(AppRouteNames.editProfile, extra: widget.user);
+                  context.pushNamed(
+                    AppRouteNames.editProfile,
+                    extra: widget.user,
+                  );
                 }),
                 Divider(),
                 if (widget.user.type.toLowerCase() == UserRole.contractor.name)
@@ -79,12 +82,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 }),
                 Divider(),
                 _profileTab("assets/images/logout.png", "Log out", () async {
-                  ref.invalidate(bottomNavProvider);
                   final tokenStorage = TokenStorage();
                   await tokenStorage.removeToken();
-                  if (context.mounted) {
+                  if (mounted) {
                     context.goNamed(AppRouteNames.login);
                   }
+                  ref.invalidate(bottomNavProvider);
+                  ref.invalidate(userProvider);
                 }),
                 Divider(),
               ],
