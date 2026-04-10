@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:partsrunner/core/entities/delivery.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/order_tracker.dart';
-import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 
 enum Status { available, inProgress, atLocation }
 
@@ -86,7 +86,7 @@ final trackingTimerProvider =
 // ---------------------------------------------------------------------------
 
 class TrackingItem extends ConsumerStatefulWidget {
-  final ActiveDeliveryModel item;
+  final Delivery item;
 
   const TrackingItem({super.key, required this.item});
 

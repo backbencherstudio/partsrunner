@@ -64,30 +64,21 @@ class _ActiveTrackingScreenState extends ConsumerState<ActiveTrackingScreen> {
     // ];
     final activeDeliveryProvider = ref.watch(getActiveDeliveriesProvider);
 
-    return activeDeliveryProvider.when(
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (error, stackTrace) => Center(child: Text("Error: $error")),
-      data: (data) {
-        print(data);
-        return Scaffold(
-          backgroundColor: Color(0xFFF5F5F5),
-          appBar: AppBar(
-            title: Text("Active Tracking"),
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.black,
-            elevation: 0,
-            centerTitle: true,
-          ),
-          body: ListView.builder(
-            padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final item = data[index];
-              return TrackingItem(item: item);
-            },
-          ),
-        );
-      },
+    return Scaffold(
+      backgroundColor: Color(0xFFF5F5F5),
+      appBar: AppBar(title: Text("Active Tracking")),
+      body: activeDeliveryProvider.when(
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (error, stackTrace) => Center(child: Text("Error: $error")),
+        data: (data) => ListView.builder(
+          padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            final item = data[index];
+            return TrackingItem(item: item);
+          },
+        ),
+      ),
     );
   }
 }

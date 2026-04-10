@@ -31,7 +31,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(

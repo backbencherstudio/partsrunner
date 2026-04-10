@@ -42,8 +42,8 @@ class HomeHeader extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Colors.white,
                     ),
-                    child: const Text(
-                      "AB",
+                    child: Text(
+                      user.name.substring(0, 2).toUpperCase(),
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -55,7 +55,7 @@ class HomeHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Good morning, James!",
+                        "Good morning, ${user.name}!",
                         style: TextStyle(
                           color: Color(0xffF86816),
                           fontSize: 16,
@@ -63,7 +63,9 @@ class HomeHeader extends StatelessWidget {
                       ),
                       1.verticalSpace,
                       Text(
-                        "Find Your Runner?",
+                        user.type == UserRole.contractor.name
+                            ? "Find Your Runner?"
+                            : "Find Your Parts?", 
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

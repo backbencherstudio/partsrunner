@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/widget/tracking_item.dart';
 import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
 class OngoingScreen extends ConsumerWidget {
@@ -11,7 +12,14 @@ class OngoingScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ongoingOrderProvider = ref.watch(ongoingOrdersProvider);
     return ongoingOrderProvider.when(
-      data: (order) => ListView(),
+      data: (order) => ListView.builder(
+        padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+        itemCount: order.length,
+        itemBuilder: (context, index) {
+          final item = order[index];
+          return TrackingItem(item: item);
+        },
+      ),
       error: (error, stackTrace) => Center(child: Text(error.toString())),
       loading: () => Center(child: CircularProgressIndicator()),
     );

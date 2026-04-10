@@ -139,9 +139,7 @@ class _FloatingCardState extends ConsumerState<FloatingCard> {
                           _pushNotificationEnabled = value;
                         });
                         // value ?
-                        ref
-                            .read(homeNotifierProvider.notifier)
-                            .changeAvailability(value);
+                        ref.read(changeAvailabilityProvider(value));
                       },
                     ),
                   ],

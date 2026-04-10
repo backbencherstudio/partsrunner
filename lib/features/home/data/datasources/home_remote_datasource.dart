@@ -9,7 +9,7 @@ abstract class HomeRemoteDatasource {
   Future<void> getDeliveryRunner();
 
   /// for contractor
-  Future<void> getDeliveryContractor();
+  Future<ShippingSummaryModel> getDeliveryContractor();
   Future<void> getNewRequests();
 }
 

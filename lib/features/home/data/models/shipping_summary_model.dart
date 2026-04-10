@@ -1,28 +1,23 @@
-import 'package:partsrunner/features/home/domain/entities/shipping_item.dart';
+import 'package:partsrunner/core/entities/delivery.dart';
 
 /// Main Model for the Shipping Response
 class ShippingSummaryModel {
-  final List<ShippingItem> currentShipping;
-  final List<ShippingItem> recentShipping;
-  final Map<String, int> limits;
+  final List<Delivery> currentShipping;
+  final List<Delivery> recentShipping;
 
   ShippingSummaryModel({
     required this.currentShipping,
     required this.recentShipping,
-    required this.limits,
   });
 
   factory ShippingSummaryModel.fromJson(Map<String, dynamic> json) {
-    var data = json['data'];
     return ShippingSummaryModel(
-      currentShipping: (data['current_shipping'] as List)
-          .map((i) => ShippingItem.fromJson(i))
+      currentShipping: (json['current_shipping'] as List)
+          .map((i) => Delivery.fromJson(i))
           .toList(),
-      recentShipping: (data['recent_shipping'] as List)
-          .map((i) => ShippingItem.fromJson(i))
+      recentShipping: (json['recent_shipping'] as List)
+          .map((i) => Delivery.fromJson(i))
           .toList(),
-      limits: Map<String, int>.from(data['limits']),
     );
   }
 }
-

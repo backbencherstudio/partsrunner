@@ -31,23 +31,25 @@ class Delivery {
     this.liveTracking,
   });
 
-  Delivery.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    packageName = json['package_name'];
-    deliveryAddress = json['delivery_address'];
-    status = json['status'];
-    paymentStatus = json['payment_status'];
-    totalAmount = json['total_amount'];
-    estimatedDistanceKm = json['estimated_distance_km'];
-    estimatedTimeMin = json['estimated_time_min'];
-    updatedAt = json['updated_at'];
-    supplier = json['supplier'] != null
-        ? Supplier.fromJson(json['supplier'])
-        : null;
-    runner = json['runner'] != null ? Runner.fromJson(json['runner']) : null;
-    liveTracking = json['live_tracking'] != null
-        ? LiveTracking.fromJson(json['live_tracking'])
-        : null;
+  factory Delivery.fromJson(Map<String, dynamic> json) {
+    return Delivery(
+      id: json['id'],
+      packageName: json['package_name'],
+      deliveryAddress: json['delivery_address'],
+      status: json['status'],
+      paymentStatus: json['payment_status'],
+      totalAmount: json['total_amount'],
+      estimatedDistanceKm: json['estimated_distance_km'],
+      estimatedTimeMin: json['estimated_time_min'],
+      updatedAt: json['updated_at'],
+      supplier: json['supplier'] != null
+          ? Supplier.fromJson(json['supplier'])
+          : null,
+      runner: json['runner'] != null ? Runner.fromJson(json['runner']) : null,
+      liveTracking: json['live_tracking'] != null
+          ? LiveTracking.fromJson(json['live_tracking'])
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
