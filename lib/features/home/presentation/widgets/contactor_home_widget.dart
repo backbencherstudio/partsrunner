@@ -6,7 +6,7 @@ import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
 import 'package:partsrunner/features/home/presentation/widgets/section_header.dart';
-import 'package:partsrunner/features/active_tracking/presentaion/widgets/tracking_item.dart';
+import 'package:partsrunner/core/widget/tracking_item.dart';
 
 class ContactorHomeWidget extends StatelessWidget {
   const ContactorHomeWidget({super.key});

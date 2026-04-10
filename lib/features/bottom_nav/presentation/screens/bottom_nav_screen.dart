@@ -49,20 +49,12 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
           Scaffold(body: Center(child: Text('Failed to load user data'))),
       data: (user) {
         final screens = [
-          HomeScreen(
-            userRole: user.type == "CONTRACTOR"
-                ? UserRole.contractor
-                : UserRole.runner,
-          ),
+          HomeScreen(user: user),
           user.type == "CONTRACTOR"
               ? const ActiveTrackingScreen()
               : ActiveJobsScreen(),
           user.type == "CONTRACTOR" ? const MyOrderScreen() : WalletScreen(),
-          ProfileScreen(
-            userRole: user.type == "CONTRACTOR"
-                ? UserRole.contractor
-                : UserRole.runner,
-          ),
+          ProfileScreen(user: user),
         ];
 
         return Scaffold(

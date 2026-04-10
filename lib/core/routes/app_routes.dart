@@ -14,6 +14,7 @@ import 'package:partsrunner/features/auth/presentation/screens/new_password_scre
 import 'package:partsrunner/features/auth/presentation/screens/otp_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
+import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/request_delivery/presentation/screens/checkout_screen.dart';
 import 'package:partsrunner/features/home/presentation/screens/home_screen.dart';
@@ -147,7 +148,7 @@ class AppRoutes {
         path: '/home',
         name: AppRouteNames.home,
         builder: (context, state) =>
-            HomeScreen(userRole: state.extra as UserRole),
+            HomeScreen(user: state.extra as UserEntity),
         routes: [
           GoRoute(
             path: 'search',
@@ -241,7 +242,7 @@ class AppRoutes {
         path: '/profile',
         name: AppRouteNames.profile,
         builder: (context, state) =>
-            ProfileScreen(userRole: state.extra as UserRole),
+            ProfileScreen(user: state.extra as UserEntity),
         routes: [
           GoRoute(
             path: 'editProfile',

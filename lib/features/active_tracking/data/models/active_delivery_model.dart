@@ -1,53 +1,68 @@
 import 'package:partsrunner/core/entities/delivery.dart';
+import 'package:partsrunner/core/entities/live_tracking.dart';
 import 'package:partsrunner/core/entities/supplier.dart';
 import 'package:partsrunner/core/entities/runner.dart';
-import 'package:partsrunner/features/live_tracking/domain/entities/live_tracking.dart';
 
 class ActiveDeliveryModel extends Delivery {
   ActiveDeliveryModel({
-    required super.id,
-    required super.packageName,
-    required super.deliveryAddress,
-    required super.status,
-    required super.paymentStatus,
-    required super.totalAmount,
-    required super.updatedAt,
-    required super.supplier,
-    required super.runner,
-    required super.liveTracking,
+    super.id,
+    super.packageName,
+    super.deliveryAddress,
+    super.status,
+    super.paymentStatus,
+    super.totalAmount,
+    super.estimatedDistanceKm,
+    super.estimatedTimeMin,
+    super.updatedAt,
+    super.supplier,
+    super.runner,
+    super.liveTracking,
   });
 
-  factory ActiveDeliveryModel.fromJson(Map<String, dynamic> json) {
-    return ActiveDeliveryModel(
-      id: json['id'],
-      packageName: json['package_name'],
-      deliveryAddress: json['delivery_address'],
-      status: json['status'],
-      paymentStatus: json['payment_status'],
-      totalAmount: json['total_amount'],
-      updatedAt: DateTime.parse(json['updated_at']),
-      supplier: Supplier.fromJson(json['supplier']),
-      runner: Runner.fromJson(json['runner']),
-      liveTracking: LiveTracking.fromJson(json['live_tracking']),
-    );
+  ActiveDeliveryModel.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    packageName = json['package_name'];
+    deliveryAddress = json['delivery_address'];
+    status = json['status'];
+    paymentStatus = json['payment_status'];
+    totalAmount = json['total_amount'];
+    estimatedDistanceKm = json['estimated_distance_km'];
+    estimatedTimeMin = json['estimated_time_min'];
+    updatedAt = json['updated_at'];
+    supplier = json['supplier'] != null
+        ? Supplier.fromJson(json['supplier'])
+        : null;
+    runner =
+        json['runner'] != null ? Runner.fromJson(json['runner']) : null;
+    liveTracking = (json['live_tracking'] != null
+        ? LiveTracking.fromJson(json['live_tracking'])
+        : null);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'package_name': packageName,
-      'delivery_address': deliveryAddress,
-      'status': status,
-      'payment_status': paymentStatus,
-      'total_amount': totalAmount,
-      'updated_at': updatedAt.toIso8601String(),
-      'supplier': supplier.toJson(),
-      'runner': runner.toJson(),
-      'live_tracking': liveTracking.toJson(),
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['package_name'] = packageName;
+    data['delivery_address'] = deliveryAddress;
+    data['status'] = status;
+    data['payment_status'] = paymentStatus;
+    data['total_amount'] = totalAmount;
+    data['estimated_distance_km'] = estimatedDistanceKm;
+    data['estimated_time_min'] = estimatedTimeMin;
+    data['updated_at'] = updatedAt;
+    if (supplier != null) {
+      data['supplier'] = supplier!.toJson();
+    }
+    if (runner != null) {
+      data['runner'] = runner!.toJson();
+    }
+    if (liveTracking != null) {
+      data['live_tracking'] = liveTracking!.toJson();
+    }
+    return data;
   }
 
   static List<ActiveDeliveryModel> getActiveDeliveriesFromList(List<dynamic> jsonList) {
-    return jsonList.map((item) => ActiveDeliveryModel.fromJson(item)).toList();
-  }
+  return jsonList.map((item) => ActiveDeliveryModel.fromJson(item)).toList();
+}
 }

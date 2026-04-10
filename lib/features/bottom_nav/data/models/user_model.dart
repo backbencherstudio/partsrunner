@@ -1,7 +1,7 @@
-import 'package:partsrunner/features/bottom_nav/domain/entities/bottom_nav_entity.dart';
+import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
 
-class BottomNavModel extends BottomNavEntity {
-  const BottomNavModel({
+class UserModel extends UserEntity {
+  const UserModel({
     required super.id,
     required super.name,
     required super.email,
@@ -14,8 +14,8 @@ class BottomNavModel extends BottomNavEntity {
     required super.createdAt,
   });
 
-  factory BottomNavModel.fromEntity(BottomNavEntity entity) {
-    return BottomNavModel(
+  factory UserModel.fromEntity(UserEntity entity) {
+    return UserModel(
       id: entity.id,
       name: entity.name,
       email: entity.email,
@@ -29,7 +29,7 @@ class BottomNavModel extends BottomNavEntity {
     );
   }
 
-  BottomNavModel copyWith({
+  UserModel copyWith({
     String? id,
     String? name,
     String? email,
@@ -41,7 +41,7 @@ class BottomNavModel extends BottomNavEntity {
     DateTime? dateOfBirth,
     DateTime? createdAt,
   }) {
-    return BottomNavModel(
+    return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
@@ -55,8 +55,8 @@ class BottomNavModel extends BottomNavEntity {
     );
   }
 
-  factory BottomNavModel.fromJson(Map<String, dynamic> json) {
-    return BottomNavModel(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
       id: json['id'],
       name: json['name'],
       email: json['email'],

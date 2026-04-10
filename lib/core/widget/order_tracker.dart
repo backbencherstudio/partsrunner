@@ -54,15 +54,17 @@ class OrderTracker extends StatelessWidget {
                 _buildPoint(
                   isActive: status.index >= 0,
                   isCurrent: status == OrderStatus.pickedUp,
+                  isIcon: status == OrderStatus.pickedUp,
                 ),
                 _buildPoint(
                   isActive: status.index >= 1,
                   isCurrent: status == OrderStatus.enRoute,
-                  isIcon: true,
+                  isIcon: status == OrderStatus.enRoute,
                 ),
                 _buildPoint(
                   isActive: status.index >= 2,
                   isCurrent: status == OrderStatus.delivered,
+                  isIcon: status == OrderStatus.delivered,
                 ),
               ],
             ),

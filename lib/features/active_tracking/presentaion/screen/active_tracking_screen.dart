@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 import 'package:partsrunner/features/active_tracking/presentaion/providers/active_tracking_provider.dart';
-import 'package:partsrunner/features/active_tracking/presentaion/widgets/tracking_item.dart';
+import 'package:partsrunner/core/widget/tracking_item.dart';
 
 class ActiveTrackingScreen extends ConsumerStatefulWidget {
   const ActiveTrackingScreen({super.key});
@@ -83,7 +83,6 @@ class _ActiveTrackingScreenState extends ConsumerState<ActiveTrackingScreen> {
             itemCount: data.length,
             itemBuilder: (context, index) {
               final item = data[index];
-
               return TrackingItem(item: item);
             },
           ),

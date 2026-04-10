@@ -5,11 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/services/api_service/token_storage.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key, required this.userRole});
-  final UserRole userRole;
+  const ProfileScreen({super.key, required this.user});
+  final UserEntity user;
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -41,22 +42,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ),
             Text(
-              "S M Al Fuad Nur",
+              widget.user.name,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text("contact@alfuad.me"),
-
+            Text(widget.user.email),
+            16.verticalSpace,
             Column(
               children: [
                 _profileTab("assets/images/index1.png", "Edit Profile", () {
-                  context.pushNamed(AppRouteNames.editProfile);
+                  context.pushNamed(AppRouteNames.editProfile, extra: widget.user);
                 }),
                 Divider(),
-                if (widget.userRole == UserRole.contractor)
+                if (widget.user.type.toLowerCase() == UserRole.contractor.name)
                   _profileTab(
                     "assets/images/index2.png",
                     "Payment Management",
@@ -64,7 +65,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       context.pushNamed(AppRouteNames.paymentManagement);
                     },
                   ),
-                if (widget.userRole == UserRole.runner)
+                if (widget.user.type == UserRole.runner.name)
                   _profileTab(
                     "assets/images/index2.2.png",
                     "Delivery History",

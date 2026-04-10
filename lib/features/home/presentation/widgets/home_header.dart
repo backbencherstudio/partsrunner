@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key, required this.height});
+  const HomeHeader({super.key, required this.user});
 
-  final double height;
+  final UserEntity user;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: height,
+      height: user.type == UserRole.contractor.name ? 300.h : 280.h,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/images/header.png'),

@@ -1,9 +1,9 @@
 import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
-import 'package:partsrunner/features/bottom_nav/data/models/bottom_nav_model.dart';
+import 'package:partsrunner/features/bottom_nav/data/models/user_model.dart';
 
 abstract class BottomNavRemoteDatasource {
-  Future<BottomNavModel> getUser();
+  Future<UserModel> getUser();
 }
 
 class BottomNavRemoteDataSourceImpl implements BottomNavRemoteDatasource {
@@ -13,12 +13,12 @@ class BottomNavRemoteDataSourceImpl implements BottomNavRemoteDatasource {
     : _apiClient = apiClient;
 
   @override
-  Future<BottomNavModel> getUser() async {
+  Future<UserModel> getUser() async {
     try {
       final response = await _apiClient.get(ApiEndpoints.me);
       print(response['data']);
       if (response['data'] != null) {
-        return BottomNavModel.fromJson(response['data']);
+        return UserModel.fromJson(response['data']);
       }
       throw Exception('Failed to get user');
     } catch (e) {

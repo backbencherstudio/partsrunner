@@ -17,11 +17,9 @@ class ActiveDeliveriesRemoteDatasourceImpl
       final response = await _apiClient.get(
         ApiEndpoints.contractorActiveTracking,
       );
-      print("Active Deliveries: $response");
       return ActiveDeliveryModel.getActiveDeliveriesFromList(response['data']);
     } catch (e) {
-      print("Fetching Failed: $e");
-      rethrow;
+      throw Exception('Fetching failed: $e');
     }
   }
 }

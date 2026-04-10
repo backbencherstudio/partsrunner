@@ -1,4 +1,4 @@
-class BottomNavEntity {
+class UserEntity {
   final String id;
   final String name;
   final String email;
@@ -10,7 +10,7 @@ class BottomNavEntity {
   final DateTime? dateOfBirth;
   final DateTime createdAt;
 
-  const BottomNavEntity({
+  const UserEntity({
     required this.id,
     required this.name,
     required this.email,

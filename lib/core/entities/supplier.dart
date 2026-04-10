@@ -1,31 +1,24 @@
 class Supplier {
-  final String id;
-  final String name;
-  final String city;
-  final String street;
+  String? id;
+  String? name;
+  String? city;
+  String? street;
 
-  Supplier({
-    required this.id,
-    required this.name,
-    required this.city,
-    required this.street,
-  });
+  Supplier({this.id, this.name, this.city, this.street});
 
-  factory Supplier.fromJson(Map<String, dynamic> json) {
-    return Supplier(
-      id: json['id'],
-      name: json['name'],
-      city: json['city'],
-      street: json['street'],
-    );
+  Supplier.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    city = json['city'];
+    street = json['street'];
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'city': city,
-      'street': street,
-    };
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['city'] = city;
+    data['street'] = street;
+    return data;
   }
 }

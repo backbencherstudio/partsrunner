@@ -71,6 +71,10 @@ class ApiEndpoints {
       '$baseUrl/api/contractor/deliveries/current-shipping';
   static String get contractorDeliveriesRecentShipping =>
       '$baseUrl/api/contractor/deliveries/recent-shipping';
+  static String get contractorDeliveriesOngoing =>
+      '$baseUrl/api/contractor/deliveries/ongoing-deliveries';
+  static String get contractorDeliveriesCompleted =>
+      '$baseUrl/api/contractor/deliveries/completed-deliveries';
 
   /// GET, PATCH, DELETE
   static String contractorDeliveryById(String id) =>

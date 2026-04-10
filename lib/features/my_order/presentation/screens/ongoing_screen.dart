@@ -1,32 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
-class OngoingScreen extends StatelessWidget {
+class OngoingScreen extends ConsumerWidget {
   const OngoingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          _buildWaitingCard(() {
-            context.pushNamed(AppRouteNames.orderDetails);
-          }),
-          const SizedBox(height: 16),
-          _buildActiveDeliveryCard(true, () {
-            context.pushNamed(AppRouteNames.orderDetails);
-          }),
-          const SizedBox(height: 16),
-          _buildActiveDeliveryCard(false, () {
-            context.pushNamed(AppRouteNames.orderDetails);
-          }),
-          const SizedBox(height: 40),
-        ],
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ongoingOrderProvider = ref.watch(ongoingOrdersProvider);
+    return ongoingOrderProvider.when(
+      data: (order) => ListView(),
+      error: (error, stackTrace) => Center(child: Text(error.toString())),
+      loading: () => Center(child: CircularProgressIndicator()),
     );
+    // return Scaffold(
+    //   backgroundColor: Colors.white,
+    //   body: ListView(
+    //     padding: const EdgeInsets.symmetric(horizontal: 16),
+    //     children: [
+    //       _buildWaitingCard(() {
+    //         context.pushNamed(AppRouteNames.orderDetails);
+    //       }),
+    //       const SizedBox(height: 16),
+    //       _buildActiveDeliveryCard(true, () {
+    //         context.pushNamed(AppRouteNames.orderDetails);
+    //       }),
+    //       const SizedBox(height: 16),
+    //       _buildActiveDeliveryCard(false, () {
+    //         context.pushNamed(AppRouteNames.orderDetails);
+    //       }),
+    //       const SizedBox(height: 40),
+    //     ],
+    //   ),
+    // );
   }
 
   Widget _buildWaitingCard(void Function()? onTap) {
