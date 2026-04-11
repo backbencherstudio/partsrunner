@@ -1,4 +1,4 @@
-import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
   const UserModel({

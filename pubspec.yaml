@@ -28,6 +28,7 @@ dependencies:
   date_picker_plus: ^7.0.0
   flutter_stripe: ^12.5.0
   webview_flutter: ^4.13.1
+  flutter_secure_storage: ^10.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

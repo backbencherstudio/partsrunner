@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/services/api_service/token_storage.dart';
+import 'package:partsrunner/core/services/api_service/token_service.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
-import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
+import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key, required this.user});
@@ -82,13 +84,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 }),
                 Divider(),
                 _profileTab("assets/images/logout.png", "Log out", () async {
-                  final tokenStorage = TokenStorage();
-                  await tokenStorage.removeToken();
-                  if (mounted) {
-                    context.goNamed(AppRouteNames.login);
-                  }
+                  print("Logging out...");
+                  await TokenService.deleteAll();
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
                   ref.invalidate(bottomNavProvider);
                   ref.invalidate(userProvider);
+                  context.goNamed(AppRouteNames.login);
+                  print("Logged out successfully");
                 }),
                 Divider(),
               ],

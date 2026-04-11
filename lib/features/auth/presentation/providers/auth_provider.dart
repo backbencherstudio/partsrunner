@@ -2,12 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/constant/auth_method.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
+import 'package:partsrunner/core/services/api_service/token_service.dart';
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:partsrunner/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/domain/repositories/auth_repository.dart';
 import 'package:partsrunner/features/auth/domain/usecases/create_contractor_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/create_runner_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/forgot_password_usecase.dart';
+import 'package:partsrunner/features/auth/domain/usecases/get_user_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/login_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:partsrunner/features/auth/domain/usecases/send_otp_usecase.dart';
@@ -80,6 +83,10 @@ final _createRunnerUseCaseProvider = Provider<CreateRunnerUsecase>(
   (ref) => CreateRunnerUsecase(ref.watch(_authRepositoryProvider)),
 );
 
+final _getUserUseCaseProvider = Provider<GetUserUsecase>(
+  (ref) => GetUserUsecase(ref.watch(_authRepositoryProvider)),
+);
+
 // ---------------------------------------------------------------------------
 // Auth state
 // ---------------------------------------------------------------------------
@@ -142,6 +149,8 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state =
         await AsyncValue.guard(() async {
           final user = await _login(identifier: identifier, password: password);
+          // Refresh user provider after successful login
+          ref.invalidate(userProvider);
           return AuthSuccess(message: 'Login successful');
         }).then(
           (asyncValue) => asyncValue.when(
@@ -344,3 +353,12 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 final authNotifierProvider = AsyncNotifierProvider<AuthNotifier, AuthState>(
   AuthNotifier.new,
 );
+
+final userProvider = FutureProvider<UserEntity>((ref) async {
+  final token = await TokenService.getToken();
+  if (token == null) {
+    throw Exception('No token found');
+  }
+  final user = await ref.read(_getUserUseCaseProvider).call();
+  return user;
+});

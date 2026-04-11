@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/routes/app_route_paths.dart';
 import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
 import 'package:partsrunner/features/active_tracking/presentaion/screen/active_tracking_screen.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
@@ -14,7 +14,6 @@ import 'package:partsrunner/features/auth/presentation/screens/new_password_scre
 import 'package:partsrunner/features/auth/presentation/screens/otp_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/select_role_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/signup_screen.dart';
-import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/screens/bottom_nav_screen.dart';
 import 'package:partsrunner/features/request_delivery/presentation/screens/checkout_screen.dart';
 import 'package:partsrunner/features/home/presentation/screens/home_screen.dart';

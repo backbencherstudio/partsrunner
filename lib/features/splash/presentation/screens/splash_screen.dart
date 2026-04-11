@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
-import 'package:partsrunner/core/services/api_service/token_storage.dart';
+import 'package:partsrunner/core/services/api_service/token_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -28,8 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<bool> _isLoggedin() async {
-    final tokenStorage = TokenStorage();
-    final token = await tokenStorage.getToken();
+    final token = await TokenService.getToken();
     return token != null;
   }
 

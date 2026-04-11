@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/services/api_service/token_storage.dart';
-import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
+import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/wallet_screen.dart';
 import '../../../active_tracking/presentaion/screen/active_tracking_screen.dart';
 import '../../../home/presentation/screens/home_screen.dart';
@@ -20,27 +18,10 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 }
 
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
-  Future<void> _handleLogout() async {
-    final tokenStorage = TokenStorage();
-    await tokenStorage.removeToken();
-    if (mounted) {
-      context.goNamed(AppRouteNames.login);
-    }
-    ref.invalidate(bottomNavProvider);
-    ref.invalidate(userProvider);
-  }
-
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavProvider);
     final userAsync = ref.watch(userProvider);
-
-    // Handle logout based on userAsync state
-    // if (userAsync.hasError) {
-    //   WidgetsBinding.instance.addPostFrameCallback((_) {
-    //     _handleLogout();
-    //   });
-    // }
 
     return userAsync.when(
       loading: () =>

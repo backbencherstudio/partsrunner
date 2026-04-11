@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
-import 'package:partsrunner/features/bottom_nav/domain/entities/user_entity.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key, required this.user});
@@ -63,9 +63,9 @@ class HomeHeader extends StatelessWidget {
                       ),
                       1.verticalSpace,
                       Text(
-                        user.type == UserRole.contractor.name
+                        user.type.toLowerCase() == UserRole.contractor.name
                             ? "Find Your Runner?"
-                            : "Find Your Parts?", 
+                            : "Find Your Parts?",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,

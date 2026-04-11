@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
-import 'package:partsrunner/core/services/api_service/token_storage.dart';
+import 'package:partsrunner/core/services/api_service/token_service.dart';
+import 'package:partsrunner/features/auth/data/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Remote data source for authentication.
@@ -16,7 +15,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///   final json = jsonDecode(response.body) as Map<String, dynamic>;
 ///   return UserModel.fromJson(json['user']);
 abstract class AuthRemoteDataSource {
-  Future<void> login({required String identifier, required String password});
+
+  Future<UserModel> getUser();
+
+  Future<void> login({
+    required String identifier,
+    String? countryCode,
+    required String password,
+  });
 
   Future<void> signup({
     required String name,
@@ -66,50 +72,68 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     : _apiClient = apiClient;
 
   @override
+  Future<UserModel> getUser() async {
+    final token = await TokenService.getToken();
+    print("Token: $token");
+    try {
+      final response = await _apiClient.get(ApiEndpoints.me);
+      if (response['data'] != null) {
+        return UserModel.fromJson(response['data']);
+      }
+      throw Exception('Failed to get user');
+    } catch (e) {
+      print("Error getting user: $e");
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> login({
     required String identifier,
+    String? countryCode,
     required String password,
   }) async {
-    final response = await _apiClient.post(
-      ApiEndpoints.login,
-      body: {'email': identifier, 'password': password},
-    );
+    try {
+      final response = await _apiClient.post(
+        ApiEndpoints.login,
+        body: {'email': identifier, 'password': password},
+      );
 
-    if (response is Map<String, dynamic> &&
-        response['success'] == true &&
-        response['authorization'] != null) {
-      final auth = response['authorization'];
-      final accessToken = auth['access_token'] as String;
-      print('Access Token: $accessToken');
-      // Store token
-      final tokenStorage = TokenStorage();
-      await tokenStorage.saveToken(accessToken);
+      if (response['success'] == true && response['authorization'] != null) {
+        final auth = response['authorization'];
+        final accessToken = auth['access_token'] as String;
+        // Store token
+        await TokenService.saveToken(accessToken);
+        final token = await TokenService.getToken();
+        print('Token after login: $token');
+        // Decode JWT to get user details
+        // final parts = accessToken.split('.');
+        // if (parts.length >= 2) {
+        //   final payloadStr = utf8.decode(
+        //     base64Url.decode(base64Url.normalize(parts[1])),
+        //   );
+        //   // final payload = jsonDecode(payloadStr);
 
-      // Decode JWT to get user details
-      final parts = accessToken.split('.');
-      if (parts.length >= 2) {
-        final payloadStr = utf8.decode(
-          base64Url.decode(base64Url.normalize(parts[1])),
-        );
-        final payload = jsonDecode(payloadStr);
-
-        // return UserModel(
-        //   id: payload['sub']?.toString() ?? 'unknown-id',
-        //   name: identifier.split('@').first,
-        //   email: payload['email']?.toString() ?? identifier,
-        //   phone: '',
-        //   role: UserRole.values.firstWhere(
-        //     (e) =>
-        //         e.name.toLowerCase() ==
-        //         (response['type']?.toString().toLowerCase() ?? 'contractor'),
-        //     orElse: () => UserRole.contractor,
-        //   ),
-        // );
+        //   // return UserModel(
+        //   //   id: payload['sub']?.toString() ?? 'unknown-id',
+        //   //   name: identifier.split('@').first,
+        //   //   email: payload['email']?.toString() ?? identifier,
+        //   //   phone: '',
+        //   //   role: UserRole.values.firstWhere(
+        //   //     (e) =>
+        //   //         e.name.toLowerCase() ==
+        //   //         (response['type']?.toString().toLowerCase() ?? 'contractor'),
+        //   //     orElse: () => UserRole.contractor,
+        //   //   ),
+        //   // );
+        // }
+        return;
       }
-      return;
-    }
 
-    throw Exception(response['message'] ?? 'Invalid response from server');
+      throw Exception(response['message'] ?? 'Invalid response from server');
+    } catch (e) {
+      print("Login failed: $e");
+    }
   }
 
   @override
@@ -121,15 +145,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required String role,
   }) async {
-    print('=== SIGNUP DEBUG ===');
-    print('Name: $name');
-    print('Email: $email');
-    print('Country Code: $countryCode');
-    print('Phone: $phone');
-    print('Password: ${password.isNotEmpty ? '***' : 'EMPTY'}');
-    print('Role: $role');
-    print('API Endpoint: ${ApiEndpoints.register}');
-
     final requestBody = {
       'name': name,
       'email': email,
@@ -139,18 +154,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       'type': role.toUpperCase(),
     };
 
-    print('Request Body: $requestBody');
-
     try {
       final response = await _apiClient.post(
         ApiEndpoints.register,
         body: requestBody,
       );
 
-      print('Response: $response');
-
-      if (response is Map<String, dynamic> && response['success'] == true) {
-        print('Signup successful');
+      if (response['success']) {
         return;
       } else {
         print('Signup failed: ${response['message'] ?? 'Unknown error'}');
@@ -172,7 +182,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ApiEndpoints.forgotPassword,
       body: {'email': email, 'country_code': countryCode, 'phone': phone},
     );
-    if (response['success'] == true) {
+    if (response['success']) {
       return;
     }
     throw Exception(response['message'] ?? 'Failed to send OTP');
@@ -201,8 +211,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: {'email': identifier, 'token': otp},
     );
 
-    if (response is Map<String, dynamic> &&
-        response['success'] == true) {
+    if (response is Map<String, dynamic> && response['success'] == true) {
       if (response['user'] != null) {
         final userJson = response['user'];
         final pref = await SharedPreferences.getInstance();

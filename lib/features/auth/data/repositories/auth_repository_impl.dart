@@ -1,10 +1,14 @@
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:partsrunner/features/auth/data/models/user_model.dart';
 import 'package:partsrunner/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   const AuthRepositoryImpl(this._remoteDataSource);
 
   final AuthRemoteDataSource _remoteDataSource;
+
+  @override
+  Future<UserModel> getUser() => _remoteDataSource.getUser();
 
   @override
   Future<void> login({

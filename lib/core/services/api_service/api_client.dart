@@ -1,18 +1,16 @@
 import 'package:dio/dio.dart';
-import 'token_storage.dart';
+import 'token_service.dart';
 
 class ApiClient {
   final Dio _dio;
-  final TokenStorage _tokenStorage;
 
-  ApiClient({TokenStorage? tokenStorage}) 
-      : _tokenStorage = tokenStorage ?? TokenStorage(),
-        _dio = Dio(BaseOptions(
+  ApiClient() 
+      : _dio = Dio(BaseOptions(
           headers: {"Content-Type": "application/json"},
         )) {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await _tokenStorage.getToken();
+        final token = await TokenService.getToken();
         if (token != null) {
           options.headers["Authorization"] = "Bearer $token";
         }

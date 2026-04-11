@@ -1,4 +1,8 @@
+import 'package:partsrunner/features/auth/data/models/user_model.dart';
+
 abstract class AuthRepository {
+  Future<UserModel> getUser();
+
   /// Login with email/phone and password. Returns the authenticated [UserEntity].
   Future<void> login({
     required String identifier, // email or phone
@@ -19,10 +23,7 @@ abstract class AuthRepository {
   Future<void> sendOtp({required String identifier});
 
   /// Verify OTP code. Returns the authenticated [UserEntity].
-  Future<void> verifyOtp({
-    required String identifier,
-    required String otp,
-  });
+  Future<void> verifyOtp({required String identifier, required String otp});
 
   /// Reset password after OTP verification.
   Future<void> resetPassword({
