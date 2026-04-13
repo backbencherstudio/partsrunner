@@ -148,7 +148,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
-          final user = await _login(identifier: identifier, password: password);
+          await _login(identifier: identifier, password: password);
           // Refresh user provider after successful login
           ref.invalidate(userProvider);
           return AuthSuccess(message: 'Login successful');
@@ -212,11 +212,11 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     required String identifier,
     required String otp,
   }) async {
-    final pref = await SharedPreferences.getInstance();
+    await SharedPreferences.getInstance();
     state = const AsyncLoading();
     state =
         await AsyncValue.guard(() async {
-          final user = await _verifyOtp(identifier: identifier, otp: otp);
+          await _verifyOtp(identifier: identifier, otp: otp);
 
           return AuthSuccess(message: 'OTP verified successfully');
         }).then(

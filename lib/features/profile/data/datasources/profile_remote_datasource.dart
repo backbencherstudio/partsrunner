@@ -15,12 +15,12 @@ class ProfileRemoteDatasourceImpl implements ProfileRemoteDatasource {
 
   @override
   Future<void> getProfile() async {
-    final response = await _apiClient.get(ApiEndpoints.me);
+    // final response = await _apiClient.get(ApiEndpoints.me);
   }
 
   @override
   Future<void> updateProfile() async {
-    final response = await _apiClient.put(ApiEndpoints.updateUser);
+    // final response = await _apiClient.put(ApiEndpoints.updateUser);
   }
 
   @override

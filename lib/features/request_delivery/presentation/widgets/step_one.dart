@@ -131,7 +131,7 @@ class StepOne extends ConsumerWidget {
             child: const Icon(Icons.access_time),
           ),
           controller: TextEditingController(
-            text: ref.read(pickupTimeProvider).format(context),
+            text: time.format(context),
           ),
         ),
       ],

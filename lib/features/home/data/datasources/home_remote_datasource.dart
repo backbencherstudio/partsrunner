@@ -47,7 +47,7 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
 
   @override
   Future<void> getDeliveryRunner() async {
-    final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
+    // final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
   }
 
   @override

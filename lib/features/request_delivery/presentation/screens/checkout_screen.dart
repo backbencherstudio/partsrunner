@@ -255,137 +255,137 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  void _showAddNewCardBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 20,
-            right: 20,
-            top: 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Add New Card',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.deepOrange,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Divider(color: Colors.grey[300]),
-              const SizedBox(height: 16),
+  // void _showAddNewCardBottomSheet(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     backgroundColor: Colors.white,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+  //     ),
+  //     builder: (context) {
+  //       return Padding(
+  //         padding: EdgeInsets.only(
+  //           bottom: MediaQuery.of(context).viewInsets.bottom,
+  //           left: 20,
+  //           right: 20,
+  //           top: 20,
+  //         ),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Center(
+  //               child: Container(
+  //                 width: 40,
+  //                 height: 4,
+  //                 decoration: BoxDecoration(
+  //                   color: Colors.grey[300],
+  //                   borderRadius: BorderRadius.circular(10),
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 20),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 const Text(
+  //                   'Add New Card',
+  //                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 TextButton(
+  //                   onPressed: () => Navigator.pop(context),
+  //                   child: const Text(
+  //                     'Cancel',
+  //                     style: TextStyle(
+  //                       color: Colors.deepOrange,
+  //                       fontWeight: FontWeight.bold,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             Divider(color: Colors.grey[300]),
+  //             const SizedBox(height: 16),
 
-              const Text(
-                'Card Number',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              _buildTextField('6718 XX78 8910 798X'),
-              const SizedBox(height: 16),
+  //             const Text(
+  //               'Card Number',
+  //               style: TextStyle(fontWeight: FontWeight.w600),
+  //             ),
+  //             const SizedBox(height: 8),
+  //             _buildTextField('6718 XX78 8910 798X'),
+  //             const SizedBox(height: 16),
 
-              const Text(
-                'Card Holder Name',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              _buildTextField('John Smith'),
-              const SizedBox(height: 16),
+  //             const Text(
+  //               'Card Holder Name',
+  //               style: TextStyle(fontWeight: FontWeight.w600),
+  //             ),
+  //             const SizedBox(height: 8),
+  //             _buildTextField('John Smith'),
+  //             const SizedBox(height: 16),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Expiry Date',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(height: 8),
-                        _buildTextField('10/2030'),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'CVV',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(height: 8),
-                        _buildTextField('•••', obscureText: true),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Confirm',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  //             Row(
+  //               children: [
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       const Text(
+  //                         'Expiry Date',
+  //                         style: TextStyle(fontWeight: FontWeight.w600),
+  //                       ),
+  //                       const SizedBox(height: 8),
+  //                       _buildTextField('10/2030'),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 16),
+  //                 Expanded(
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       const Text(
+  //                         'CVV',
+  //                         style: TextStyle(fontWeight: FontWeight.w600),
+  //                       ),
+  //                       const SizedBox(height: 8),
+  //                       _buildTextField('•••', obscureText: true),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 24),
+  //             SizedBox(
+  //               width: double.infinity,
+  //               child: ElevatedButton(
+  //                 onPressed: () {
+  //                   Navigator.pop(context);
+  //                 },
+  //                 style: ElevatedButton.styleFrom(
+  //                   backgroundColor: Colors.deepOrange,
+  //                   padding: const EdgeInsets.symmetric(vertical: 16),
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(8),
+  //                   ),
+  //                 ),
+  //                 child: const Text(
+  //                   'Confirm',
+  //                   style: TextStyle(
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeight.bold,
+  //                     color: Colors.white,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(height: 20),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void _submitDeliveryRequest(BuildContext context) {
     ref
@@ -521,31 +521,31 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     );
   }
 
-  Widget _buildTextField(String hintText, {bool obscureText = false}) {
-    return TextField(
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.black54),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[200]!),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey[300]!),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.deepOrange),
-        ),
-      ),
-    );
-  }
+  // Widget _buildTextField(String hintText, {bool obscureText = false}) {
+  //   return TextField(
+  //     obscureText: obscureText,
+  //     decoration: InputDecoration(
+  //       hintText: hintText,
+  //       hintStyle: const TextStyle(color: Colors.black54),
+  //       contentPadding: const EdgeInsets.symmetric(
+  //         horizontal: 16,
+  //         vertical: 14,
+  //       ),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8),
+  //         borderSide: BorderSide(color: Colors.grey[200]!),
+  //       ),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8),
+  //         borderSide: BorderSide(color: Colors.grey[300]!),
+  //       ),
+  //       focusedBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8),
+  //         borderSide: const BorderSide(color: Colors.deepOrange),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildTrackingDetailRow(String label, String value) {
     return Row(
