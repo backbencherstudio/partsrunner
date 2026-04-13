@@ -1,16 +1,18 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:partsrunner/core/services/api_service/api_client.dart';
 import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/features/home/data/models/delivery_home_runner_model.dart';
+import 'package:partsrunner/features/home/data/models/new_delivery_request_model.dart';
 import 'package:partsrunner/features/home/data/models/shipping_summary_model.dart';
 
 abstract class HomeRemoteDatasource {
   /// for runner
   Future<void> changeAvailability(bool isOnline);
-  Future<void> getDeliveryRunner();
+  Future<DeliveryHomeRunnerModel> getDeliveryRunner();
+  Future<NewDeliveryRequestModel> getNewRequest();
 
   /// for contractor
   Future<ShippingSummaryModel> getDeliveryContractor();
-  Future<void> getNewRequests();
 }
 
 class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
@@ -46,8 +48,14 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
   }
 
   @override
-  Future<void> getDeliveryRunner() async {
-    // final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
+  Future<DeliveryHomeRunnerModel> getDeliveryRunner() async {
+    final response = await _apiClient.get(ApiEndpoints.runnerDeliveryHome);
+    print('response: $response');
+    if (response['success']) {
+      return DeliveryHomeRunnerModel.fromJson(response['data']);
+    } else {
+      throw Exception(response['message']);
+    }
   }
 
   @override
@@ -66,8 +74,17 @@ class HomeRemoteDatasourceImpl extends HomeRemoteDatasource {
   }
 
   @override
-  Future<void> getNewRequests() {
-    // TODO: implement getNewRequests
-    throw UnimplementedError();
+  Future<NewDeliveryRequestModel> getNewRequest() async {
+    try {
+      final response = await _apiClient.get(
+        ApiEndpoints.runnerDeliveryNewRequests,
+      );
+      if (response['success']) {
+        return NewDeliveryRequestModel.fromJson(response['data']);
+      }
+      throw Exception('Fetch failed');
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

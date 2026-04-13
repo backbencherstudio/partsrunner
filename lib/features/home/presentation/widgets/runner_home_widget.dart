@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
+import 'package:partsrunner/features/home/presentation/widgets/floating_card.dart';
 import 'package:partsrunner/features/home/presentation/widgets/no_active_jobs_widget.dart';
 import 'package:partsrunner/features/home/presentation/widgets/request_card.dart';
 import 'package:partsrunner/features/home/presentation/widgets/runner_report_item.dart';
 
-class RunnerHomeWidget extends StatefulWidget {
+class RunnerHomeWidget extends ConsumerStatefulWidget {
   const RunnerHomeWidget({super.key});
 
   @override
-  State<RunnerHomeWidget> createState() => _RunnerHomeWidgetState();
+  ConsumerState<RunnerHomeWidget> createState() => _RunnerHomeWidgetState();
 }
 
-class _RunnerHomeWidgetState extends State<RunnerHomeWidget> {
+class _RunnerHomeWidgetState extends ConsumerState<RunnerHomeWidget> {
   late bool hasRequest;
   @override
   void initState() {
@@ -25,22 +28,34 @@ class _RunnerHomeWidgetState extends State<RunnerHomeWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final deliveryRunner = ref.watch(deliveryRunnerProvider);
+    return Container(
+      width: double.infinity,
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         children: [
+          FloatingCard(),
+          20.verticalSpace,
           Row(
             children: [
               RunnerReportItem(
                 icon: Icons.payment,
                 title: "Todays Earnings",
-                value: "\$0.00",
+                value: deliveryRunner.when(
+                  data: (data) => "\$${data.todayEarning}",
+                  error: (error, stackTrace) => "\$0",
+                  loading: () => "\$0",
+                ),
               ),
               12.horizontalSpace,
               RunnerReportItem(
                 icon: Icons.delivery_dining_rounded,
                 title: "Todays Deliveries",
-                value: "0",
+                value: deliveryRunner.when(
+                  data: (data) => "${data.todayDeliveries}",
+                  error: (error, stackTrace) => "0",
+                  loading: () => "0",
+                ),
               ),
             ],
           ),

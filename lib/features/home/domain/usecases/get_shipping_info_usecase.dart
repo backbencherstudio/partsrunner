@@ -5,7 +5,7 @@ class GetShippingInfoUsecase {
   final HomeRepository _homeRepository;
   GetShippingInfoUsecase(this._homeRepository);
 
-  Future<ShippingSummaryModel> call() async {
-    return await _homeRepository.getDeliveryContractor();
+  Future<ShippingSummaryModel> call() {
+    return _homeRepository.getDeliveryContractor();
   }
 }

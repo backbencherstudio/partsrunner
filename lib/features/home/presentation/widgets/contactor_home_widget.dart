@@ -7,6 +7,7 @@ import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
 import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
+import 'package:partsrunner/features/home/presentation/widgets/floating_card.dart';
 import 'package:partsrunner/features/home/presentation/widgets/section_header.dart';
 import 'package:partsrunner/core/widget/tracking_item.dart';
 
@@ -21,6 +22,8 @@ class ContactorHomeWidget extends ConsumerWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
+            FloatingCard(isContactor: true),
+            20.verticalSpace,
             SectionHeader(title: "Current Shipping", viewAll: () {}),
             16.verticalSpace,
             ...data.currentShipping.map((e) => TrackingItem(item: e)),
