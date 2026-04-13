@@ -15,20 +15,29 @@ class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
   final ApiClient _apiClient;
   OrderRemoteDatasourceImpl({required ApiClient apiClient})
     : _apiClient = apiClient;
+
   @override
   Future<List<OrderModel>> getOngingOrder() async {
-    final response = await _apiClient.get(
-      ApiEndpoints.contractorDeliveriesOngoing,
-    );
-    return OrderModel.getOrdersFromList(response['data']);
+    try {
+      final response = await _apiClient.get(
+        ApiEndpoints.contractorDeliveriesOngoing,
+      );
+      return OrderModel.getOrdersFromList(response['data']);
+    } catch (e) {
+      throw Exception("Failed to get ongoing orders. $e");
+    }
   }
 
   @override
   Future<List<OrderModel>> getCompletedOrder() async {
-    final response = await _apiClient.post(
-      ApiEndpoints.contractorDeliveriesCompleted,
-    );
-    return OrderModel.getOrdersFromList(response['data']);
+    try {
+      final response = await _apiClient.get(
+        ApiEndpoints.contractorDeliveriesCompleted,
+      );
+      return OrderModel.getOrdersFromList(response['data']);
+    } catch (e) {
+      throw Exception("Failed to get completed orders. $e");
+    }
   }
 
   @override

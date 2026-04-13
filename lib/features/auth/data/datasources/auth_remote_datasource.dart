@@ -63,6 +63,8 @@ abstract class AuthRemoteDataSource {
     required String vehicleModel,
     required String vehicleIdentificationNumber,
   });
+
+  Future<void> newPassword({required String password, required String newPassword});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -299,5 +301,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } else {
       throw Exception(response['message'] ?? 'Failed to create runner');
     }
+  }
+
+  @override
+  Future<void> newPassword({required String password, required String newPassword}) {
+    return _apiClient.post(
+      ApiEndpoints.changePassword,
+      body: {
+        'old_password': password,
+        'new_password': newPassword,
+      },
+    );
   }
 }
