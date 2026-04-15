@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
 import 'package:partsrunner/features/home/presentation/widgets/floating_card.dart';
 import 'package:partsrunner/features/home/presentation/widgets/no_active_jobs_widget.dart';
@@ -15,10 +16,9 @@ class RunnerHomeWidget extends ConsumerStatefulWidget {
 }
 
 class _RunnerHomeWidgetState extends ConsumerState<RunnerHomeWidget> {
-  late bool hasRequest;
   @override
   void initState() {
-    hasRequest = getRequest();
+    ref.read(onlineStatusProvider.notifier).state = false;
     super.initState();
   }
 
@@ -60,16 +60,24 @@ class _RunnerHomeWidgetState extends ConsumerState<RunnerHomeWidget> {
             ],
           ),
           24.verticalSpace,
-          hasRequest
-              ? ListView.separated(
-                  padding: EdgeInsets.zero,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => RequestCard(),
-                  separatorBuilder: (_, _) => 12.verticalSpace,
-                  itemCount: 5,
-                )
-              : NoActiveJobsWidget(),
+          ref
+              .watch(periodicNewRequestProvider)
+              .when(
+                data: (data) => data.isNotEmpty
+                    ? ListView.separated(
+                        padding: EdgeInsets.zero,
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) =>
+                            RequestCard(request: data[index]),
+                        separatorBuilder: (_, _) => 12.verticalSpace,
+                        itemCount: data.length,
+                      )
+                    : NoActiveJobsWidget(),
+                loading: () => NoActiveJobsWidget(),
+                error: (error, stackTrace) => NoActiveJobsWidget(),
+              ),
+          60.verticalSpace,
         ],
       ),
     );

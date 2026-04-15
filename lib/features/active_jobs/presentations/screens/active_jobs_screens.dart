@@ -1,21 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import '../../../../core/constant/app_color.dart';
+import '../providers/active_jobs_provider.dart';
 
-class ActiveJobsScreen extends StatefulWidget {
+class ActiveJobsScreen extends ConsumerWidget {
   const ActiveJobsScreen({super.key});
 
   @override
-  State<ActiveJobsScreen> createState() => _ActiveJobsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedTabIndex = ref.watch(selectedTabIndexProvider);
+    final tabs = ['All', 'Ongoing', 'Completed', 'Canceled'];
 
-class _ActiveJobsScreenState extends State<ActiveJobsScreen> {
-  int _selectedTabIndex = 0;
-  final List<String> _tabs = ['All', 'Ongoing', 'Completed', 'Canceled'];
+    FutureProvider<List<DeliveryModel>> getCurrentProvider() {
+      switch (selectedTabIndex) {
+        case 0:
+          return getAllDeliveriesProvider;
+        case 1:
+          return getOngoingDeliveriesProvider;
+        case 2:
+          return getCompletedDeliveriesProvider;
+        case 3:
+          return getCanceledDeliveriesProvider;
+        default:
+          return getAllDeliveriesProvider;
+      }
+    }
 
-  @override
-  Widget build(BuildContext context) {
+    final deliveriesAsync = ref.watch(getCurrentProvider());
     return Scaffold(
       backgroundColor:
           Colors.white, // assuming a white background for the screen
@@ -44,13 +58,11 @@ class _ActiveJobsScreenState extends State<ActiveJobsScreen> {
                 final double buttonWidth = (constraints.maxWidth - 6) / 4;
                 return ToggleButtons(
                   isSelected: List.generate(
-                    _tabs.length,
-                    (index) => index == _selectedTabIndex,
+                    tabs.length,
+                    (index) => index == selectedTabIndex,
                   ),
                   onPressed: (index) {
-                    setState(() {
-                      _selectedTabIndex = index;
-                    });
+                    ref.read(selectedTabIndexProvider.notifier).state = index;
                   },
                   color: Colors.grey.shade500,
                   selectedColor: AppColor.primary,
@@ -66,7 +78,7 @@ class _ActiveJobsScreenState extends State<ActiveJobsScreen> {
                     minWidth: buttonWidth,
                     minHeight: 44, // reasonably tall tabs
                   ),
-                  children: _tabs.map((tab) => Text(tab)).toList(),
+                  children: tabs.map((tab) => Text(tab)).toList(),
                 );
               },
             ),
@@ -74,14 +86,37 @@ class _ActiveJobsScreenState extends State<ActiveJobsScreen> {
           const SizedBox(height: 16),
           // List of Cards
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: mockJobs.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                final job = mockJobs[index];
-                return _JobCard(job: job);
+            child: deliveriesAsync.when(
+              data: (deliveries) {
+                if (deliveries.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No deliveries found',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  );
+                }
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  itemCount: deliveries.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final delivery = deliveries[index];
+                    return _DeliveryCard(delivery: delivery);
+                  },
+                );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(
+                child: Text(
+                  'Error: ${error.toString()}',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
             ),
           ),
         ],
@@ -90,26 +125,39 @@ class _ActiveJobsScreenState extends State<ActiveJobsScreen> {
   }
 }
 
-class _JobCard extends StatelessWidget {
-  final JobModel job;
+class _DeliveryCard extends StatelessWidget {
+  final DeliveryModel delivery;
 
-  const _JobCard({required this.job});
+  const _DeliveryCard({required this.delivery});
 
-  Color _getStatusColor(String status) {
+  Color _getStatusColor(String? status) {
+    if (status == null) return Colors.grey;
     final s = status.toLowerCase();
-    if (s == 'in progress') {
+    if (s == 'in progress' || s == 'en_route') {
       return Colors.green;
-    } else if (s == 'available') {
+    } else if (s == 'available' || s == 'pending') {
       return const Color(0xFF9B51E0); // a purple tone
-    } else if (s == 'completed') {
+    } else if (s == 'completed' || s == 'delivered') {
       return const Color(0xFFFF7A59); // reddish/orange tone from image
+    } else if (s == 'canceled') {
+      return Colors.red;
     }
     return Colors.grey;
   }
 
+  String _formatDate(String? dateString) {
+    if (dateString == null) return 'N/A';
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+    } catch (e) {
+      return dateString;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor(job.status);
+    final statusColor = _getStatusColor(delivery.status);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -152,7 +200,7 @@ class _JobCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      job.title,
+                      delivery.packageName ?? 'Unknown Package',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -161,7 +209,7 @@ class _JobCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'ID: ${job.id}',
+                      'ID: ${delivery.id ?? 'N/A'}',
                       style: TextStyle(
                         color: Colors.grey.shade500,
                         fontSize: 13,
@@ -181,7 +229,7 @@ class _JobCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  job.status,
+                  delivery.status ?? 'Unknown',
                   style: TextStyle(
                     color: statusColor,
                     fontSize: 10,
@@ -206,7 +254,7 @@ class _JobCard extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: job.dateStr,
+                        text: _formatDate(delivery.pickupDate),
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.normal,
@@ -227,7 +275,8 @@ class _JobCard extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: '${job.distance} Miles',
+                        text:
+                            '${delivery.estimatedDistanceKm?.toStringAsFixed(1) ?? 'N/A'} km',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.normal,
@@ -243,7 +292,7 @@ class _JobCard extends StatelessWidget {
           // Location
           RichText(
             text: TextSpan(
-              text: 'Supplier Location: ',
+              text: 'Delivery Location: ',
               style: const TextStyle(
                 color: Colors.black87,
                 fontWeight: FontWeight.w600,
@@ -251,7 +300,7 @@ class _JobCard extends StatelessWidget {
               ),
               children: [
                 TextSpan(
-                  text: job.location,
+                  text: delivery.deliveryAddress ?? 'N/A',
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontWeight: FontWeight.normal,
@@ -284,57 +333,3 @@ class _JobCard extends StatelessWidget {
     );
   }
 }
-
-// Mock Data
-class JobModel {
-  final String title;
-  final String id;
-  final String dateStr;
-  final int distance;
-  final String location;
-  final String status;
-
-  const JobModel({
-    required this.title,
-    required this.id,
-    required this.dateStr,
-    required this.distance,
-    required this.location,
-    required this.status,
-  });
-}
-
-const mockJobs = [
-  JobModel(
-    title: 'Apple Watch Series 8',
-    id: 'VTY7162E',
-    dateStr: '10/08/2026',
-    distance: 125,
-    location: '102 Ocean Road, Melbourne.',
-    status: 'In Progress',
-  ),
-  JobModel(
-    title: 'Apple Watch Series 8',
-    id: 'VTY7162E',
-    dateStr: '10/08/2026',
-    distance: 125,
-    location: '102 Ocean Road, Melbourne.',
-    status: 'Available',
-  ),
-  JobModel(
-    title: 'Apple Watch Series 8',
-    id: 'VTY7162E',
-    dateStr: '10/08/2026',
-    distance: 125,
-    location: '102 Ocean Road, Melbourne.',
-    status: 'Completed',
-  ),
-  JobModel(
-    title: 'Apple Watch Series 8',
-    id: 'VTY7162E',
-    dateStr: '10/08/2026',
-    distance: 125,
-    location: '102 Ocean Road, Melbourne.',
-    status: 'Completed',
-  ),
-];

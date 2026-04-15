@@ -1,7 +1,7 @@
 import 'package:partsrunner/core/entities/contractor.dart';
 import 'package:partsrunner/core/entities/supplier.dart';
 
-class NewDeliveryRequestModel {
+class DeliveryModel {
   String? id;
   String? contractorId;
   String? runnerId;
@@ -32,54 +32,57 @@ class NewDeliveryRequestModel {
   List<String>? photoProofUrl;
   int? dispatchIndex;
   String? offeredRunnerId;
-  String? offerExpiresAt;
+  DateTime? offerExpiresAt;
   bool? dispatchCompleted;
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
   Supplier? supplier;
   Contractor? contractor;
+  List<dynamic>? statusHistory;
 
-  NewDeliveryRequestModel(
-      {this.id,
-      this.contractorId,
-      this.runnerId,
-      this.supplierId,
-      this.packageName,
-      this.weight,
-      this.pickupLat,
-      this.pickupLng,
-      this.pickupDate,
-      this.technicianName,
-      this.technicianPhone,
-      this.deliveryAddress,
-      this.deliveryLat,
-      this.deliveryLng,
-      this.specialInstructions,
-      this.totalAmount,
-      this.paymentStatus,
-      this.isAvailable,
-      this.status,
-      this.acceptedAt,
-      this.pickedUpAt,
-      this.enRouteAt,
-      this.deliveredAt,
-      this.estimatedDistanceKm,
-      this.estimatedTimeMin,
-      this.currentDistanceKm,
-      this.currentEtaMin,
-      this.photoProofUrl,
-      this.dispatchIndex,
-      this.offeredRunnerId,
-      this.offerExpiresAt,
-      this.dispatchCompleted,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.supplier,
-      this.contractor});
+  DeliveryModel({
+    this.id,
+    this.contractorId,
+    this.runnerId,
+    this.supplierId,
+    this.packageName,
+    this.weight,
+    this.pickupLat,
+    this.pickupLng,
+    this.pickupDate,
+    this.technicianName,
+    this.technicianPhone,
+    this.deliveryAddress,
+    this.deliveryLat,
+    this.deliveryLng,
+    this.specialInstructions,
+    this.totalAmount,
+    this.paymentStatus,
+    this.isAvailable,
+    this.status,
+    this.acceptedAt,
+    this.pickedUpAt,
+    this.enRouteAt,
+    this.deliveredAt,
+    this.estimatedDistanceKm,
+    this.estimatedTimeMin,
+    this.currentDistanceKm,
+    this.currentEtaMin,
+    this.photoProofUrl,
+    this.dispatchIndex,
+    this.offeredRunnerId,
+    this.offerExpiresAt,
+    this.dispatchCompleted,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.supplier,
+    this.contractor,
+    this.statusHistory,
+  });
 
-  NewDeliveryRequestModel.fromJson(Map<String, dynamic> json) {
+  DeliveryModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     contractorId = json['contractor_id'];
     runnerId = json['runner_id'];
@@ -99,10 +102,10 @@ class NewDeliveryRequestModel {
     paymentStatus = json['payment_status'];
     isAvailable = json['is_available'];
     status = json['status'];
-    acceptedAt = json['accepted_at'];
-    pickedUpAt = json['picked_up_at'];
-    enRouteAt = json['en_route_at'];
-    deliveredAt = json['delivered_at'];
+    acceptedAt = DateTime.tryParse(json['accepted_at'] ?? '');
+    pickedUpAt = DateTime.tryParse(json['picked_up_at'] ?? '');
+    enRouteAt = DateTime.tryParse(json['en_route_at'] ?? '');
+    deliveredAt = DateTime.tryParse(json['delivered_at'] ?? '');
     estimatedDistanceKm = json['estimated_distance_km'];
     estimatedTimeMin = json['estimated_time_min'];
     currentDistanceKm = json['current_distance_km'];
@@ -115,17 +118,18 @@ class NewDeliveryRequestModel {
     }
     dispatchIndex = json['dispatch_index'];
     offeredRunnerId = json['offered_runner_id'];
-    offerExpiresAt = json['offer_expires_at'];
+    offerExpiresAt = DateTime.tryParse(json['offer_expires_at'] ?? '');
     dispatchCompleted = json['dispatch_completed'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
+    createdAt = DateTime.tryParse(json['created_at'] ?? '');
+    updatedAt = DateTime.tryParse(json['updated_at'] ?? '');
+    deletedAt = DateTime.tryParse(json['deleted_at'] ?? '');
     supplier = json['supplier'] != null
-        ? new Supplier.fromJson(json['supplier'])
+        ? Supplier.fromJson(json['supplier'])
         : null;
     contractor = json['contractor'] != null
-        ? new Contractor.fromJson(json['contractor'])
+        ? Contractor.fromJson(json['contractor'])
         : null;
+    statusHistory = json['status_history'];
   }
 
   Map<String, dynamic> toJson() {
@@ -173,6 +177,11 @@ class NewDeliveryRequestModel {
     if (contractor != null) {
       data['contractor'] = contractor!.toJson();
     }
+    data['status_history'] = statusHistory;
     return data;
+  }
+
+  static List<DeliveryModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => DeliveryModel.fromJson(json)).toList();
   }
 }

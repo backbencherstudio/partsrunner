@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:partsrunner/core/provider/api_client_provider.dart';
 import 'package:partsrunner/features/request_delivery/domain/entities/supplier_entity.dart';
 import 'package:partsrunner/features/request_delivery/domain/usecases/get_suppliers.dart';
 import 'package:partsrunner/features/request_delivery/domain/usecases/create_request_delivery.dart';
@@ -224,14 +225,6 @@ Request Delivery Submission:
     super.dispose();
   }
 }
-
-// ---------------------------------------------------------------------------
-// Providers
-// ---------------------------------------------------------------------------
-
-// Dependency injection providers
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
 final requestDeliveryDatasourceProvider =
     Provider<RequestDeliveryRemoteDatasource>(
       (ref) => RequestDeliveryRemoteDatasourceImpl(

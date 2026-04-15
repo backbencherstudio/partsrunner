@@ -1,6 +1,6 @@
 import 'package:partsrunner/features/home/data/datasources/home_remote_datasource.dart';
 import 'package:partsrunner/features/home/data/models/delivery_home_runner_model.dart';
-import 'package:partsrunner/features/home/data/models/new_delivery_request_model.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/features/home/data/models/shipping_summary_model.dart';
 import 'package:partsrunner/features/home/domain/repositories/home_repository.dart';
 
@@ -20,7 +20,7 @@ class HomeRepositoryImpl implements HomeRepository {
   }
 
   @override
-  Future<NewDeliveryRequestModel> getNewRequest() {
+  Future<List<DeliveryModel>> getNewRequest() {
     return _homeRemoteDataSource.getNewRequest();
   }
 

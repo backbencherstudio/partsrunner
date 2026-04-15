@@ -167,12 +167,14 @@ class AppRoutes {
           GoRoute(
             path: 'jobDetails',
             name: AppRouteNames.jobDetails,
-            builder: (context, state) => const JobDetailsScreen(),
+            builder: (context, state) =>
+                JobDetailsScreen(id: state.extra as String),
           ),
           GoRoute(
             path: 'activeJobDetails',
             name: AppRouteNames.activeJobDetails,
-            builder: (context, state) => const ActiveJobDetailsScreen(),
+            builder: (context, state) =>
+                ActiveJobDetailsScreen(id: state.extra as String),
           ),
         ],
       ),

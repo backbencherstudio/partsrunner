@@ -18,9 +18,17 @@ class FloatingCard extends ConsumerStatefulWidget {
 }
 
 class _FloatingCardState extends ConsumerState<FloatingCard> {
-  bool _pushNotificationEnabled = false;
+  @override
+  void initState() {
+    !widget.isContactor
+        ? ref.read(onlineStatusProvider.notifier).state = false
+        : null;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isOnline = ref.watch(onlineStatusProvider);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -117,7 +125,7 @@ class _FloatingCardState extends ConsumerState<FloatingCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "You're Online",
+                            isOnline ? "You're Online" : "You're Offline",
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -125,21 +133,20 @@ class _FloatingCardState extends ConsumerState<FloatingCard> {
                           ),
                           4.verticalSpace,
                           Text(
-                            "We'll send delivery requests your way.",
+                            isOnline
+                                ? "We'll send delivery requests your way."
+                                : "We'll send delivery requests your way when you are online.",
                             style: TextStyle(color: Colors.grey, fontSize: 14),
                           ),
                         ],
                       ),
                     ),
                     CupertinoSwitch(
-                      value: _pushNotificationEnabled,
+                      value: isOnline,
                       activeTrackColor: AppColor.primary,
-                      onChanged: (value) {
-                        setState(() {
-                          _pushNotificationEnabled = value;
-                        });
-                        // value ?
-                        ref.read(changeAvailabilityProvider(value));
+                      onChanged: (value) async {
+                        ref.read(onlineStatusProvider.notifier).state = value;
+                        await ref.read(changeAvailabilityProvider.future);
                       },
                     ),
                   ],

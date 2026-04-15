@@ -1,3 +1,4 @@
+import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/features/home/domain/repositories/home_repository.dart';
 
 class GetNewRequestUsecase {
@@ -5,7 +6,7 @@ class GetNewRequestUsecase {
 
   GetNewRequestUsecase(this._homeRepository);
 
-  Future<dynamic> call() {
+  Future<List<DeliveryModel>> call() {
     return _homeRepository.getNewRequest();
   }
 }

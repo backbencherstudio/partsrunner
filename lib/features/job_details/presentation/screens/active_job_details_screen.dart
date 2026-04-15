@@ -1,16 +1,9 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ActiveJobDetailsScreen(),
-    ),
-  );
-}
-
 class ActiveJobDetailsScreen extends StatefulWidget {
-  const ActiveJobDetailsScreen({super.key});
+  const ActiveJobDetailsScreen({super.key, required this.id});
+
+  final String id;
 
   @override
   State<ActiveJobDetailsScreen> createState() => _ActiveJobDetailsScreenState();

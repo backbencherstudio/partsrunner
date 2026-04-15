@@ -5,9 +5,12 @@ import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
 
 class RequestCard extends StatelessWidget {
-  const RequestCard({super.key});
+  const RequestCard({super.key, required this.request});
+
+  final DeliveryModel request;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class RequestCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 width: 44.w,
@@ -32,22 +35,12 @@ class RequestCard extends StatelessWidget {
               ),
               16.horizontalSpace,
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "New Delivery Request",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    4.verticalSpace,
-                    Text(
-                      "You’re 1.2 miles from the pickup location.",
-                      style: TextStyle(fontSize: 14.sp),
-                    ),
-                  ],
+                child: Text(
+                  "New Delivery Request",
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
@@ -56,55 +49,59 @@ class RequestCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Apple Watch Series 8",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      request.packageName ?? '',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14.sp,
+                      ),
                     ),
-                  ),
-                  4.verticalSpace,
-                  Text("ID: VTY7162EY8"),
-                ],
+                    4.verticalSpace,
+                    Text("ID: ${request.id}", overflow: TextOverflow.ellipsis),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: "Distance:",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14.sp,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: " 125 Miles",
-                          style: TextStyle(fontWeight: FontWeight.normal),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        text: "Distance:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp,
                         ),
-                      ],
-                    ),
-                  ),
-                  4.verticalSpace,
-                  Text.rich(
-                    TextSpan(
-                      text: "Price:",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14.sp,
+                        children: [
+                          TextSpan(
+                            text: " ${request.currentDistanceKm ?? 0} Miles",
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                        ],
                       ),
-                      children: [
-                        TextSpan(
-                          text: " \$125.00",
-                          style: TextStyle(fontWeight: FontWeight.normal),
-                        ),
-                      ],
                     ),
-                  ),
-                ],
+                    4.verticalSpace,
+                    Text.rich(
+                      TextSpan(
+                        text: "Price:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.sp,
+                        ),
+                        children: [
+                          TextSpan(
+                            text: " \$125.00",
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -115,7 +112,7 @@ class RequestCard extends StatelessWidget {
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
               children: [
                 TextSpan(
-                  text: " AutoZone – 3.2 miles",
+                  text: " ${request.supplier?.street}",
                   style: TextStyle(fontWeight: FontWeight.normal),
                 ),
               ],
@@ -128,7 +125,7 @@ class RequestCard extends StatelessWidget {
               style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
               children: [
                 TextSpan(
-                  text: " Acme HVAC – 7.5 miles",
+                  text: " ${request.deliveryAddress}",
                   style: TextStyle(fontWeight: FontWeight.normal),
                 ),
               ],
@@ -141,7 +138,7 @@ class RequestCard extends StatelessWidget {
             text: "View Details",
             textColor: AppColor.primary,
             submit: () {
-              context.pushNamed(AppRouteNames.jobDetails);
+              context.pushNamed(AppRouteNames.jobDetails, extra: request.id);
             },
           ),
         ],

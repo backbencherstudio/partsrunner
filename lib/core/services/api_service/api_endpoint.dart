@@ -25,10 +25,10 @@ class ApiEndpoints {
   // ─────────────────────────────────────────
   // BASE URL (loaded from .env)
   // ─────────────────────────────────────────
-  static String get baseUrl =>
-      _isLocal ? 'https://wind-limits-quite-legislative.trycloudflare.com' :
-      dotenv.env['BASE_URL'] ??
-      'https://wind-limits-quite-legislative.trycloudflare.com';
+  static String get baseUrl => _isLocal
+      ? 'https://parish-dakota-tested-diet.trycloudflare.com'
+      : dotenv.env['BASE_URL'] ??
+            'https://parish-dakota-tested-diet.trycloudflare.com';
 
   // ─────────────────────────────────────────
   // AUTH
@@ -94,6 +94,12 @@ class ApiEndpoints {
   // RUNNER DELIVERY 🔒
   // ─────────────────────────────────────────
   static String get runnerDeliveries => '$baseUrl/api/delivery';
+  static String get runnerOngoingDeliveries =>
+      '$baseUrl/api/delivery/ongoing-deliveries';
+  static String get runnerCompletedDeliveries =>
+      '$baseUrl/api/delivery/completed-deliveries';
+  static String get runnerCanceledDeliveries =>
+      '$baseUrl/api/delivery/cancelled-deliveries';
   static String get runnerDeliveryNewRequests =>
       '$baseUrl/api/delivery/new-requests';
   static String get runnerDeliveryHome => '$baseUrl/api/delivery/home';
