@@ -11,6 +11,7 @@ class Message extends StatelessWidget {
     required this.imagePath,
     required this.buttonText,
     this.routeName,
+    this.earning,
   });
 
   final String title;
@@ -18,6 +19,7 @@ class Message extends StatelessWidget {
   final String imagePath;
   final String buttonText;
   final String? routeName;
+  final String? earning;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,29 @@ class Message extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
+            if (earning != null) ...[
+              24.verticalSpace,
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.03),
+                  border: Border.all(color: Colors.red.shade100),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      earning.toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text('Added To Balance'),
+                  ],
+                ),
+              ),
+            ],
             32.verticalSpace,
             CustomButton(
               text: buttonText,

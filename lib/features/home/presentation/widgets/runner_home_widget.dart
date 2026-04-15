@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
 import 'package:partsrunner/features/home/presentation/widgets/floating_card.dart';
 import 'package:partsrunner/features/home/presentation/widgets/no_active_jobs_widget.dart';
@@ -18,7 +17,6 @@ class RunnerHomeWidget extends ConsumerStatefulWidget {
 class _RunnerHomeWidgetState extends ConsumerState<RunnerHomeWidget> {
   @override
   void initState() {
-    ref.read(onlineStatusProvider.notifier).state = false;
     super.initState();
   }
 
@@ -77,7 +75,6 @@ class _RunnerHomeWidgetState extends ConsumerState<RunnerHomeWidget> {
                 loading: () => NoActiveJobsWidget(),
                 error: (error, stackTrace) => NoActiveJobsWidget(),
               ),
-          60.verticalSpace,
         ],
       ),
     );

@@ -29,7 +29,6 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
       error: (e, _) =>
           Scaffold(body: Center(child: Text('Failed to load user data: $e'))),
       data: (user) {
-        print(user.type);
         final screens = [
           HomeScreen(user: user),
           user.type == "CONTRACTOR"
@@ -63,19 +62,13 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  _buildNavItem(
-                    "assets/images/index0.png",
-                    0,
-                    currentIndex,
-                    ref,
-                  ),
+                  _buildNavItem("assets/images/index0.png", 0, currentIndex),
                   _buildNavItem(
                     user.type == "CONTRACTOR"
                         ? "assets/images/index1.png"
                         : "assets/images/index2.png",
                     1,
                     currentIndex,
-                    ref,
                   ),
                   _buildNavItem(
                     user.type == "CONTRACTOR"
@@ -83,14 +76,8 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
                         : "assets/images/index2.2.png",
                     2,
                     currentIndex,
-                    ref,
                   ),
-                  _buildNavItem(
-                    "assets/images/profile.png",
-                    3,
-                    currentIndex,
-                    ref,
-                  ),
+                  _buildNavItem("assets/images/profile.png", 3, currentIndex),
                 ],
               ),
             ),
@@ -100,12 +87,7 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
     );
   }
 
-  Widget _buildNavItem(
-    String imagePath,
-    int index,
-    int currentIndex,
-    WidgetRef ref,
-  ) {
+  Widget _buildNavItem(String imagePath, int index, int currentIndex) {
     bool isSelect = index == currentIndex;
     return GestureDetector(
       onTap: () {

@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
+import 'package:partsrunner/features/job_details/presentation/providers/job_details_provider.dart';
 
-class ActiveJobDetailsScreen extends StatefulWidget {
+class ActiveJobDetailsScreen extends ConsumerStatefulWidget {
   const ActiveJobDetailsScreen({super.key, required this.id});
 
   final String id;
 
   @override
-  State<ActiveJobDetailsScreen> createState() => _ActiveJobDetailsScreenState();
+  ConsumerState<ActiveJobDetailsScreen> createState() =>
+      _ActiveJobDetailsScreenState();
 }
 
-class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
-  // Toggle this from 1 to 4 to see different screen states from your screenshots
-  final int _currentStage = 2;
-
+class _ActiveJobDetailsScreenState
+    extends ConsumerState<ActiveJobDetailsScreen> {
   @override
   Widget build(BuildContext context) {
+    final currentStage = ref.watch(activeJobStageProvider);
+    final jobDetails = ref.watch(getRequestById(widget.id));
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,9 +39,19 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
                 fontSize: 18,
               ),
             ),
-            Text(
-              'ID: VTY7162E',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            jobDetails.when(
+              data: (job) => Text(
+                'ID: ${job.id}',
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+              ),
+              loading: () => const Text(
+                'ID: Loading...',
+                style: TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+              error: (_, _) => const Text(
+                'ID: Error',
+                style: TextStyle(color: Colors.red, fontSize: 13),
+              ),
             ),
           ],
         ),
@@ -46,7 +63,7 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
             // 1. Progress Stepper
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: JobProgressStepper(stage: _currentStage),
+              child: JobProgressStepper(stage: currentStage),
             ),
 
             Expanded(
@@ -55,11 +72,11 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
                 child: Column(
                   children: [
                     // 2. Status Card (Dynamic based on stage)
-                    StatusCard(stage: _currentStage),
+                    StatusCard(stage: currentStage, jobDetails: jobDetails),
                     const SizedBox(height: 25),
 
                     // 3. Middle Content (Changes per screenshot)
-                    _buildMiddleContent(),
+                    _buildMiddleContent(currentStage, jobDetails),
                   ],
                 ),
               ),
@@ -68,7 +85,11 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
             // 4. Bottom Action Buttons
             Padding(
               padding: const EdgeInsets.all(20),
-              child: _buildBottomActions(),
+              child: jobDetails.when(
+                data: (job) => _buildBottomActions(currentStage, job),
+                loading: () => const SizedBox(),
+                error: (_, _) => const SizedBox(),
+              ),
             ),
           ],
         ),
@@ -76,8 +97,11 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
     );
   }
 
-  Widget _buildMiddleContent() {
-    if (_currentStage == 1) {
+  Widget _buildMiddleContent(
+    int currentStage,
+    AsyncValue<DeliveryModel> jobDetails,
+  ) {
+    if (currentStage == 1) {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -90,53 +114,104 @@ class _ActiveJobDetailsScreenState extends State<ActiveJobDetailsScreen> {
           style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.4),
         ),
       );
-    } else if (_currentStage == 2) {
+    } else if (currentStage == 2) {
       return const TimerSection();
-    } else if (_currentStage == 3) {
-      return const InfoSection(
+    } else if (currentStage == 3) {
+      return InfoSection(
         title: "Pickup Details",
         personLabel: "Counter Person",
-        personName: "Arlene McCoy",
+        personName: "Counter Staff",
+        jobDetails: jobDetails,
       );
     } else {
-      return const Column(
+      return Column(
         children: [
           InfoSection(
             title: "Delivery Details",
             personLabel: "Technician Name",
-            personName: "Darlene Robertson",
+            personName: "Technician",
+            jobDetails: jobDetails,
           ),
-          SizedBox(height: 20),
-          SpecialInstructions(),
+          const SizedBox(height: 20),
+          SpecialInstructions(jobDetails: jobDetails),
         ],
       );
     }
   }
 
-  Widget _buildBottomActions() {
-    if (_currentStage == 4) {
+  Widget _buildBottomActions(int currentStage, DeliveryModel jobDetails) {
+    if (currentStage == 4) {
       return Column(
         children: [
           PrimaryButton(
             text: "Take Photo Proof",
             icon: Icons.camera_alt_outlined,
-            onPressed: () {},
+            onPressed: () {
+              
+            },
           ),
           const SizedBox(height: 12),
           PrimaryButton(
             text: "Mark as Delivered",
             isSecondary: true,
-            onPressed: null, // Disabled as per screenshot
+            onPressed: () async {
+              await ref.read(
+                updateRequestStatus((
+                  id: widget.id,
+                  status: "DELIVERED",
+                  proofFile: null,
+                )).future,
+              );
+              if (context.mounted) {
+                context.goNamed(
+                  AppRouteNames.message,
+                  extra: {
+                    'title': 'Delivery Complete',
+                    'message': 'Your delivery has been marked as complete.',
+                    'imagePath': 'assets/icons/success.png',
+                    'buttonText': 'Back to Home',
+                    'earning': jobDetails.totalAmount,
+                    'routeName': AppRouteNames.bottomNav,
+                  },
+                );
+              }
+            },
           ),
         ],
       );
     }
 
     String btnText = "I've Arrived";
-    if (_currentStage == 2) btnText = "Package Acquired";
-    if (_currentStage == 3) btnText = "Confirm Pickup";
+    String status = "";
+    if (currentStage == 1) {
+      btnText = "I've Arrived";
+      status = "PICKED_UP";
+    }
+    if (currentStage == 2) {
+      btnText = "Package Acquired";
+      status = "EN_ROUTE";
+    }
+    if (currentStage == 3) {
+      btnText = "Confirm Pickup";
+      status = "EN_ROUTE";
+    }
 
-    return PrimaryButton(text: btnText, onPressed: () {});
+    return PrimaryButton(
+      text: btnText,
+      onPressed: () async {
+        // Call API to update status before changing stage
+        if (status.isNotEmpty) {
+          await ref.read(
+            updateRequestStatus((
+              id: widget.id,
+              status: status,
+              proofFile: null,
+            )).future,
+          );
+        }
+        ref.read(activeJobStageProvider.notifier).state = currentStage + 1;
+      },
+    );
   }
 }
 
@@ -152,8 +227,8 @@ class JobProgressStepper extends StatelessWidget {
       children: [
         _step(true, "Requested"),
         _line(stage >= 2),
-        _step(stage >= 2, "Accepted"),
-        _line(stage >= 3),
+        _step(stage >= 1, "Accepted"),
+        _line(stage >= 2),
         _step(stage >= 3, "Pickup", isCurrent: stage < 4),
         _line(stage >= 4),
         _step(stage >= 4, "En Route"),
@@ -209,7 +284,8 @@ class JobProgressStepper extends StatelessWidget {
 
 class StatusCard extends StatelessWidget {
   final int stage;
-  const StatusCard({super.key, required this.stage});
+  final AsyncValue<DeliveryModel> jobDetails;
+  const StatusCard({super.key, required this.stage, required this.jobDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -218,15 +294,33 @@ class StatusCard extends StatelessWidget {
     String title = "Ferguson Supply";
     String subtitle = "2847 Industrial Blvd, Austin, TX";
 
+    jobDetails.when(
+      data: (job) {
+        if (job.supplier != null) {
+          title = job.supplier!.name ?? 'Unknown Supplier';
+          subtitle =
+              '${job.supplier!.location ?? ''}, ${job.supplier!.street ?? ''}, ${job.supplier!.city ?? ''}';
+        }
+      },
+      loading: () {},
+      error: (_, _) {},
+    );
+
     if (stage == 2) {
       status = "Waiting Room";
       title = "Waiting for Parts...";
-      subtitle = "At Ferguson Supply";
+      subtitle = "At supplier location";
     }
     if (stage == 4) {
       status = "Delivery";
-      title = "Deliver to: Apex Mechanical";
-      subtitle = "1100 E 6th st, Austin TX 78702";
+      jobDetails.when(
+        data: (job) {
+          title = "Deliver to: ${job.technicianName ?? 'Unknown'}";
+          subtitle = job.deliveryAddress ?? 'Unknown address';
+        },
+        loading: () {},
+        error: (_, _) {},
+      );
     }
 
     return Container(
@@ -266,7 +360,12 @@ class StatusCard extends StatelessWidget {
             children: [
               const Icon(Icons.location_on, color: Colors.deepOrange, size: 18),
               const SizedBox(width: 5),
-              Text(subtitle, style: const TextStyle(color: Colors.black54)),
+              Flexible(
+                child: Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.black54),
+                ),
+              ),
             ],
           ),
         ],
@@ -312,11 +411,13 @@ class TimerSection extends StatelessWidget {
 
 class InfoSection extends StatelessWidget {
   final String title, personLabel, personName;
+  final AsyncValue<DeliveryModel> jobDetails;
   const InfoSection({
     super.key,
     required this.title,
     required this.personLabel,
     required this.personName,
+    required this.jobDetails,
   });
 
   @override
@@ -379,7 +480,8 @@ class InfoSection extends StatelessWidget {
 }
 
 class SpecialInstructions extends StatelessWidget {
-  const SpecialInstructions({super.key});
+  final AsyncValue<DeliveryModel> jobDetails;
+  const SpecialInstructions({super.key, required this.jobDetails});
   @override
   Widget build(BuildContext context) {
     return Container(

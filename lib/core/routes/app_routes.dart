@@ -6,7 +6,6 @@ import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
 import 'package:partsrunner/features/active_tracking/presentaion/screen/active_tracking_screen.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
-import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
@@ -63,6 +62,7 @@ class AppRoutes {
             imagePath: extra?['imagePath'] ?? '',
             buttonText: extra?['buttonText'] ?? '',
             routeName: extra?['routeName'],
+            earning: extra?['earning'],
           );
         },
       ),
@@ -146,8 +146,7 @@ class AppRoutes {
       GoRoute(
         path: '/home',
         name: AppRouteNames.home,
-        builder: (context, state) =>
-            HomeScreen(user: state.extra as UserEntity),
+        builder: (context, state) => const HomeScreen(),
         routes: [
           GoRoute(
             path: 'search',
@@ -195,7 +194,8 @@ class AppRoutes {
           GoRoute(
             path: 'packageDetails',
             name: AppRouteNames.packageDetails,
-            builder: (context, state) => const PackageDetailsScreen(),
+            builder: (context, state) =>
+                PackageDetailsScreen(id: state.extra as String),
           ),
         ],
       ),
@@ -242,8 +242,7 @@ class AppRoutes {
       GoRoute(
         path: '/profile',
         name: AppRouteNames.profile,
-        builder: (context, state) =>
-            ProfileScreen(user: state.extra as UserEntity),
+        builder: (context, state) => const ProfileScreen(),
         routes: [
           GoRoute(
             path: 'editProfile',

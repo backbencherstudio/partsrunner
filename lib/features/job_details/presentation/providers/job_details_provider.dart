@@ -7,6 +7,7 @@ import 'package:partsrunner/features/job_details/domain/repositories/job_details
 import 'package:partsrunner/features/job_details/domain/usecase/get_request_by_id_usecase.dart';
 import 'package:partsrunner/features/job_details/domain/usecase/runner_accept_request_usecase.dart';
 import 'package:partsrunner/features/job_details/domain/usecase/runner_reject_request_usecase.dart';
+import 'package:partsrunner/features/job_details/domain/usecase/update_delivery_status_usecase.dart';
 
 final _jobDetailsRemoteDatasourceProvider =
     Provider<JobDetailsRemoteDatasource>(
@@ -22,6 +23,12 @@ final _getRequestByIdUsecaseProvider = Provider<GetRequestByIdUsecase>(
   (ref) => GetRequestByIdUsecase(ref.watch(_jobDetailsRepositoryProvider)),
 );
 
+final _updateRequestStatusUsecaseProvider =
+    Provider<UpdateDeliveryStatusUsecase>(
+      (ref) =>
+          UpdateDeliveryStatusUsecase(ref.watch(_jobDetailsRepositoryProvider)),
+    );
+
 final _runnerAcceptRequestUsecaseProvider =
     Provider<RunnerAcceptRequestUsecase>(
       (ref) =>
@@ -32,6 +39,13 @@ final _runnerRejectRequestUsecaseProvider =
     Provider<RunnerRejectRequestUsecase>(
       (ref) =>
           RunnerRejectRequestUsecase(ref.watch(_jobDetailsRepositoryProvider)),
+    );
+
+final updateRequestStatus =
+    FutureProvider.family<void, ({String id, String status, List<String>? proofFile})>(
+      (ref, ({String id, String status, List<String>? proofFile}) args) => ref
+          .read(_updateRequestStatusUsecaseProvider)
+          .call(args.id, args.status, args.proofFile),
     );
 
 final getRequestById = FutureProvider.family<DeliveryModel, String>(
@@ -51,3 +65,6 @@ final runnerRejectRequest = FutureProvider.family<void, String>((
 ) async {
   await ref.read(_runnerRejectRequestUsecaseProvider).call(id);
 });
+
+// Active job stage provider (1: Arrived, 2: Waiting, 3: Pickup, 4: En Route)
+final activeJobStageProvider = StateProvider<int>((ref) => 1);

@@ -11,8 +11,8 @@ import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_na
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
-  const ProfileScreen({super.key, required this.user});
-  final UserEntity user;
+  const ProfileScreen({super.key, this.user});
+  final UserEntity? user;
 
   @override
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
@@ -21,6 +21,13 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final userAsync = ref.watch(userProvider);
+    final currentUser = widget.user ?? userAsync.value;
+
+    if (currentUser == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -44,33 +51,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
             ),
             Text(
-              widget.user.name,
+              currentUser.name,
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(widget.user.email),
+            Text(currentUser.email),
             16.verticalSpace,
             Column(
               children: [
                 _profileTab("assets/images/index1.png", "Edit Profile", () {
                   context.pushNamed(
                     AppRouteNames.editProfile,
-                    extra: widget.user,
+                    extra: currentUser,
                   );
                 }),
                 Divider(),
-                if (widget.user.type.toLowerCase() == UserRole.contractor.name)
+                if (currentUser.type.toLowerCase() == UserRole.contractor.name)
                   _profileTab(
                     "assets/images/index2.png",
                     "Payment Management",
                     () {
                       context.pushNamed(AppRouteNames.paymentManagement);
                     },
-                  ),
-                if (widget.user.type == UserRole.runner.name)
+                  )
+                else
                   _profileTab(
                     "assets/images/index2.2.png",
                     "Delivery History",

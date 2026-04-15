@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/models/delivery_model.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
@@ -119,6 +120,7 @@ class ActiveJobsScreen extends ConsumerWidget {
               ),
             ),
           ),
+          100.verticalSpace,
         ],
       ),
     );
@@ -199,13 +201,36 @@ class _DeliveryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      delivery.packageName ?? 'Unknown Package',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          delivery.packageName ?? 'Unknown Package',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            delivery.status ?? 'Unknown',
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -217,24 +242,6 @@ class _DeliveryCard extends StatelessWidget {
                       ),
                     ),
                   ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  delivery.status ?? 'Unknown',
-                  style: TextStyle(
-                    color: statusColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
                 ),
               ),
             ],
@@ -275,8 +282,7 @@ class _DeliveryCard extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text:
-                            '${delivery.estimatedDistanceKm?.toStringAsFixed(1) ?? 'N/A'} km',
+                        text: '${delivery.estimatedDistanceKm ?? 'N/A'} km',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.normal,
@@ -313,7 +319,7 @@ class _DeliveryCard extends StatelessWidget {
           // View Details Button
           OutlinedButton(
             onPressed: () {
-              context.pushNamed(AppRouteNames.packageDetails);
+              context.pushNamed(AppRouteNames.packageDetails, extra: delivery.id);
             },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColor.primary,

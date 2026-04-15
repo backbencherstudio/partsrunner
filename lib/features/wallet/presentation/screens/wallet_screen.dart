@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import '../../../../core/constant/app_color.dart';
@@ -214,7 +215,7 @@ class WalletScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            100.verticalSpace,
           ],
         ),
       ),

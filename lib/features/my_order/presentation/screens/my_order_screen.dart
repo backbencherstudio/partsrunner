@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'completed_screen.dart';
 import 'ongoing_screen.dart';
@@ -117,6 +118,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                   ? const OngoingScreen()
                   : const CompletedScreen(),
             ),
+            100.verticalSpace,
           ],
         ),
       ),

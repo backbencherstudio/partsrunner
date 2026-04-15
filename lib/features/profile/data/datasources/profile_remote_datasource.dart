@@ -10,8 +10,7 @@ abstract class ProfileRemoteDatasource {
 class ProfileRemoteDatasourceImpl implements ProfileRemoteDatasource {
   final ApiClient _apiClient;
 
-  ProfileRemoteDatasourceImpl({required ApiClient apiClient})
-    : _apiClient = apiClient;
+  ProfileRemoteDatasourceImpl(this._apiClient);
 
   @override
   Future<void> getProfile() async {

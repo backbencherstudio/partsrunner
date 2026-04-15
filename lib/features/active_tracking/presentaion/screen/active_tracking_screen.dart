@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 import 'package:partsrunner/features/active_tracking/presentaion/providers/active_tracking_provider.dart';
 import 'package:partsrunner/core/widget/tracking_item.dart';
@@ -67,17 +68,22 @@ class _ActiveTrackingScreenState extends ConsumerState<ActiveTrackingScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(title: Text("Active Tracking")),
-      body: activeDeliveryProvider.when(
-        loading: () => Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text("Error: $error")),
-        data: (data) => ListView.builder(
-          padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
-          itemCount: data.length,
-          itemBuilder: (context, index) {
-            final item = data[index];
-            return TrackingItem(item: item);
-          },
-        ),
+      body: Column(
+        children: [
+          activeDeliveryProvider.when(
+            loading: () => Center(child: CircularProgressIndicator()),
+            error: (error, stackTrace) => Center(child: Text("Error: $error")),
+            data: (data) => ListView.builder(
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final item = data[index];
+                return TrackingItem(item: item);
+              },
+            ),
+          ),
+          100.verticalSpace,
+        ],
       ),
     );
   }

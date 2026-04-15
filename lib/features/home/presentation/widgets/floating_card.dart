@@ -20,9 +20,6 @@ class FloatingCard extends ConsumerStatefulWidget {
 class _FloatingCardState extends ConsumerState<FloatingCard> {
   @override
   void initState() {
-    !widget.isContactor
-        ? ref.read(onlineStatusProvider.notifier).state = false
-        : null;
     super.initState();
   }
 

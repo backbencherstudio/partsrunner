@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PackageDetailsScreen extends StatefulWidget {
-  const PackageDetailsScreen({super.key});
+  const PackageDetailsScreen({super.key, required this.id});
+
+  final String id;
 
   @override
   State<PackageDetailsScreen> createState() => _PackageDetailsScreenState();

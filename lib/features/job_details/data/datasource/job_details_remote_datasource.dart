@@ -6,6 +6,11 @@ abstract class JobDetailsRemoteDatasource {
   Future<DeliveryModel> getRequestById(String id);
   Future<void> runnerAcceptRequest(String id);
   Future<void> runnerRejectRequest(String id);
+  Future<void> updateDeliveryStatus(
+    String id,
+    String status,
+    List<String>? proofFile,
+  );
 }
 
 class JobDetailsRemoteDatasourceImpl implements JobDetailsRemoteDatasource {
@@ -51,6 +56,33 @@ class JobDetailsRemoteDatasourceImpl implements JobDetailsRemoteDatasource {
       final response = await _apiClient.post(
         ApiEndpoints.runnerRejectOffer,
         body: {"delivery_id": id},
+      );
+      print(response);
+      if (!response['success']) {
+        throw Exception(response['message']);
+      }
+    } catch (e) {
+      throw Exception('Request accept failed: $e');
+    }
+  }
+
+  @override
+  Future<void> updateDeliveryStatus(
+    String id,
+    String status,
+    List<String>? proofFile,
+  ) async {
+    try {
+      final body = <String, dynamic>{"delivery_id": id, "status": status};
+
+      // Only add proof_file when status is DELIVERED
+      if (status == "DELIVERED" && proofFile != null && proofFile.isNotEmpty) {
+        body["proof_file"] = proofFile;
+      }
+
+      final response = await _apiClient.post(
+        ApiEndpoints.runnerUpdateDeliveryStatus,
+        body: body,
       );
       print(response);
       if (!response['success']) {

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/widget/custom_container.dart';
+import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
 
-class NoActiveJobsWidget extends StatelessWidget {
+class NoActiveJobsWidget extends ConsumerWidget {
   const NoActiveJobsWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return CustomContainer(
       height: 300.h,
       width: double.infinity,
@@ -45,15 +47,20 @@ class NoActiveJobsWidget extends StatelessWidget {
             style: TextStyle(fontSize: 16.sp),
           ),
           8.verticalSpace,
-          Text(
-            "View Job History",
-            style: TextStyle(
-              fontFamily: 'Industry',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColor.primary,
-              decoration: TextDecoration.underline,
-              decorationColor: AppColor.primary,
+          GestureDetector(
+            onTap: () {
+              ref.read(bottomNavProvider.notifier).state = 1;
+            },
+            child: Text(
+              "View Job History",
+              style: TextStyle(
+                fontFamily: 'Industry',
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: AppColor.primary,
+                decoration: TextDecoration.underline,
+                decorationColor: AppColor.primary,
+              ),
             ),
           ),
         ],
