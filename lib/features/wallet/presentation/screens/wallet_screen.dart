@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import '../../../../core/constant/app_color.dart';
+import '../providers/wallet_provider.dart';
 
-class WalletScreen extends StatelessWidget {
+class WalletScreen extends ConsumerWidget {
   const WalletScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final walletSummaryAsync = ref.watch(walletSummaryProvider);
+    final earningOverviewAsync = ref.watch(earningOverviewProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -27,196 +32,226 @@ class WalletScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Available Balance Card
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: const DecorationImage(
-                  image: AssetImage('assets/images/wallet_card.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet_outlined,
-                        color: Colors.white70,
-                        size: 20,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        'Available Balance',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+        child: walletSummaryAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+          data: (walletSummary) {
+            return earningOverviewAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (earningOverview) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Available Balance Card
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/wallet_card.png'),
+                          fit: BoxFit.cover,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    '\$118.50',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Ready to withdraw',
-                    style: TextStyle(
-                      color: AppColor.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Updated in real time after each completed delivery',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Pending Earnings Card
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF5F2),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColor.primary.withOpacity(0.3)),
-              ),
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Pending Earnings',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    '\$38.50',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 12),
-                  Text(
-                    'Includes deliveries completed today',
-                    style: TextStyle(color: AppColor.primary, fontSize: 12),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Will be available after confirmation period',
-                    style: TextStyle(color: AppColor.primary, fontSize: 12),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      context.pushNamed(AppRouteNames.transactionHistory);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColor.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Text(
-                      'View Transactions',
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      context.pushNamed(AppRouteNames.withdraw);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColor.primary,
-                      side: const BorderSide(color: AppColor.primary),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(
+                                Icons.account_balance_wallet_outlined,
+                                color: Colors.white70,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Available Balance',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            '\$${walletSummary.availableToWithdraw?.toStringAsFixed(2) ?? '0.00'}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 40,
+                              fontWeight: FontWeight.bold,
+                              height: 1.1,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Ready to withdraw',
+                            style: TextStyle(
+                              color: AppColor.primary,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Updated in real time after each completed delivery',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: const Text(
-                      'Withdraw Now',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                    const SizedBox(height: 16),
+
+                    // Pending Earnings Card
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF5F2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColor.primary.withOpacity(0.3),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 20,
+                        horizontal: 16,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Pending Earnings',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '\$${earningOverview.pendingEarnings?.toStringAsFixed(2) ?? '0.00'}',
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Includes deliveries completed today',
+                            style: TextStyle(
+                              color: AppColor.primary,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Will be available after ${earningOverview.confirmationPeriodDays ?? 0} days confirmation period',
+                            style: TextStyle(
+                              color: AppColor.primary,
+                              fontSize: 12,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                    const SizedBox(height: 20),
 
-            // This Weeks Performance
-            const Text(
-              'This Weeks Performance',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 16),
+                    // Action Buttons
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.pushNamed(
+                                AppRouteNames.transactionHistory,
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColor.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: const Text(
+                              'View Transactions',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              context.pushNamed(AppRouteNames.withdraw);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColor.primary,
+                              side: const BorderSide(color: AppColor.primary),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                            ),
+                            child: const Text(
+                              'Withdraw Now',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
 
-            // Performance Cards
-            Row(
-              children: [
-                Expanded(
-                  child: _buildPerformanceCard(
-                    icon: Icons.monetization_on_outlined,
-                    title: 'Total Earned',
-                    value: '\$684.20',
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildPerformanceCard(
-                    icon: Icons.local_shipping_outlined,
-                    title: 'Deliveries Completed',
-                    value: '18 Jobs',
-                  ),
-                ),
-              ],
-            ),
-            100.verticalSpace,
-          ],
+                    // This Weeks Performance
+                    const Text(
+                      'This Weeks Performance',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Performance Cards
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildPerformanceCard(
+                            icon: Icons.monetization_on_outlined,
+                            title: 'Total Earned',
+                            value:
+                                '\$${earningOverview.totalEarned?.toStringAsFixed(2) ?? '0.00'}',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildPerformanceCard(
+                            icon: Icons.local_shipping_outlined,
+                            title: 'Deliveries Completed',
+                            value:
+                                '${earningOverview.deliveriesCompleted ?? 0} Jobs',
+                          ),
+                        ),
+                      ],
+                    ),
+                    100.verticalSpace,
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
     );

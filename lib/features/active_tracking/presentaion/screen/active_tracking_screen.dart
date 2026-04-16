@@ -73,13 +73,15 @@ class _ActiveTrackingScreenState extends ConsumerState<ActiveTrackingScreen> {
           activeDeliveryProvider.when(
             loading: () => Center(child: CircularProgressIndicator()),
             error: (error, stackTrace) => Center(child: Text("Error: $error")),
-            data: (data) => ListView.builder(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final item = data[index];
-                return TrackingItem(item: item);
-              },
+            data: (data) => Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.fromLTRB(16, 12, 16, 24),
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  final item = data[index];
+                  return TrackingItem(item: item);
+                },
+              ),
             ),
           ),
           100.verticalSpace,

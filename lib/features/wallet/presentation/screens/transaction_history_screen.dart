@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
+import '../providers/wallet_provider.dart';
 
-class TransactionHistoryScreen extends StatefulWidget {
+class TransactionHistoryScreen extends ConsumerStatefulWidget {
   const TransactionHistoryScreen({super.key});
 
   @override
-  State<TransactionHistoryScreen> createState() =>
+  ConsumerState<TransactionHistoryScreen> createState() =>
       _TransactionHistoryScreenState();
 }
 
-class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
+class _TransactionHistoryScreenState
+    extends ConsumerState<TransactionHistoryScreen> {
   int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    final withdrawHistoryAsync = ref.watch(withdrawHistoryProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -52,12 +57,21 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
           // List
           Expanded(
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              itemCount: 3,
-              separatorBuilder: (context, index) => 16.verticalSpace,
-              itemBuilder: (context, index) {
-                return _buildTransactionCard();
+            child: withdrawHistoryAsync.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+              data: (withdrawHistory) {
+                // Note: WithdrawModel appears to be a single object, not a list
+                // You may need to adjust this based on your actual API response structure
+                // For now, showing a placeholder if the data structure is different
+                return ListView.separated(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  itemCount: 1,
+                  separatorBuilder: (context, index) => 16.verticalSpace,
+                  itemBuilder: (context, index) {
+                    return _buildTransactionCard(withdrawHistory);
+                  },
+                );
               },
             ),
           ),
@@ -104,7 +118,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     );
   }
 
-  Widget _buildTransactionCard() {
+  Widget _buildTransactionCard(dynamic withdrawData) {
     return GestureDetector(
       onTap: () {
         context.pushNamed(AppRouteNames.transactionDetails);
@@ -129,7 +143,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             Row(
               children: [
                 Text(
-                  'Delivery #PR-3044',
+                  'Withdrawal #${withdrawData?.id ?? 'N/A'}',
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.bold,
@@ -143,7 +157,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
-                    'Completed',
+                    withdrawData?.status ?? 'Pending',
                     style: TextStyle(
                       color: AppColor.primary,
                       fontSize: 10.sp,
@@ -163,11 +177,11 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: 'Pickup Location: ',
+                    text: 'Amount: ',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   TextSpan(
-                    text: 'AutoZone – 3.2 miles',
+                    text: '\$${withdrawData?.amount?.toString() ?? '0.00'}',
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
                 ],
@@ -183,11 +197,13 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 ),
                 children: [
                   TextSpan(
-                    text: 'Drop-Off Location: ',
+                    text: 'Date: ',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   TextSpan(
-                    text: 'Acme HVAC – 7.5 miles',
+                    text: withdrawData?.createdAt != null
+                        ? '${withdrawData.createdAt.day}/${withdrawData.createdAt.month}/${withdrawData.createdAt.year}'
+                        : 'N/A',
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
                 ],
@@ -197,9 +213,17 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildIconText(Icons.location_on_outlined, '9.7 miles'),
-                _buildIconText(Icons.access_time, '38 mins'),
-                _buildIconText(Icons.attach_money, '\$125.00'),
+                _buildIconText(Icons.account_balance_wallet, 'Wallet'),
+                _buildIconText(
+                  Icons.access_time,
+                  withdrawData?.createdAt != null
+                      ? '${withdrawData.createdAt.hour}:${withdrawData.createdAt.minute.toString().padLeft(2, '0')}'
+                      : 'N/A',
+                ),
+                _buildIconText(
+                  Icons.attach_money,
+                  '\$${withdrawData?.amount?.toString() ?? '0.00'}',
+                ),
               ],
             ),
           ],
