@@ -51,6 +51,16 @@ final _profileRepositoryProvider = Provider<ProfileRepository>(
   (ref) => ProfileRepositoryImpl(ref.watch(_profileRemoteDatasourceProvider)),
 );
 
-final _changePasswordUsecase = Provider<ChangePasswordUsecase>(
+final _changePasswordUsecaseProvider = Provider<ChangePasswordUsecase>(
   (ref) => ChangePasswordUsecase(ref.watch(_profileRepositoryProvider)),
 );
+
+final changePasswordProvider =
+    FutureProvider.family<
+      Map<String, dynamic>,
+      ({String oldPassword, String newPassword})
+    >((ref, params) {
+      return ref
+          .watch(_changePasswordUsecaseProvider)
+          .call(params.oldPassword, params.newPassword);
+    });

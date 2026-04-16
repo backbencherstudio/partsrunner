@@ -1,3 +1,3 @@
 abstract class ProfileRepository {
-  Future<void> changePassword(String oldPassword, String newPassword);
+  Future<Map<String, dynamic>> changePassword(String oldPassword, String newPassword);
 }

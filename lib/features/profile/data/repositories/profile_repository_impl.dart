@@ -5,7 +5,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDatasource _profileRemoteDatasource;
   ProfileRepositoryImpl(this._profileRemoteDatasource);
   @override
-  Future<void> changePassword(String oldPassword, String newPassword) {
+  Future<Map<String, dynamic>> changePassword(String oldPassword, String newPassword) {
     return _profileRemoteDatasource.changePassword(oldPassword, newPassword);
   }
 }

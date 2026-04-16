@@ -1,19 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/constant/app_color.dart';
+import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/custom_text_fIeld.dart';
+import 'package:partsrunner/features/profile/presentation/providers/profile_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _pushNotificationEnabled = true;
+  var _isChangingPassword = false;
 
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
@@ -33,7 +37,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.black,
+            size: 20,
+          ),
           onPressed: () => context.pop(),
         ),
         title: Text(
@@ -81,10 +89,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Change password section
             Text(
               "Change password",
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
             ),
             SizedBox(height: 16.h),
             // Current Password
@@ -107,7 +112,75 @@ class _SettingsScreenState extends State<SettingsScreen> {
               hintText: "Enter confirm password",
               controller: _confirmPasswordController,
             ),
-            SizedBox(height: 30.h),
+            30.verticalSpace,
+            CustomButton(
+              submit: () async {
+                // Validate passwords match
+                if (_newPasswordController.text !=
+                    _confirmPasswordController.text) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Passwords do not match')),
+                  );
+                  return;
+                }
+
+                // Validate fields are not empty
+                if (_currentPasswordController.text.isEmpty ||
+                    _newPasswordController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill in all fields')),
+                  );
+                  return;
+                }
+
+                setState(() {
+                  _isChangingPassword = true;
+                });
+
+                try {
+                  final response = await ref.read(
+                    changePasswordProvider((
+                      oldPassword: _currentPasswordController.text,
+                      newPassword: _newPasswordController.text,
+                    )).future,
+                  );
+
+                  if (response['success'] == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          response['message'] ??
+                              'Password changed successfully',
+                        ),
+                      ),
+                    );
+                    // Clear the password fields
+                    _currentPasswordController.clear();
+                    _newPasswordController.clear();
+                    _confirmPasswordController.clear();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          response['message'] ?? 'Failed to change password',
+                        ),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: ${e.toString()}')),
+                  );
+                } finally {
+                  setState(() {
+                    _isChangingPassword = false;
+                  });
+                }
+              },
+              text: _isChangingPassword ? 'Changing...' : 'Confirm',
+              textColor: AppColor.white,
+              backgroundColor: AppColor.primary,
+            ),
           ],
         ),
       ),
@@ -124,10 +197,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
         ),
         CustomTextField(
           hintText: hintText,
