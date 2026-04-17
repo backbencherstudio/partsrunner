@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum OrderStatus { pickedUp, enRoute, delivered }
+enum OrderStatus { accepted, pickedUp, enRoute, delivered }
 
 class OrderTracker extends StatelessWidget {
   final OrderStatus status;
@@ -12,6 +12,9 @@ class OrderTracker extends StatelessWidget {
     // Determine progress width factor based on status
     double progressFactor;
     switch (status) {
+      case OrderStatus.accepted:
+        progressFactor = 0;
+        break;
       case OrderStatus.pickedUp:
         progressFactor = 0.0;
         break;
@@ -75,11 +78,17 @@ class OrderTracker extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildLabel(
-              'Picked Up',
-              status.index >= 0,
-              status == OrderStatus.pickedUp,
-            ),
+            status == OrderStatus.accepted
+                ? _buildLabel(
+                    'Accepted',
+                    status.index == 0,
+                    status == OrderStatus.accepted,
+                  )
+                : _buildLabel(
+                    'Picked Up',
+                    status.index >= 0,
+                    status == OrderStatus.pickedUp,
+                  ),
             _buildLabel(
               'En Route',
               status.index >= 1,

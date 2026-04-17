@@ -1,4 +1,5 @@
 import 'package:partsrunner/core/entities/contractor.dart';
+import 'package:partsrunner/core/entities/runner.dart';
 import 'package:partsrunner/core/entities/supplier.dart';
 
 class DeliveryModel {
@@ -37,6 +38,7 @@ class DeliveryModel {
   DateTime? createdAt;
   DateTime? updatedAt;
   DateTime? deletedAt;
+  Runner? runner;
   Supplier? supplier;
   Contractor? contractor;
   List<dynamic>? statusHistory;
@@ -77,6 +79,7 @@ class DeliveryModel {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    this.runner,
     this.supplier,
     this.contractor,
     this.statusHistory,
@@ -123,6 +126,9 @@ class DeliveryModel {
     createdAt = DateTime.tryParse(json['created_at'] ?? '');
     updatedAt = DateTime.tryParse(json['updated_at'] ?? '');
     deletedAt = DateTime.tryParse(json['deleted_at'] ?? '');
+    runner = json['runner'] != null
+        ? Runner.fromJson(json['runner'])
+        : null;
     supplier = json['supplier'] != null
         ? Supplier.fromJson(json['supplier'])
         : null;
@@ -171,6 +177,9 @@ class DeliveryModel {
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['deleted_at'] = deletedAt;
+    if(runner != null){
+      data['runner'] = runner!.toJson();
+    }
     if (supplier != null) {
       data['supplier'] = supplier!.toJson();
     }

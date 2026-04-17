@@ -133,6 +133,7 @@ class JobDetailsScreen extends ConsumerWidget {
 
             // Pickup Section
             _buildInfoCard(
+              context,
               icon: Icons.location_on,
               label: "Pickup Location",
               placeName: jobDetails.supplier?.name ?? 'Unknown Location',
@@ -145,6 +146,7 @@ class JobDetailsScreen extends ConsumerWidget {
 
             // Drop-off Section
             _buildInfoCard(
+              context,
               icon: Icons.location_on,
               label: "Drop-off Location",
               placeName: jobDetails.technicianName ?? 'Unknown Location',
@@ -214,7 +216,8 @@ class JobDetailsScreen extends ConsumerWidget {
   }
 
   // Widget for Location Cards
-  Widget _buildInfoCard({
+  Widget _buildInfoCard(
+    BuildContext context, {
     required IconData icon,
     required String label,
     required String placeName,
@@ -285,7 +288,12 @@ class JobDetailsScreen extends ConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                context.pushNamed(
+                  AppRouteNames.liveTracking,
+                  pathParameters: {'id': id},
+                );
+              },
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: primaryOrange),
                 shape: RoundedRectangleBorder(

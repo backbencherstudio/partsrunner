@@ -9,25 +9,18 @@ class CompletedScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final completedOrderProvider = ref.watch(completedOrdersProvider);
+    final completedOrderProvider = ref.watch(getCompletedOrdersProvider);
     return completedOrderProvider.when(
       data: (order) => ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: order.length + 2,
         itemBuilder: (context, index) {
           return CompleteOrderCard(
-            title:
-                //  order[index].packageName ??
-                "Apple Watch Series 8",
-            orderId:
-                //  order[index].id ??
-                "VTY7162E",
-            recipient:
-                //  order[index].recipient ??
-                "Sandy Permata",
+            title: order[index].packageName ?? "Apple Watch Series 8",
+            orderId: order[index].id ?? "VTY7162E",
+            recipient: order[index].supplier?.name ?? "Sandy Permata",
             address:
-                //  order[index].address ??
-                "Jl.kenanga no 2 batang",
+                '${order[index].supplier?.location} ${order[index].supplier?.street} ${order[index].supplier?.city}',
           );
         },
       ),
@@ -38,7 +31,7 @@ class CompletedScreen extends ConsumerWidget {
   }
 }
 
-class CompleteOrderCard extends StatelessWidget {
+class CompleteOrderCard extends ConsumerWidget {
   const CompleteOrderCard({
     super.key,
     required this.title,
@@ -53,12 +46,12 @@ class CompleteOrderCard extends StatelessWidget {
   final String address;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
         onTap: () {
-          context.pushNamed(AppRouteNames.orderDetails);
+          context.pushNamed(AppRouteNames.orderDetails, extra: orderId);
         },
         child: Container(
           padding: const EdgeInsets.all(16),

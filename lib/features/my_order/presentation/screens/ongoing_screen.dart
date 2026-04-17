@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/tracking_item.dart';
 import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
@@ -8,14 +10,26 @@ class OngoingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ongoingOrderProvider = ref.watch(ongoingOrdersProvider);
+    final ongoingOrderProvider = ref.watch(getOngoingOrdersProvider);
     return ongoingOrderProvider.when(
       data: (order) => ListView.builder(
         padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
         itemCount: order.length,
         itemBuilder: (context, index) {
           final item = order[index];
-          return TrackingItem(item: item);
+          return GestureDetector(
+            onTap: () {
+              context.pushNamed(AppRouteNames.orderDetails, extra: item.id);
+            },
+            child: TrackingItem(
+              item: item,
+              // onCancel: () async {
+              //   if (item.id != null) {
+              //     await ref.read(cancelOrderProvider(item.id!).future);
+              //   }
+              // },
+            ),
+          );
         },
       ),
       error: (error, stackTrace) => Center(child: Text(error.toString())),
@@ -383,5 +397,4 @@ class OngoingScreen extends ConsumerWidget {
   //     ],
   //   );
   // }
-
 }

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/entities/delivery.dart';
+import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/core/widget/customButton.dart';
 import 'package:partsrunner/core/widget/order_tracker.dart';
+import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
 enum Status { available, inProgress, atLocation }
 
@@ -87,8 +90,9 @@ final trackingTimerProvider =
 
 class TrackingItem extends ConsumerStatefulWidget {
   final Delivery item;
+  final VoidCallback? onCancel;
 
-  const TrackingItem({super.key, required this.item});
+  const TrackingItem({super.key, required this.item, this.onCancel});
 
   @override
   ConsumerState<TrackingItem> createState() => _TrackingItemState();
@@ -96,6 +100,9 @@ class TrackingItem extends ConsumerStatefulWidget {
 
 class _TrackingItemState extends ConsumerState<TrackingItem> {
   OrderStatus _getStatus(String status) {
+    if (status.toLowerCase().contains('accepted')) {
+      return OrderStatus.accepted;
+    }
     if (status.toLowerCase().contains('picked_up')) {
       return OrderStatus.pickedUp;
     }
@@ -119,7 +126,7 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
     final status = item.status;
     final message =
         'The counter is preparing your order. You can call supply house for any delays\nRunner is Waiting for Parts...';
-    final showTimer = item.estimatedTimeMin! == 0;
+    final showTimer = item.estimatedTimeMin! == 0 || status == 'picked_up';
 
     // Listen to estimatedTimeMin changes and start/stop the timer reactively.
     ref.listen<bool>(trackingTimerProvider(itemId).select((_) => showTimer), (
@@ -188,12 +195,47 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        name!,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            name!,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: status!.toLowerCase().contains('en_route')
+                                  ? Colors.green.withOpacity(0.12)
+                                  : status.toLowerCase().contains('delivered')
+                                  ? Colors.purple.withOpacity(0.12)
+                                  : Colors.blue.withOpacity(0.12),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              status.toLowerCase().contains('en_route')
+                                  ? 'In Progress'
+                                  : status.toLowerCase().contains('delivered')
+                                  ? 'At Location'
+                                  : 'Available',
+                              style: TextStyle(
+                                color: status.toLowerCase().contains('en_route')
+                                    ? Colors.green
+                                    : status.toLowerCase().contains('delivered')
+                                    ? Colors.purple
+                                    : Colors.blue,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -204,36 +246,6 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: status!.toLowerCase().contains('en_route')
-                        ? Colors.green.withOpacity(0.12)
-                        : status.toLowerCase().contains('delivered')
-                        ? Colors.purple.withOpacity(0.12)
-                        : Colors.blue.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    status.toLowerCase().contains('en_route')
-                        ? 'In Progress'
-                        : status.toLowerCase().contains('delivered')
-                        ? 'At Location'
-                        : 'Available',
-                    style: TextStyle(
-                      color: status.toLowerCase().contains('en_route')
-                          ? Colors.green
-                          : status.toLowerCase().contains('delivered')
-                          ? Colors.purple
-                          : Colors.blue,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
                   ),
                 ),
               ],
@@ -255,15 +267,13 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildInfoText("Price: ", price!),
-                      const SizedBox(height: 8),
-                      _buildInfoText("ETA: ", eta.toString()),
-                    ],
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _buildInfoText("Price: ", price!),
+                    const SizedBox(height: 8),
+                    _buildInfoText("ETA: ", eta.toString()),
+                  ],
                 ),
               ],
             ),
@@ -336,9 +346,61 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
                 border: Border.all(color: Colors.deepOrange, width: 1.5),
                 borderRadius: 24,
                 textSize: 16,
-                submit: () {},
+                submit: () {
+                  context.pushNamed(
+                    AppRouteNames.liveTracking,
+                    pathParameters: {'id': widget.item.id!},
+                  );
+                },
               ),
             ),
+
+            const SizedBox(height: 12),
+
+            // Cancel Button
+            if (widget.onCancel != null)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Cancel Order'),
+                        content: const Text(
+                          'Are you sure you want to cancel this order?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => context.pop(),
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              widget.onCancel!();
+                              context.pop();
+                            },
+                            child: const Text('Yes'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirmed == true) {
+                      await ref.read(cancelOrderProvider(itemId).future);
+                    }
+                  },
+                  icon: const Icon(Icons.cancel, size: 18),
+                  label: const Text('Cancel Order'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:partsrunner/core/models/delivery_model.dart';
+import 'package:partsrunner/features/my_order/data/models/order_model.dart';
+import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
-  const OrderDetailsScreen({super.key});
+class OrderDetailsScreen extends ConsumerWidget {
+  const OrderDetailsScreen({super.key, required this.id});
+
+  final String id;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -28,34 +35,50 @@ class OrderDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildTopCard(),
-            const SizedBox(height: 24),
-            _buildAddressesRow(),
-            const SizedBox(height: 24),
-            _buildTimeline(),
-            const SizedBox(height: 24),
-            _buildImagesSection(),
-            const SizedBox(height: 32),
-          ],
-        ),
+      body: FutureBuilder(
+        future: ref.watch(getOrderDetailsProvider((id)).future),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          final order = snapshot.data;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildTopCard(order!),
+                const SizedBox(height: 24),
+                _buildAddressesRow(order),
+                const SizedBox(height: 24),
+                _buildTimeline(),
+                const SizedBox(height: 24),
+                _buildImagesSection(),
+                // const SizedBox(height: 32),
+                // _buildCancelButton(context, ref, order?.id ?? '', () async {
+                //   if (id.isEmpty) {
+                //     await ref.read(cancelOrderProvider(id).future);
+                //   }
+                // }),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTopCard() {
+  Widget _buildTopCard(DeliveryModel order) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFFF7A59).withOpacity(0.15),
-        ),
+        border: Border.all(color: const Color(0xFFFF7A59).withOpacity(0.15)),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFFF7A59).withOpacity(0.04), // soft shadow
@@ -89,17 +112,40 @@ class OrderDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Apple Watch Series 8',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          order.packageName ?? 'Apple Watch Series 8',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'In Progress',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'ID: VTY7162EY8',
+                      'ID: ${order.id ?? 'VTY7162EY8'}',
                       style: TextStyle(
                         color: Colors.grey.shade500,
                         fontSize: 13,
@@ -109,36 +155,19 @@ class OrderDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'In Progress',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
             ],
           ),
           const SizedBox(height: 20),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildRichText('Runner: ', 'Michael S.'),
+                    _buildRichText('Runner: ', order.runner?.user?.name ?? ''),
                     const SizedBox(height: 8),
-                    _buildRichText('Supplier: ', 'Auto Supply Co.'),
+                    _buildRichText('Supplier: ', order.supplier?.name ?? ''),
                   ],
                 ),
               ),
@@ -146,9 +175,9 @@ class OrderDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildRichText('Price: ', '\$125.00'),
+                    _buildRichText('Price: ', '\$${order.totalAmount}'),
                     const SizedBox(height: 8),
-                    _buildRichText('ETA: ', '-'),
+                    _buildRichText('ETA: ', order.estimatedTimeMin.toString()),
                   ],
                 ),
               ),
@@ -182,7 +211,7 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAddressesRow() {
+  Widget _buildAddressesRow(dynamic order) {
     return Column(
       children: [
         Row(
@@ -192,13 +221,18 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Sender:',
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 13)),
+                  Text(
+                    'Sender:',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('Alexander',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
+                  Text(
+                    order?.runner?.user?.name ?? 'Alexander',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -206,13 +240,18 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Receiver:',
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 13)),
+                  Text(
+                    'Receiver:',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('Jason',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
+                  Text(
+                    order?.supplier?.name ?? 'Jason',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -226,15 +265,20 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('From:',
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 13)),
+                  Text(
+                    'From:',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('Jl. Merdeka Raya No. 123,\nJakarta Pusat',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          height: 1.4)),
+                  Text(
+                    '${order?.supplier?.location ?? ''} ${order?.supplier?.street ?? ''} ${order?.supplier?.city ?? ''}'
+                        .trim(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -242,15 +286,20 @@ class OrderDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('To:',
-                      style: TextStyle(
-                          color: Colors.grey.shade600, fontSize: 13)),
+                  Text(
+                    'To:',
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  ),
                   const SizedBox(height: 4),
-                  const Text('102 Ocean View Road,\nMelbourne, VIC 3000',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          height: 1.4)),
+                  Text(
+                    order?.deliveryAddress ??
+                        '102 Ocean View Road,\nMelbourne, VIC 3000',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      height: 1.4,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -375,9 +424,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   Expanded(
                     child: CustomPaint(
                       painter: DashedLinePainter(),
-                      child: const SizedBox(
-                        width: 2,
-                      ),
+                      child: const SizedBox(width: 2),
                     ),
                   ),
               ],
@@ -474,6 +521,54 @@ class OrderDetailsScreen extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildCancelButton(
+    BuildContext context,
+    WidgetRef ref,
+    String orderId,
+    VoidCallback onCancel,
+  ) {
+    return ElevatedButton(
+      onPressed: () async {
+        final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Cancel Order'),
+            content: const Text('Are you sure you want to cancel this order?'),
+            actions: [
+              TextButton(
+                onPressed: () => context.pop(),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () {
+                  onCancel();
+                  context.pop();
+                },
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed == true) {
+          await ref.read(cancelOrderProvider(orderId).future);
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      ),
+      child: const Text(
+        'Cancel Order',
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

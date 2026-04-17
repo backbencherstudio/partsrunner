@@ -29,6 +29,8 @@ dependencies:
   flutter_stripe: ^12.5.0
   webview_flutter: ^4.13.1
   flutter_secure_storage: ^10.0.0
+  google_maps_flutter: ^2.17.0
+  flutter_polyline_points: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'completed_screen.dart';
 import 'ongoing_screen.dart';
+import '../providers/order_provider.dart';
 
-class MyOrderScreen extends StatefulWidget {
+class MyOrderScreen extends ConsumerWidget {
   const MyOrderScreen({super.key});
 
   @override
-  State<MyOrderScreen> createState() => _MyOrderScreenState();
-}
-
-class _MyOrderScreenState extends State<MyOrderScreen> {
-  bool isOngoing = true;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -45,18 +40,16 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            isOngoing = true;
-                          });
+                          ref.read(orderTabProvider.notifier).state = true;
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: isOngoing
+                            color: ref.watch(orderTabProvider)
                                 ? Colors.white
                                 : Colors.transparent,
-                            border: isOngoing
+                            border: ref.watch(orderTabProvider)
                                 ? Border.all(color: const Color(0xffFF4000))
                                 : null,
                           ),
@@ -66,7 +59,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: isOngoing
+                                color: ref.watch(orderTabProvider)
                                     ? const Color(0xffFF4000)
                                     : Colors.grey[400],
                               ),
@@ -78,18 +71,16 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            isOngoing = false;
-                          });
+                          ref.read(orderTabProvider.notifier).state = false;
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
-                            color: !isOngoing
+                            color: !ref.watch(orderTabProvider)
                                 ? Colors.white
                                 : Colors.transparent,
-                            border: !isOngoing
+                            border: !ref.watch(orderTabProvider)
                                 ? Border.all(color: const Color(0xffFF4000))
                                 : null,
                           ),
@@ -99,7 +90,7 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
-                                color: !isOngoing
+                                color: !ref.watch(orderTabProvider)
                                     ? const Color(0xffFF4000)
                                     : Colors.grey[400],
                               ),
@@ -112,13 +103,12 @@ class _MyOrderScreenState extends State<MyOrderScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            16.verticalSpace,
             Expanded(
-              child: isOngoing
+              child: ref.watch(orderTabProvider)
                   ? const OngoingScreen()
                   : const CompletedScreen(),
             ),
-            100.verticalSpace,
           ],
         ),
       ),

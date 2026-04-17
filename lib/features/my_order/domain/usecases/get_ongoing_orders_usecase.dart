@@ -3,8 +3,7 @@ import 'package:partsrunner/features/my_order/domain/repositories/order_reposito
 
 class GetOngoingOrdersUsecase {
   final OrderRepository _orderRepository;
-  GetOngoingOrdersUsecase({required OrderRepository orderRepository})
-    : _orderRepository = orderRepository;
+  GetOngoingOrdersUsecase(this._orderRepository);
 
   Future<List<OrderModel>> call() {
     return _orderRepository.getOngoingOrder();

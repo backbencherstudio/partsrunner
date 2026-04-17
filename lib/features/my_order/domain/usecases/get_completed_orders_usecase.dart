@@ -3,10 +3,9 @@ import 'package:partsrunner/features/my_order/domain/repositories/order_reposito
 
 class GetCompletedOrdersUsecase {
   final OrderRepository _orderRepository;
-  GetCompletedOrdersUsecase({required OrderRepository orderRepository})
-    : _orderRepository = orderRepository;
+  GetCompletedOrdersUsecase(this._orderRepository);
 
   Future<List<OrderModel>> call() {
-    return _orderRepository.getCompleteOrder();
+    return _orderRepository.getCompletedOrder();
   }
 }
