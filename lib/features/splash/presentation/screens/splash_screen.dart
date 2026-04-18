@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
-import 'package:partsrunner/core/services/api_service/token_service.dart';
+import 'package:partsrunner/core/services/api/token_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

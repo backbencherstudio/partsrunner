@@ -1,6 +1,6 @@
 import 'package:partsrunner/core/models/delivery_model.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
 
 abstract class JobDetailsRemoteDatasource {
   Future<DeliveryModel> getRequestById(String id);

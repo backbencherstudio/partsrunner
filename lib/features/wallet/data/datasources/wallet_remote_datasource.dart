@@ -1,5 +1,5 @@
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
 import 'package:partsrunner/features/wallet/data/models/earning_overview_model.dart';
 import 'package:partsrunner/features/wallet/data/models/wallet_summery_model.dart';
 import 'package:partsrunner/features/wallet/data/models/withdraw_model.dart';

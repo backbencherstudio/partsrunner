@@ -1,5 +1,5 @@
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
 import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 
 abstract class ActiveDeliveriesRemoteDatasource {

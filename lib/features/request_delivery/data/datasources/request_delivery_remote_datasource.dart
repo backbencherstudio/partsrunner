@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
-import 'package:partsrunner/core/services/payment_service/stripe_service.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
+import 'package:partsrunner/core/services/payment/stripe_service.dart';
 import 'package:partsrunner/features/request_delivery/data/models/supplier_model.dart';
 
 import '../../domain/entities/supplier_entity.dart';

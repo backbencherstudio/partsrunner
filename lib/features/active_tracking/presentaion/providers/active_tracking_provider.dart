@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/provider/api_client_provider.dart';
 import 'package:partsrunner/features/active_tracking/data/datasources/active_deliveries_remote_datasource.dart';
 import 'package:partsrunner/features/active_tracking/data/models/active_delivery_model.dart';
 import 'package:partsrunner/features/active_tracking/data/repositories/active_deliveries_repository_impl.dart';
@@ -10,12 +10,10 @@ import 'package:partsrunner/features/active_tracking/domain/usecases/get_active_
 // Dependency providers
 // ---------------------------------------------------------------------------
 
-final _apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
 final _activeDeliveriesRemoteDatasource =
     Provider<ActiveDeliveriesRemoteDatasource>(
       (ref) => ActiveDeliveriesRemoteDatasourceImpl(
-        apiClient: ref.watch(_apiClientProvider),
+        apiClient: ref.watch(apiClientProvider),
       ),
     );
 

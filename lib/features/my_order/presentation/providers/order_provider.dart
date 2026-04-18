@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:partsrunner/core/models/delivery_model.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/provider/api_client_provider.dart';
 import 'package:partsrunner/features/my_order/data/datasources/order_remote_datasource.dart';
 import 'package:partsrunner/features/my_order/data/models/order_model.dart';
 import 'package:partsrunner/features/my_order/data/repositories/order_repository_impl.dart';
@@ -37,10 +37,8 @@ class UpdateOrderParams {
   });
 }
 
-final _apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
 final _orderRemoteDatasourceProvider = Provider<OrderRemoteDatasource>(
-  (ref) => OrderRemoteDatasourceImpl(ref.watch(_apiClientProvider)),
+  (ref) => OrderRemoteDatasourceImpl(ref.watch(apiClientProvider)),
 );
 
 final _orderRepositoryProvider = Provider<OrderRepository>(

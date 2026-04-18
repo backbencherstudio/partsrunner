@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:partsrunner/core/services/payment_service/stripe_service.dart';
+import 'package:partsrunner/core/services/payment/stripe_service.dart';
 import 'package:partsrunner/core/theme/app_theme.dart';
 import 'core/routes/app_routes.dart';
 

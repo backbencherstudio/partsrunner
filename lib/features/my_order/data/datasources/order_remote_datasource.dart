@@ -1,6 +1,6 @@
 import 'package:partsrunner/core/models/delivery_model.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
 import 'package:partsrunner/features/my_order/data/models/order_model.dart';
 
 abstract class OrderRemoteDatasource {

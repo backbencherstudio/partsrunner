@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/provider/api_client_provider.dart';
 import 'package:partsrunner/core/constant/auth_method.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
-import 'package:partsrunner/core/services/api_service/token_service.dart';
+import 'package:partsrunner/core/services/api/token_service.dart';
 import 'package:partsrunner/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:partsrunner/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
@@ -41,10 +41,8 @@ final isResendingProvider = StateProvider<bool>((ref) => false);
 // ---------------------------------------------------------------------------
 // Dependency providers
 // ---------------------------------------------------------------------------
-final _apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
-
 final _authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>(
-  (ref) => AuthRemoteDataSourceImpl(apiClient: ref.watch(_apiClientProvider)),
+  (ref) => AuthRemoteDataSourceImpl(apiClient: ref.watch(apiClientProvider)),
 );
 
 final _authRepositoryProvider = Provider<AuthRepository>(

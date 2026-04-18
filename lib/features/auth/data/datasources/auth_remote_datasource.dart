@@ -1,6 +1,6 @@
-import 'package:partsrunner/core/services/api_service/api_client.dart';
-import 'package:partsrunner/core/services/api_service/api_endpoint.dart';
-import 'package:partsrunner/core/services/api_service/token_service.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/api/api_endpoint.dart';
+import 'package:partsrunner/core/services/api/token_service.dart';
 import 'package:partsrunner/features/auth/data/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
