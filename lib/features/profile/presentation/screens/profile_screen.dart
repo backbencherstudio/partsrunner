@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:partsrunner/core/services/api_service/token_service.dart';
+import 'package:partsrunner/core/services/api/token_service.dart';
 import 'package:partsrunner/core/constant/user_role.dart';
 import 'package:partsrunner/core/routes/app_route_names.dart';
 import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/presentation/providers/auth_provider.dart';
 import 'package:partsrunner/features/bottom_nav/presentation/providers/bottom_nav_provider.dart';
+import 'package:partsrunner/features/home/presentation/providers/home_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -92,6 +93,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 Divider(),
                 _profileTab("assets/images/logout.png", "Log out", () async {
                   print("Logging out...");
+                  ref.invalidate(runnerSocketServiceProvider);
                   await TokenService.deleteAll();
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.clear();

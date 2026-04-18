@@ -6,6 +6,7 @@ import 'package:partsrunner/core/widget/message.dart';
 import 'package:partsrunner/core/widget/error_screen.dart';
 import 'package:partsrunner/features/active_tracking/presentaion/screen/active_tracking_screen.dart';
 import 'package:partsrunner/features/active_jobs/presentations/screens/active_jobs_screens.dart';
+import 'package:partsrunner/features/auth/domain/entities/user_entity.dart';
 import 'package:partsrunner/features/auth/presentation/screens/complete_info_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:partsrunner/features/auth/presentation/screens/login_Screen.dart';
@@ -75,7 +76,8 @@ class AppRoutes {
       GoRoute(
         path: '/liveTracking/:id',
         name: AppRouteNames.liveTracking,
-        builder: (context, state) => LiveTrackingScreens(id: state.pathParameters['id']!),
+        builder: (context, state) =>
+            LiveTrackingScreens(id: state.pathParameters['id']!),
       ),
       GoRoute(
         path: '/notification',
@@ -249,7 +251,8 @@ class AppRoutes {
           GoRoute(
             path: 'editProfile',
             name: AppRouteNames.editProfile,
-            builder: (context, state) => const EditProfileScreen(),
+            builder: (context, state) =>
+                EditProfileScreen(user: state.extra as UserEntity),
           ),
           GoRoute(
             path: 'deliveryHistory',

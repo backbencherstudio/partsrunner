@@ -1,6 +1,7 @@
 import 'package:partsrunner/core/entities/contractor.dart';
 import 'package:partsrunner/core/entities/runner.dart';
 import 'package:partsrunner/core/entities/supplier.dart';
+import 'package:partsrunner/core/helpers/helper_functions.dart';
 
 class DeliveryModel {
   String? id;
@@ -91,15 +92,15 @@ class DeliveryModel {
     runnerId = json['runner_id'];
     supplierId = json['supplier_id'];
     packageName = json['package_name'];
-    weight = json['weight'];
-    pickupLat = json['pickup_lat'];
-    pickupLng = json['pickup_lng'];
+    weight = HelperFunctions.toInt(json['weight']);
+    pickupLat = HelperFunctions.toDouble(json['pickup_lat']);
+    pickupLng = HelperFunctions.toDouble(json['pickup_lng']);
     pickupDate = json['pickup_date'];
     technicianName = json['technician_name'];
     technicianPhone = json['technician_phone'];
     deliveryAddress = json['delivery_address'];
-    deliveryLat = json['delivery_lat'];
-    deliveryLng = json['delivery_lng'];
+    deliveryLat = HelperFunctions.toDouble(json['delivery_lat']);
+    deliveryLng = HelperFunctions.toDouble(json['delivery_lng']);
     specialInstructions = json['special_instructions'];
     totalAmount = json['total_amount'];
     paymentStatus = json['payment_status'];
@@ -109,17 +110,17 @@ class DeliveryModel {
     pickedUpAt = DateTime.tryParse(json['picked_up_at'] ?? '');
     enRouteAt = DateTime.tryParse(json['en_route_at'] ?? '');
     deliveredAt = DateTime.tryParse(json['delivered_at'] ?? '');
-    estimatedDistanceKm = json['estimated_distance_km'];
-    estimatedTimeMin = json['estimated_time_min'];
-    currentDistanceKm = json['current_distance_km'];
-    currentEtaMin = json['current_eta_min'];
+    estimatedDistanceKm = HelperFunctions.toDouble(json['estimated_distance_km']);
+    estimatedTimeMin = HelperFunctions.toInt(json['estimated_time_min']);
+    currentDistanceKm = HelperFunctions.toDouble(json['current_distance_km']);
+    currentEtaMin = HelperFunctions.toInt(json['current_eta_min']);
     if (json['photo_proof_url'] != null) {
       photoProofUrl = <String>[];
       json['photo_proof_url'].forEach((v) {
         photoProofUrl!.add(v as String);
       });
     }
-    dispatchIndex = json['dispatch_index'];
+    dispatchIndex = HelperFunctions.toInt(json['dispatch_index']);
     offeredRunnerId = json['offered_runner_id'];
     offerExpiresAt = DateTime.tryParse(json['offer_expires_at'] ?? '');
     dispatchCompleted = json['dispatch_completed'];

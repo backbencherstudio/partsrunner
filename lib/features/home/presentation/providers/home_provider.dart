@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:partsrunner/core/services/api_service/api_client.dart';
+import 'package:partsrunner/core/services/api/api_client.dart';
+import 'package:partsrunner/core/services/websocket/websocket_service.dart';
 import 'package:partsrunner/features/home/data/datasources/home_remote_datasource.dart';
 import 'package:partsrunner/features/home/data/models/delivery_home_runner_model.dart';
 import 'package:partsrunner/core/models/delivery_model.dart';
@@ -17,8 +18,17 @@ import 'package:partsrunner/features/home/domain/usecases/get_shipping_info_usec
 // ---------------------------------------------------------------------------
 final _apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
 
+final runnerSocketServiceProvider = Provider<WebsocketService>((ref) {
+  final service = WebsocketService();
+  ref.onDispose(service.dispose);
+  return service;
+});
+
 final _homeRemoteDataSourceProvider = Provider<HomeRemoteDatasource>(
-  (ref) => HomeRemoteDatasourceImpl(apiClient: ref.watch(_apiClientProvider)),
+  (ref) => HomeRemoteDatasourceImpl(
+    apiClient: ref.watch(_apiClientProvider),
+    socket: ref.watch(runnerSocketServiceProvider),
+  ),
 );
 
 final _homeRepositoryProvider = Provider<HomeRepository>(
@@ -70,13 +80,19 @@ final onlineStatusProvider = StateProvider<bool>((ref) => false);
 
 // Periodic polling provider for new requests every 10 seconds
 final periodicNewRequestProvider = StreamProvider<List<DeliveryModel>>((ref) {
+  final isOnline = ref.watch(onlineStatusProvider);
   final getNewRequestUseCase = ref.read(_getNewRequestUseCaseProvider);
 
-  return Stream.periodic(const Duration(seconds: 10), (count) {
+  if (!isOnline) {
+    return Stream.value(<DeliveryModel>[]);
+  }
+
+  return Stream.periodic(const Duration(seconds: 3), (count) {
     return count;
   }).asyncMap((_) async {
     try {
       final result = await getNewRequestUseCase.call();
+      print("New requests fetched: ${result.length}");
       return result;
     } catch (e) {
       print("Error fetching new requests: $e");
