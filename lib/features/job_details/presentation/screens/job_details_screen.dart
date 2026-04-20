@@ -292,6 +292,7 @@ class JobDetailsScreen extends ConsumerWidget {
                 context.pushNamed(
                   AppRouteNames.liveTracking,
                   pathParameters: {'id': id},
+                  extra: false,
                 );
               },
               style: OutlinedButton.styleFrom(

@@ -31,7 +31,7 @@ import 'package:partsrunner/features/profile/presentation/screens/payment_manage
 import 'package:partsrunner/features/profile/presentation/screens/profile_screen.dart';
 import 'package:partsrunner/features/profile/presentation/screens/settings_screen.dart';
 import 'package:partsrunner/features/request_delivery/presentation/screens/request_delivery_screen.dart';
-import 'package:partsrunner/features/search/presentation/screens/search_result_screen.dart';
+import 'package:partsrunner/features/search/presentation/screens/search_screen.dart';
 import 'package:partsrunner/features/splash/presentation/screens/splash_screen.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/transaction_details_screen.dart';
 import 'package:partsrunner/features/wallet/presentation/screens/transaction_history_screen.dart';
@@ -77,7 +77,7 @@ class AppRoutes {
         path: '/liveTracking/:id',
         name: AppRouteNames.liveTracking,
         builder: (context, state) =>
-            LiveTrackingScreens(id: state.pathParameters['id']!),
+            LiveTrackingScreens(id: state.pathParameters['id']!, isContractor: state.extra as bool,),
       ),
       GoRoute(
         path: '/notification',
@@ -154,7 +154,13 @@ class AppRoutes {
           GoRoute(
             path: 'search',
             name: AppRouteNames.search,
-            builder: (context, state) => const SearchResultScreen(),
+            builder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return SearchScreen(
+                query: extra?['query'] ?? '',
+                isContractor: extra?['isContractor'] ?? true,
+              );
+            },
           ),
           GoRoute(
             path: 'requestNewDelivery',

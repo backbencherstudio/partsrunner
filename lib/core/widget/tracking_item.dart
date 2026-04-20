@@ -350,6 +350,7 @@ class _TrackingItemState extends ConsumerState<TrackingItem> {
                   context.pushNamed(
                     AppRouteNames.liveTracking,
                     pathParameters: {'id': widget.item.id!},
+                    extra: true,
                   );
                 },
               ),

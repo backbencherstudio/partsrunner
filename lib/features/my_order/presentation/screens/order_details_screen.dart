@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:partsrunner/core/models/delivery_model.dart';
-import 'package:partsrunner/features/my_order/data/models/order_model.dart';
 import 'package:partsrunner/features/my_order/presentation/providers/order_provider.dart';
 
 class OrderDetailsScreen extends ConsumerWidget {
@@ -521,54 +519,6 @@ class OrderDetailsScreen extends ConsumerWidget {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildCancelButton(
-    BuildContext context,
-    WidgetRef ref,
-    String orderId,
-    VoidCallback onCancel,
-  ) {
-    return ElevatedButton(
-      onPressed: () async {
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Cancel Order'),
-            content: const Text('Are you sure you want to cancel this order?'),
-            actions: [
-              TextButton(
-                onPressed: () => context.pop(),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () {
-                  onCancel();
-                  context.pop();
-                },
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        );
-        if (confirmed == true) {
-          await ref.read(cancelOrderProvider(orderId).future);
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      ),
-      child: const Text(
-        'Cancel Order',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
     );
   }
 }

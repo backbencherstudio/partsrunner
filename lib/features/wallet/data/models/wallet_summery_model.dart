@@ -1,8 +1,10 @@
+import 'package:partsrunner/core/helpers/helper_functions.dart';
+
 class WalletSummeryModel {
   double? walletBalance;
   double? totalEarned;
   int? totalDeliveries;
-  int? pendingWithdrawal;
+  double? pendingWithdrawal;
   double? availableToWithdraw;
   bool? stripeConnected;
 
@@ -15,11 +17,11 @@ class WalletSummeryModel {
       this.stripeConnected});
 
   WalletSummeryModel.fromJson(Map<String, dynamic> json) {
-    walletBalance = json['wallet_balance'];
-    totalEarned = json['total_earned'];
+    walletBalance = HelperFunctions.toDouble(json['wallet_balance']);
+    totalEarned = HelperFunctions.toDouble(json['total_earned']);
     totalDeliveries = json['total_deliveries'];
-    pendingWithdrawal = json['pending_withdrawal'];
-    availableToWithdraw = json['available_to_withdraw'];
+    pendingWithdrawal = HelperFunctions.toDouble(json['pending_withdrawal']);
+    availableToWithdraw = HelperFunctions.toDouble(json['available_to_withdraw']);
     stripeConnected = json['stripe_connected'];
   }
 

@@ -1,21 +1,24 @@
+import 'package:partsrunner/core/helpers/helper_functions.dart';
+
 class EarningOverviewModel {
-  int? availableBalance;
+  double? availableBalance;
   double? pendingEarnings;
   double? totalEarned;
   int? deliveriesCompleted;
   int? confirmationPeriodDays;
 
-  EarningOverviewModel(
-      {this.availableBalance,
-      this.pendingEarnings,
-      this.totalEarned,
-      this.deliveriesCompleted,
-      this.confirmationPeriodDays});
+  EarningOverviewModel({
+    this.availableBalance,
+    this.pendingEarnings,
+    this.totalEarned,
+    this.deliveriesCompleted,
+    this.confirmationPeriodDays,
+  });
 
   EarningOverviewModel.fromJson(Map<String, dynamic> json) {
-    availableBalance = json['available_balance'];
-    pendingEarnings = json['pending_earnings'];
-    totalEarned = json['total_earned'];
+    availableBalance = HelperFunctions.toDouble(json['available_balance']);
+    pendingEarnings = HelperFunctions.toDouble(json['pending_earnings']);
+    totalEarned = HelperFunctions.toDouble(json['total_earned']);
     deliveriesCompleted = json['deliveries_completed'];
     confirmationPeriodDays = json['confirmation_period_days'];
   }

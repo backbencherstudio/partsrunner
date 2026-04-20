@@ -1,25 +1,28 @@
+import 'package:partsrunner/core/helpers/helper_functions.dart';
+
 class WithdrawModel {
   String? id;
   String? runnerId;
-  int? amount;
+  double? amount;
   String? status;
   String? stripeTransferId;
   DateTime? createdAt;
   DateTime? updatedAt;
 
-  WithdrawModel(
-      {this.id,
-      this.runnerId,
-      this.amount,
-      this.status,
-      this.stripeTransferId,
-      this.createdAt,
-      this.updatedAt});
+  WithdrawModel({
+    this.id,
+    this.runnerId,
+    this.amount,
+    this.status,
+    this.stripeTransferId,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   WithdrawModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     runnerId = json['runner_id'];
-    amount = json['amount'];
+    amount = HelperFunctions.toDouble(json['amount']);
     status = json['status'];
     stripeTransferId = json['stripe_transfer_id'];
     createdAt = DateTime.tryParse(json['created_at']);

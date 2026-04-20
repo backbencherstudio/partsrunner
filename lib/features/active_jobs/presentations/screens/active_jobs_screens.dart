@@ -261,7 +261,7 @@ class _DeliveryCard extends StatelessWidget {
                     ),
                     children: [
                       TextSpan(
-                        text: _formatDate(delivery.pickupDate),
+                        text: _formatDate(delivery.pickupDate.toString()),
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontWeight: FontWeight.normal,

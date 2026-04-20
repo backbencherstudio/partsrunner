@@ -12,6 +12,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final searchController = TextEditingController();
     return Container(
       width: double.infinity,
       height: user.type == UserRole.contractor.name ? 300.h : 280.h,
@@ -96,6 +97,7 @@ class HomeHeader extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               TextFormField(
+                controller: searchController,
                 decoration: InputDecoration(
                   hintText: "Search...",
                   filled: true,
@@ -112,7 +114,15 @@ class HomeHeader extends StatelessWidget {
                     padding: const EdgeInsets.all(6),
                     child: GestureDetector(
                       onTap: () {
-                        context.goNamed(AppRouteNames.search);
+                        context.pushNamed(
+                          AppRouteNames.search,
+                          extra: {
+                            'query': searchController.text,
+                            'isContractor':
+                                user.type.toLowerCase() ==
+                                UserRole.contractor.name.toLowerCase(),
+                          },
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(8),
